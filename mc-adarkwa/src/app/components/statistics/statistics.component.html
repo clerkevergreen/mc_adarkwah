@@ -1,0 +1,22 @@
+<section class="stats section" id="stats">
+  <div class="stats__bg"></div>
+  <div class="container">
+    <div class="stats__grid">
+      <div class="stats__item" *ngFor="let stat of statistics; let i = index"
+        [style.--delay]="i * 0.15 + 's'">
+        <div class="stats__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <ng-container [ngSwitch]="stat.icon">
+              <path *ngSwitchCase="'calendar-check'" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              <path *ngSwitchCase="'briefcase'" d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><rect x="8" y="3" width="8" height="4" rx="1"/>
+              <path *ngSwitchCase="'award'" d="M12 15l-2 5 2-1 2 1-2-5z"/><path d="M12 15a7 7 0 100-14 7 7 0 000 14z"/>
+              <path *ngSwitchCase="'users'" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+            </ng-container>
+          </svg>
+        </div>
+        <span class="stats__value">{{ (stat.current || 0) | number }}{{ stat.suffix }}</span>
+        <span class="stats__label">{{ stat.label }}</span>
+      </div>
+    </div>
+  </div>
+</section>

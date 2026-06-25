@@ -1,0 +1,153 @@
+@use '../../styles/variables' as *;
+
+.calendar {
+  background: lighten($dark, 3%);
+
+  &__widget {
+    max-width: 500px;
+    margin: 0 auto;
+    background: rgba($white, 0.02);
+    border: 1px solid rgba($gold, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+
+    h3 {
+      font-family: $font-heading;
+      color: $white;
+      font-size: 1.1rem;
+    }
+  }
+
+  &__nav {
+    background: transparent;
+    border: 1px solid rgba($gold, 0.15);
+    color: $gold;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+
+    &:hover {
+      background: $gold;
+      color: $dark;
+    }
+
+    svg { width: 18px; height: 18px; }
+  }
+
+  &__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    margin-bottom: 0.5rem;
+
+    span {
+      font-size: 0.75rem;
+      color: rgba($white, 0.4);
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 0.5rem 0;
+    }
+  }
+
+  &__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  &__day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: rgba($white, 0.7);
+    border-radius: 8px;
+    position: relative;
+    cursor: default;
+
+    &--empty {
+      visibility: hidden;
+    }
+
+    &--event {
+      color: $gold;
+      font-weight: 600;
+    }
+  }
+
+  &__dot {
+    width: 4px;
+    height: 4px;
+    background: $gold;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 4px;
+  }
+
+  &__events {
+    margin-top: 1.5rem;
+    border-top: 1px solid rgba($gold, 0.1);
+    padding-top: 1rem;
+
+    h4 {
+      color: $white;
+      font-family: $font-heading;
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
+    }
+  }
+
+  &__event-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba($gold, 0.05);
+
+    &:last-child { border-bottom: none; }
+  }
+
+  &__event-date {
+    font-size: 0.75rem;
+    color: $gold;
+    font-weight: 600;
+    min-width: 55px;
+  }
+
+  &__event-title {
+    flex: 1;
+    font-size: 0.85rem;
+    color: rgba($white, 0.7);
+  }
+
+  &__event-badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+
+    &.upcoming {
+      background: rgba($green, 0.15);
+      color: $green;
+    }
+
+    &:not(.upcoming) {
+      background: rgba($gold, 0.1);
+      color: $gold;
+    }
+  }
+}

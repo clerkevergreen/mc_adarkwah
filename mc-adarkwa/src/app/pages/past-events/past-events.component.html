@@ -1,0 +1,58 @@
+<app-navbar></app-navbar>
+
+<section class="past-events section">
+  <div class="container">
+    <div class="section__header">
+      <span class="section__badge">Portfolio</span>
+      <h1 class="section__title">Past <span class="text-gold">Events</span></h1>
+      <p class="section__desc">Browse through our portfolio of successfully hosted events.</p>
+    </div>
+
+    <div class="past-events__filters" appScrollReveal>
+      <input type="text" class="past-events__search" placeholder="Search events..." [(ngModel)]="filter.search" (ngModelChange)="applyFilters()" />
+
+      <select class="past-events__select" [(ngModel)]="filter.year" (ngModelChange)="applyFilters()">
+        <option [ngValue]="undefined">All Years</option>
+        <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
+      </select>
+
+      <select class="past-events__select" [(ngModel)]="filter.category" (ngModelChange)="applyFilters()">
+        <option *ngFor="let cat of categories" [ngValue]="cat.value">{{ cat.label }}</option>
+      </select>
+
+      <button class="past-events__clear" (click)="clearFilters()">Clear Filters</button>
+    </div>
+
+    <div class="past-events__grid">
+      <div class="past-events__card" *ngFor="let event of filteredEvents; let i = index"
+        appScrollReveal [delay]="i * 100">
+        <div class="past-events__card-image">
+          <img *ngIf="event.bannerImage; else pastNoImage" [src]="event.bannerImage" [alt]="event.title" class="past-events__card-img" />
+          <ng-template #pastNoImage>
+            <div class="past-events__card-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          </ng-template>
+          <span class="past-events__card-category">{{ event.category | titlecase }}</span>
+        </div>
+        <div class="past-events__card-body">
+          <div class="past-events__card-meta">
+            <span>{{ event.date | date:'mediumDate' }}</span>
+            <span>{{ event.attendeeCount | number }} Guests</span>
+          </div>
+          <h3>{{ event.title }}</h3>
+          <p class="past-events__card-venue">{{ event.venue }}, {{ event.location }}</p>
+          <p class="past-events__card-desc">{{ event.shortDescription }}</p>
+          <a class="btn btn--gold btn--sm" [routerLink]="['/events', event.slug]">View Details</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="past-events__empty" *ngIf="filteredEvents.length === 0">
+      <p>No events found matching your criteria.</p>
+      <button class="btn btn--outline" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+</section>
+
+<app-footer></app-footer>

@@ -1,0 +1,97 @@
+<div class="layout">
+  <app-sidebar></app-sidebar>
+  <div class="layout__main">
+    <app-topbar pageTitle="Sponsors Management"></app-topbar>
+    <div class="content">
+<div class="sponsors">
+  <div class="sponsors__header">
+    <h1 class="sponsors__title">Sponsors Management</h1>
+    <button class="btn btn--gold" (click)="openCreate()">➕ Add Sponsor</button>
+  </div>
+
+  @if (loading()) {
+    <div class="sponsors__loading">
+      @for (_ of [1,2,3,4]; track _) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
+  } @else if (sponsors().length === 0) {
+    <div class="sponsors__empty">No sponsors found. Click "Add Sponsor" to create one.</div>
+  } @else {
+    <div class="sponsors__table-wrapper">
+      <table class="sponsors__table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Logo</th>
+            <th>Name</th>
+            <th>Website</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (sponsor of sponsors(); track sponsor.id; let i = $index) {
+            <tr>
+              <td class="sponsors__table-order">{{ i + 1 }}</td>
+              <td>
+                <img class="sponsor-logo" [src]="sponsor.logo" [alt]="sponsor.name" />
+              </td>
+              <td class="sponsors__table-name">{{ sponsor.name }}</td>
+              <td>
+                @if (sponsor.website) {
+                  <a class="sponsor-link" [href]="sponsor.website" target="_blank" rel="noopener">{{ sponsor.website }}</a>
+                } @else {
+                  <span class="sponsors__table-na">—</span>
+                }
+              </td>
+              <td class="sponsors__table-actions">
+                <button class="icon-btn" (click)="openEdit(sponsor)" title="Edit">✏️</button>
+                <button class="icon-btn" (click)="confirmDelete(sponsor.id)" title="Delete">🗑</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (showModal) {
+    <app-modal [title]="editingSponsor ? 'Edit Sponsor' : 'Add Sponsor'" (close)="closeModal()">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input class="form-input" [(ngModel)]="formData.name" placeholder="Sponsor name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Logo URL</label>
+          <input class="form-input" [(ngModel)]="formData.logo" placeholder="https://..." />
+          @if (formData.logo) {
+            <div class="logo-preview">
+              <img [src]="formData.logo" alt="Logo preview" />
+            </div>
+          }
+        </div>
+        <div class="form-group">
+          <label class="form-label">Website</label>
+          <input class="form-input" [(ngModel)]="formData.website" placeholder="https://..." />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--ghost" (click)="closeModal()">Cancel</button>
+        <button class="btn btn--gold" (click)="save()">{{ editingSponsor ? 'Update' : 'Create' }}</button>
+      </div>
+    </app-modal>
+  }
+
+  @if (showConfirm) {
+    <app-confirm-dialog
+      title="Delete Sponsor"
+      message="Are you sure you want to delete this sponsor? This action cannot be undone."
+      (confirm)="deleteSponsor()"
+      (cancel)="cancelDelete()"
+    ></app-confirm-dialog>
+  }
+</div>
+    </div>
+  </div>
+</div>

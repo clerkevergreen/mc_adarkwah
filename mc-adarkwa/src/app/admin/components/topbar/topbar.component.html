@@ -1,0 +1,27 @@
+<header class="app-topbar">
+  <div class="app-topbar__left">
+    <button class="app-topbar__hamburger" (click)="toggle.emit()" aria-label="Toggle menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M3 12h18M3 6h18M3 18h18"/>
+      </svg>
+    </button>
+    <h1 class="app-topbar__title">{{ pageTitle }}</h1>
+  </div>
+
+  <div class="app-topbar__right">
+    <button class="app-topbar__notif" aria-label="Notifications">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+      </svg>
+      <span class="app-topbar__notif-dot"></span>
+    </button>
+
+    <div class="app-topbar__admin">
+      <div class="app-topbar__avatar">{{ adminName.charAt(0).toUpperCase() }}</div>
+      <div class="app-topbar__info">
+        <span class="app-topbar__name">{{ adminName }}</span>
+        <span class="app-topbar__email">{{ adminEmail }}</span>
+      </div>
+    </div>
+  </div>
+</header>

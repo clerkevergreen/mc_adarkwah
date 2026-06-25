@@ -1,0 +1,138 @@
+<div class="layout">
+  <app-sidebar></app-sidebar>
+  <div class="layout__main">
+    <app-topbar pageTitle="News Management"></app-topbar>
+    <div class="content">
+<div class="news">
+  <div class="news__header">
+    <h1 class="news__title">News Management</h1>
+    <button class="btn btn--gold" (click)="openCreate()">➕ Add News</button>
+  </div>
+
+  <div class="news__filters">
+    <input class="search-input" [(ngModel)]="searchQuery" placeholder="Search news..." />
+    <div class="news__chips">
+      <button
+        class="chip"
+        [class.chip--active]="!selectedCategory"
+        (click)="selectedCategory = ''"
+      >All</button>
+      @for (cat of categories; track cat) {
+        <button
+          class="chip"
+          [class.chip--active]="selectedCategory === cat"
+          (click)="selectedCategory = cat"
+        >{{ cat }}</button>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="news__loading">
+      @for (_ of [1,2,3,4]; track _) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
+  } @else if (filteredNews.length === 0) {
+    <div class="news__empty">No news articles found.</div>
+  } @else {
+    <div class="news__table-wrapper">
+      <table class="news__table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Excerpt</th>
+            <th>Featured</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of filteredNews; track item.id) {
+            <tr>
+              <td class="news__table-title">{{ item.title }}</td>
+              <td><span class="category-badge">{{ item.category }}</span></td>
+              <td class="news__table-excerpt">{{ truncate(item.excerpt, 50) }}</td>
+              <td>
+                <label class="toggle">
+                  <input type="checkbox" [checked]="item.featured" (change)="toggleFeatured(item)" />
+                  <span class="toggle__slider"></span>
+                </label>
+              </td>
+              <td class="news__table-date">{{ item.date | date:'mediumDate' }}</td>
+              <td class="news__table-actions">
+                <button class="icon-btn" (click)="openEdit(item)" title="Edit">✏️</button>
+                <button class="icon-btn" (click)="confirmDelete(item.id)" title="Delete">🗑</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (showModal) {
+    <app-modal [title]="editingNews ? 'Edit News' : 'Add News'" size="lg" (close)="closeModal()">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group form-group--flex">
+            <label class="form-label">Title</label>
+            <input class="form-input" [(ngModel)]="formData.title" placeholder="News title" />
+          </div>
+          <div class="form-group form-group--flex">
+            <label class="form-label">Category</label>
+            <select class="form-input" [(ngModel)]="formData.category">
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Excerpt</label>
+          <textarea class="form-input form-input--textarea" [(ngModel)]="formData.excerpt" placeholder="Short summary" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Content</label>
+          <textarea class="form-input form-input--textarea" [(ngModel)]="formData.content" placeholder="Full content" rows="6"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group form-group--flex">
+            <label class="form-label">Image URL</label>
+            <input class="form-input" [(ngModel)]="formData.imageUrl" placeholder="https://..." />
+            @if (formData.imageUrl) {
+              <img class="form-preview" [src]="formData.imageUrl" alt="Preview" />
+            }
+          </div>
+          <div class="form-group form-group--flex">
+            <label class="form-label">Tags (comma-separated)</label>
+            <input class="form-input" [(ngModel)]="tagsString" placeholder="tag1, tag2, tag3" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="formData.featured" />
+            <span>Featured</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--ghost" (click)="closeModal()">Cancel</button>
+        <button class="btn btn--gold" (click)="save()">{{ editingNews ? 'Update' : 'Create' }}</button>
+      </div>
+    </app-modal>
+  }
+
+  @if (showConfirm) {
+    <app-confirm-dialog
+      title="Delete News"
+      message="Are you sure you want to delete this news article? This action cannot be undone."
+      (confirm)="deleteNews()"
+      (cancel)="cancelDelete()"
+    ></app-confirm-dialog>
+  }
+</div>
+    </div>
+  </div>
+</div>

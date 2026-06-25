@@ -1,0 +1,172 @@
+@use '../../../styles/variables' as *;
+
+.login {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #0F0F1A;
+  overflow: hidden;
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba($gold, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 50%, rgba($gold, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  &__card {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    padding: 2.5rem 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba($gold, 0.12);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    box-shadow:
+      0 0 40px rgba($gold, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+
+  &__brand {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  &__logo-icon {
+    font-size: 2rem;
+    color: $gold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    font-family: $font-heading;
+    font-size: 1.6rem;
+    color: $gold;
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    font-size: 0.85rem;
+    color: rgba($white, 0.5);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    color: rgba($white, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__input {
+    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba($gold, 0.1);
+    border-radius: 8px;
+    color: $white;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+
+    &::placeholder {
+      color: rgba($white, 0.2);
+    }
+
+    &:focus {
+      border-color: $gold;
+      box-shadow: 0 0 0 3px rgba($gold, 0.1);
+    }
+
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px #1a1a2e inset;
+      -webkit-text-fill-color: $white;
+    }
+  }
+
+  &__error {
+    padding: 0.6rem 0.8rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 6px;
+    color: #ef4444;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  &__btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.9rem;
+    background: linear-gradient(135deg, $gold, darken($gold, 10%));
+    border: none;
+    border-radius: 8px;
+    color: $dark;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, darken($gold, 5%), darken($gold, 15%));
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba($gold, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba($dark, 0.2);
+    border-top-color: $dark;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 40px rgba($gold, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    box-shadow:
+      0 0 60px rgba($gold, 0.08),
+      0 0 80px rgba($gold, 0.03),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+}
