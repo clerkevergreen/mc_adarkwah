@@ -1,0 +1,60 @@
+<section class="gallery section" id="gallery">
+  <div class="container">
+    <div class="section__header" appScrollReveal>
+      <span class="section__badge">Gallery</span>
+      <h2 class="section__title">Event <span class="text-gold">Moments</span></h2>
+      <p class="section__desc">Browse through memorable moments captured at events hosted by MC Adarkwah.</p>
+    </div>
+
+    <div class="gallery__filters" appScrollReveal>
+      <button class="gallery__filter-btn" *ngFor="let cat of categories"
+        [class.active]="activeCategory === cat.value"
+        (click)="filterItems(cat.value)">
+        {{ cat.label }}
+      </button>
+    </div>
+
+    <div class="gallery__grid" appScrollReveal>
+      <div class="gallery__item" *ngFor="let item of filteredItems; let i = index"
+        [class.gallery__item--wide]="i % 5 === 0"
+        [class.gallery__item--tall]="i % 7 === 0"
+        (click)="openLightbox(i)">
+        <div class="gallery__item-image">
+          <img *ngIf="item.imageUrl; else galleryPlaceholder" [src]="item.imageUrl" [alt]="item.title" class="gallery__item-img" />
+          <ng-template #galleryPlaceholder>
+            <div class="gallery__item-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          </ng-template>
+          <div class="gallery__item-overlay">
+            <div class="gallery__item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+            </div>
+            <h4>{{ item.title }}</h4>
+          </div>
+        </div>
+        <div class="gallery__item-info">
+          <h4>{{ item.title }}</h4>
+          <p>{{ item.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gallery__lightbox" *ngIf="lightboxOpen" (click)="closeLightbox()">
+    <button class="gallery__lightbox-close" (click)="closeLightbox()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button class="gallery__lightbox-nav gallery__lightbox-nav--prev" (click)="prevImage(); $event.stopPropagation()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="gallery__lightbox-content" (click)="$event.stopPropagation()">
+      <img *ngIf="filteredItems[lightboxIndex]?.imageUrl" [src]="filteredItems[lightboxIndex].imageUrl" [alt]="filteredItems[lightboxIndex].title" class="gallery__lightbox-img" />
+      <h3>{{ filteredItems[lightboxIndex].title }}</h3>
+      <p>{{ filteredItems[lightboxIndex].description }}</p>
+    </div>
+    <button class="gallery__lightbox-nav gallery__lightbox-nav--next" (click)="nextImage(); $event.stopPropagation()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+</section>

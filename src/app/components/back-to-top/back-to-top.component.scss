@@ -1,0 +1,44 @@
+@use '../../styles/variables' as *;
+
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 999;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $gold, darken($gold, 10%));
+  color: $dark;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 4px 20px rgba($gold, 0.3);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s;
+  }
+
+  &--visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+  }
+
+  &:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 30px rgba($gold, 0.4);
+
+    svg {
+      transform: translateY(-2px);
+    }
+  }
+}

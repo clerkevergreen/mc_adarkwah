@@ -1,0 +1,157 @@
+<div class="app-data-table">
+  @if (loading) {
+    <div class="app-data-table__skeleton">
+      @for (r of skeletonRows; track r) {
+        <div class="app-data-table__skeleton-row">
+          @for (c of skeletonColumns; track c) {
+            <div class="app-data-table__skeleton-cell">
+              <div class="app-data-table__skeleton-bar"></div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="app-data-table__wrapper">
+      <table class="app-data-table__table">
+        <thead>
+          <tr>
+            @for (col of columns; track col.key) {
+              <th
+                class="app-data-table__th"
+                [class.app-data-table__th--sortable]="col.sortable"
+                (click)="col.sortable && toggleSort(col.key)"
+              >
+                <div class="app-data-table__th-content">
+                  {{ col.label }}
+                  @if (col.sortable) {
+                    <svg class="app-data-table__sort-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path [attr.d]="getSortIcon(col.key)" />
+                    </svg>
+                  }
+                </div>
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows; track row._id || row.id || $index) {
+            <tr class="app-data-table__row">
+              @for (col of columns; track col.key) {
+                <td class="app-data-table__td">
+                  @switch (col.type) {
+                    @case ('badge') {
+                      <span class="app-data-table__badge" [class]="badgeClass(row[col.key])">
+                        {{ row[col.key] }}
+                      </span>
+                    }
+                    @case ('action') {
+                      <div class="app-data-table__actions">
+                        <button class="app-data-table__action-btn" (click)="view.emit(row)" title="View">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                          </svg>
+                        </button>
+                        <button class="app-data-table__action-btn" (click)="edit.emit(row)" title="Edit">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                          </svg>
+                        </button>
+                        <button class="app-data-table__action-btn app-data-table__action-btn--danger" (click)="delete.emit(row)" title="Delete">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                          </svg>
+                        </button>
+                      </div>
+                    }
+                    @case ('date') {
+                      {{ formatDate(row[col.key]) }}
+                    }
+                    @case ('toggle') {
+                      <label class="app-data-table__toggle">
+                        <input
+                          type="checkbox"
+                          [checked]="row[col.key]"
+                          (change)="onToggleChange(row._id || row.id, $event)"
+                        />
+                        <span class="app-data-table__toggle-slider"></span>
+                      </label>
+                    }
+                    @case ('stars') {
+                      <div class="app-data-table__stars">
+                        @for (s of starArray(row[col.key]); track s) {
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C" stroke="#C9A84C" stroke-width="1">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                          </svg>
+                        }
+                        @for (s of emptyStarArray(row[col.key]); track s) {
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                          </svg>
+                        }
+                      </div>
+                    }
+                    @default {
+                      {{ row[col.key] ?? '-' }}
+                    }
+                  }
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td class="app-data-table__empty" [attr.colspan]="columns.length">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5">
+                  <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9l-7-7z"/>
+                  <path d="M13 2v7h7"/>
+                </svg>
+                <p>No data found</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (pagination.pages > 1) {
+      <div class="app-data-table__pagination">
+        <button
+          class="app-data-table__page-btn"
+          [disabled]="pagination.page <= 1"
+          (click)="pageChange.emit('prev')"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+
+        @for (p of pageNumbers; track p) {
+          <button
+            class="app-data-table__page-btn"
+            [class.app-data-table__page-btn--active]="p === pagination.page"
+            (click)="pageChange.emit(p)"
+          >
+            {{ p }}
+          </button>
+        }
+
+        <button
+          class="app-data-table__page-btn"
+          [disabled]="pagination.page >= pagination.pages"
+          (click)="pageChange.emit('next')"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+
+        <span class="app-data-table__page-info">
+          Page {{ pagination.page }} of {{ pagination.pages }}
+        </span>
+      </div>
+    }
+  }
+</div>

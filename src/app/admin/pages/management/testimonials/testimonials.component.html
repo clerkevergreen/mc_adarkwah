@@ -1,0 +1,124 @@
+<div class="layout">
+  <app-sidebar></app-sidebar>
+  <div class="layout__main">
+    <app-topbar pageTitle="Testimonials"></app-topbar>
+    <div class="content">
+      <div class="toolbar">
+        <div class="toolbar__search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search testimonials..." [(ngModel)]="searchTerm" (input)="applyFilters()" />
+        </div>
+        <div class="toolbar__chips">
+          <button class="chip" [class.chip--active]="statusFilter === 'all'" (click)="setStatusFilter('all')">All</button>
+          <button class="chip" [class.chip--active]="statusFilter === 'approved'" (click)="setStatusFilter('approved')">Approved</button>
+          <button class="chip" [class.chip--active]="statusFilter === 'pending'" (click)="setStatusFilter('pending')">Pending</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Event</th>
+              <th>Rating</th>
+              <th>Review</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredTestimonials.length === 0) {
+              <tr>
+                <td colspan="6" class="table__empty">No testimonials found</td>
+              </tr>
+            }
+            @for (t of filteredTestimonials; track t.id) {
+              <tr>
+                <td class="table__name-cell">
+                  <img [src]="t.photo || 'assets/images/placeholder-avatar.jpg'" alt="" class="table__avatar" />
+                  <span>{{ t.name }}</span>
+                </td>
+                <td>{{ t.eventName }}</td>
+                <td>
+                  <div class="stars">
+                    @for (s of [1,2,3,4,5]; track s) {
+                      <svg class="star" [class.star--filled]="s <= t.rating" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                      </svg>
+                    }
+                  </div>
+                </td>
+                <td class="table__review">{{ truncate(t.review) }}</td>
+                <td>
+                  <label class="toggle" (click)="$event.stopPropagation()">
+                    <input type="checkbox" [checked]="t.isApproved" (change)="toggleApproval(t)" />
+                    <span class="toggle__slider" [class.toggle__slider--on]="t.isApproved"></span>
+                  </label>
+                </td>
+                <td>
+                  <div class="actions">
+                    <button class="actions__btn" title="Edit" (click)="openEdit(t)">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="actions__btn actions__btn--danger" title="Delete" (click)="confirmDelete(t.id)">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (showEditModal) {
+  <app-modal title="Edit Testimonial" size="md" (close)="closeEdit()">
+    <div class="form">
+      <div class="form__group">
+        <label class="form__label">Name</label>
+        <input class="form__input" type="text" [(ngModel)]="editForm.name" />
+      </div>
+      <div class="form__group">
+        <label class="form__label">Photo URL</label>
+        <input class="form__input" type="text" [(ngModel)]="editForm.photo" />
+      </div>
+      <div class="form__group">
+        <label class="form__label">Event Name</label>
+        <input class="form__input" type="text" [(ngModel)]="editForm.eventName" />
+      </div>
+      <div class="form__group">
+        <label class="form__label">Rating</label>
+        <select class="form__select" [(ngModel)]="editForm.rating">
+          @for (r of ratings; track r) {
+            <option [value]="r">{{ r }}</option>
+          }
+        </select>
+      </div>
+      <div class="form__group">
+        <label class="form__label">Review</label>
+        <textarea class="form__textarea" rows="4" [(ngModel)]="editForm.review"></textarea>
+      </div>
+      <div class="form__group">
+        <label class="form__label">Designation</label>
+        <input class="form__input" type="text" [(ngModel)]="editForm.designation" />
+      </div>
+    </div>
+    <div slot="footer">
+      <button class="btn btn--outline btn--sm" (click)="closeEdit()">Cancel</button>
+      <button class="btn btn--gold btn--sm" (click)="saveEdit()">Save</button>
+    </div>
+  </app-modal>
+}
+
+@if (showConfirm) {
+  <app-confirm-dialog
+    title="Delete Testimonial"
+    message="Are you sure you want to delete this testimonial? This action cannot be undone."
+    (confirm)="deleteTestimonial()"
+    (cancel)="cancelDelete()"
+  ></app-confirm-dialog>
+}

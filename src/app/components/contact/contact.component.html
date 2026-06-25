@@ -1,0 +1,96 @@
+<section class="contact section" id="contact">
+  <div class="container">
+    <div class="section__header" appScrollReveal>
+      <span class="section__badge">Contact</span>
+      <h2 class="section__title">Get In <span class="text-gold">Touch</span></h2>
+      <p class="section__desc">Have a question or want to discuss your event? Reach out to us through any of the channels below.</p>
+    </div>
+
+    <div class="contact__grid" appScrollReveal>
+      <div class="contact__card">
+        <div class="contact__card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <h3>Phone</h3>
+        <a href="tel:{{contactInfo.phone}}">{{contactInfo.phone}}</a>
+      </div>
+
+      <div class="contact__card">
+        <div class="contact__card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <h3>Email</h3>
+        <a href="mailto:{{contactInfo.email}}">{{contactInfo.email}}</a>
+      </div>
+
+      <div class="contact__card">
+        <div class="contact__card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <h3>Location</h3>
+        <p>{{contactInfo.office}}</p>
+      </div>
+
+       <div class="contact__card">
+        <div class="contact__card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/><path d="M12 2v2"/></svg>
+        </div>
+        <h3>WhatsApp</h3>
+        <a [href]="getWhatsAppLink()" target="_blank">Chat on WhatsApp</a>
+      </div>
+    </div>
+
+    <div class="contact__form-wrapper" appScrollReveal>
+      <div class="contact__form-card">
+        <h3 class="contact__form-title">Send a Message</h3>
+        @if (submitted) {
+          <div class="contact__form-success">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <p>Thank you! Your message has been received. We'll get back to you soon.</p>
+          </div>
+        } @else {
+          <form (ngSubmit)="submitForm()" #contactForm="ngForm">
+            <div class="contact__form-row">
+              <div class="contact__form-group">
+                <input class="contact__form-input" type="text" [(ngModel)]="formData.name" name="name" placeholder="Your Name" required />
+              </div>
+              <div class="contact__form-group">
+                <input class="contact__form-input" type="email" [(ngModel)]="formData.email" name="email" placeholder="Your Email" required />
+              </div>
+            </div>
+            <div class="contact__form-group">
+              <input class="contact__form-input" type="text" [(ngModel)]="formData.subject" name="subject" placeholder="Subject (optional)" />
+            </div>
+            <div class="contact__form-group">
+              <textarea class="contact__form-input contact__form-textarea" [(ngModel)]="formData.message" name="message" placeholder="Your Message" rows="4" required></textarea>
+            </div>
+            @if (error) {
+              <div class="contact__form-error">{{ error }}</div>
+            }
+            <button class="btn btn--gold" type="submit" [disabled]="submitting">
+              {{ submitting ? 'Sending...' : 'Send Message' }}
+            </button>
+          </form>
+        }
+      </div>
+    </div>
+
+    <div class="contact__map" appScrollReveal>
+      @if (mapUrl) {
+        <iframe
+          [src]="mapUrl"
+          class="contact__map-iframe"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen>
+        </iframe>
+      } @else {
+        <div class="contact__map-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <p>Accra, Ghana - Airport Residential Area</p>
+          <a href="https://maps.google.com/?q=Accra+Ghana" target="_blank" class="btn btn--outline btn--sm">Open in Google Maps</a>
+        </div>
+      }
+    </div>
+  </div>
+</section>

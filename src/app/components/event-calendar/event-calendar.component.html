@@ -1,0 +1,45 @@
+<section class="calendar section" id="calendar">
+  <div class="container">
+    <div class="section__header" appScrollReveal>
+      <span class="section__badge">Calendar</span>
+      <h2 class="section__title">Event <span class="text-gold">Calendar</span></h2>
+      <p class="section__desc">Stay updated with all past and upcoming events.</p>
+    </div>
+
+    <div class="calendar__widget" appScrollReveal>
+      <div class="calendar__header">
+        <button class="calendar__nav" (click)="previousMonth()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h3>{{ months[currentMonth] }} {{ currentYear }}</h3>
+        <button class="calendar__nav" (click)="nextMonth()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <div class="calendar__weekdays">
+        <span *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">{{ day }}</span>
+      </div>
+
+      <div class="calendar__days">
+        <div class="calendar__day" *ngFor="let day of calendarDays"
+          [class.calendar__day--empty]="!day"
+          [class.calendar__day--event]="day && hasEvent(day)">
+          <span *ngIf="day">{{ day }}</span>
+          <span class="calendar__dot" *ngIf="day && hasEvent(day)"></span>
+        </div>
+      </div>
+
+      <div class="calendar__events" *ngIf="monthEvents.length > 0">
+        <h4>Events This Month</h4>
+        <div class="calendar__event-item" *ngFor="let event of monthEvents">
+          <span class="calendar__event-date">{{ event.date | date:'MMM dd' }}</span>
+          <span class="calendar__event-title">{{ event.title }}</span>
+          <span class="calendar__event-badge" [class.upcoming]="event.isUpcoming">
+            {{ event.isUpcoming ? 'Upcoming' : 'Past' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

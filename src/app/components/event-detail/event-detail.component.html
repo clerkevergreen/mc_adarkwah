@@ -1,0 +1,104 @@
+<app-navbar></app-navbar>
+
+<section class="event-detail" *ngIf="event">
+  <div class="event-detail__banner">
+    <img *ngIf="event.bannerImage && !bannerError; else noBannerImg" [src]="event.bannerImage" [alt]="event.title" class="event-detail__banner-img" (error)="bannerError = true" />
+    <ng-template #noBannerImg>
+      <div class="event-detail__banner-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+    </ng-template>
+    <div class="event-detail__banner-overlay">
+      <div class="container">
+        <span class="event-detail__category">{{ event.category | titlecase }}</span>
+        <h1>{{ event.title }}</h1>
+        <div class="event-detail__meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            {{ event.date | date:'fullDate' }}
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            {{ event.venue }}
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            {{ event.attendeeCount | number }} Attendees
+          </span>
+        </div>
+        <div *ngIf="event.isUpcoming" class="event-detail__countdown">
+          <app-countdown-timer [targetDate]="event.date" size="md"></app-countdown-timer>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="event-detail__content">
+    <div class="container">
+      <div class="event-detail__grid">
+        <div class="event-detail__main">
+          <h2>About This Event</h2>
+          <p>{{ event.description }}</p>
+
+          <div class="event-detail__highlights" *ngIf="event.highlights.length > 0">
+            <h3>Event Highlights</h3>
+            <ul>
+              <li *ngFor="let highlight of event.highlights">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                {{ highlight }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="event-detail__sidebar">
+          <div class="event-detail__info-card">
+            <h3>Event Details</h3>
+            <div class="event-detail__info-row">
+              <span>Date</span>
+              <span>{{ event.date | date:'fullDate' }}</span>
+            </div>
+            <div class="event-detail__info-row">
+              <span>Venue</span>
+              <span>{{ event.venue }}</span>
+            </div>
+            <div class="event-detail__info-row">
+              <span>Location</span>
+              <span>{{ event.location }}</span>
+            </div>
+            <div class="event-detail__info-row">
+              <span>Attendees</span>
+              <span>{{ event.attendeeCount | number }}</span>
+            </div>
+            <div class="event-detail__info-row">
+              <span>Category</span>
+              <span>{{ event.category | titlecase }}</span>
+            </div>
+            <div class="event-detail__actions">
+              <button *ngIf="event.isUpcoming" class="btn btn--gold" (click)="openRegistration()">Register Now</button>
+              <a *ngIf="event.registrationUrl" [href]="event.registrationUrl" target="_blank" class="btn btn--outline">External Registration</a>
+              <a routerLink="/" fragment="booking" class="btn btn--outline">Book Similar Event</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="event-detail__not-found" *ngIf="!event">
+  <div class="container">
+    <h2>Event Not Found</h2>
+    <p>The event you are looking for does not exist.</p>
+    <a routerLink="/" class="btn btn--gold">Go Home</a>
+  </div>
+</section>
+
+<app-footer></app-footer>
+
+<app-registration-form
+  *ngIf="showRegistration && event"
+  [eventId]="event.id"
+  [eventTitle]="event.title"
+  (close)="showRegistration = false"
+></app-registration-form>
