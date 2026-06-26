@@ -24,7 +24,11 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'quotes', loadComponent: () => import('./pages/management/quotes/quotes.component').then(m => m.QuotesComponent) },
       { path: 'contact', loadComponent: () => import('./pages/management/contact/contact.component').then(m => m.ContactComponent) },
       { path: 'services', loadComponent: () => import('./pages/management/services/services.component').then(m => m.ServicesComponent) },
-
+      { path: 'hero', loadComponent: () => import('./pages/management/hero/hero.component').then(m => m.HeroComponent) },
+      { path: 'nav', loadComponent: () => import('./pages/management/nav/nav.component').then(m => m.NavComponent) },
+      { path: 'profile', loadComponent: () => import('./pages/management/profile/profile.component').then(m => m.ProfileComponent) },
+      { path: 'statistics', loadComponent: () => import('./pages/management/statistics/statistics.component').then(m => m.StatisticsComponent) },
+      { path: 'videos', loadComponent: () => import('./pages/management/videos/videos.component').then(m => m.VideosComponent) },
     ],
   },
 ];

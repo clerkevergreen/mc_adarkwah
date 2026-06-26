@@ -30,7 +30,7 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-const frontendDist = path.join(__dirname, '../../mc-adarkwa/dist/mc-adarkwa/browser');
+const frontendDist = path.join(__dirname, '../../dist/mc-adarkwa/browser');
 if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
 }
