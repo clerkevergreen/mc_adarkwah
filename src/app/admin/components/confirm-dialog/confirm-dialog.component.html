@@ -1,0 +1,19 @@
+<div class="app-confirm-dialog__backdrop" (click)="onBackdropClick($event)">
+  <div class="app-confirm-dialog">
+    <div class="app-confirm-dialog__icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <h3 class="app-confirm-dialog__title">{{ title }}</h3>
+    @if (message) {
+      <p class="app-confirm-dialog__message">{{ message }}</p>
+    }
+    <div class="app-confirm-dialog__actions">
+      <button class="app-confirm-dialog__btn app-confirm-dialog__btn--cancel" (click)="cancel.emit()">Cancel</button>
+      <button class="app-confirm-dialog__btn app-confirm-dialog__btn--confirm" (click)="confirm.emit()">Confirm</button>
+    </div>
+  </div>
+</div>

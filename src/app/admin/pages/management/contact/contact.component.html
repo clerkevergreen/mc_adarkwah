@@ -1,0 +1,93 @@
+<div class="layout">
+  <app-sidebar></app-sidebar>
+  <div class="layout__main">
+    <app-topbar pageTitle="Contact Messages"></app-topbar>
+    <div class="content">
+<div class="contact">
+  <div class="contact__header">
+    <h1 class="contact__title">Contact Messages</h1>
+    <span class="contact__count">{{ messages().length }} total</span>
+  </div>
+
+  @if (loading()) {
+    <div class="contact__loading">
+      @for (_ of [1,2,3,4]; track _) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
+  } @else if (messages().length === 0) {
+    <div class="contact__empty">No contact messages yet.</div>
+  } @else {
+    <div class="contact__table-wrapper">
+      <table class="contact__table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (msg of messages(); track msg.id) {
+            <tr>
+              <td class="contact__table-name">{{ msg.name }}</td>
+              <td class="contact__table-email">{{ msg.email }}</td>
+              <td class="contact__table-subject">{{ msg.subject }}</td>
+              <td class="contact__table-message">{{ truncate(msg.message, 80) }}</td>
+              <td class="contact__table-date">{{ msg.createdAt | date:'mediumDate' }}</td>
+              <td>
+                <button class="icon-btn" (click)="openView(msg)" title="View">👁</button>
+                <button class="icon-btn icon-btn--danger" (click)="confirmDelete(msg.id)" title="Delete">🗑</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (showConfirm) {
+    <app-confirm-dialog
+      title="Delete Message"
+      message="Are you sure you want to delete this message?"
+      (confirm)="deleteMessage()"
+      (cancel)="cancelDelete()"
+    />
+  }
+
+  @if (showViewModal && selectedMessage) {
+    <app-modal title="Message Details" size="md" (close)="closeView()">
+      <div class="modal-body message-detail">
+        <div class="message-detail__field">
+          <span class="message-detail__label">From</span>
+          <span class="message-detail__value">{{ selectedMessage.name }}</span>
+        </div>
+        <div class="message-detail__field">
+          <span class="message-detail__label">Email</span>
+          <span class="message-detail__value">{{ selectedMessage.email }}</span>
+        </div>
+        <div class="message-detail__field">
+          <span class="message-detail__label">Subject</span>
+          <span class="message-detail__value">{{ selectedMessage.subject }}</span>
+        </div>
+        <div class="message-detail__field">
+          <span class="message-detail__label">Date</span>
+          <span class="message-detail__value">{{ selectedMessage.createdAt | date:'fullDate' }}</span>
+        </div>
+        <div class="message-detail__field message-detail__field--full">
+          <span class="message-detail__label">Message</span>
+          <p class="message-detail__text">{{ selectedMessage.message }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--gold" (click)="closeView()">Close</button>
+      </div>
+    </app-modal>
+  }
+</div>
+    </div>
+  </div>
+</div>

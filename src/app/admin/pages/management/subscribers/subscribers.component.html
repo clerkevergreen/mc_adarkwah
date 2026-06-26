@@ -1,0 +1,49 @@
+<div class="layout">
+  <app-sidebar></app-sidebar>
+  <div class="layout__main">
+    <app-topbar pageTitle="Subscribers"></app-topbar>
+    <div class="content">
+<div class="subscribers">
+  <div class="subscribers__header">
+    <h1 class="subscribers__title">Subscribers</h1>
+    <span class="subscribers__count">{{ subscribers().length }} total</span>
+  </div>
+
+  @if (loading()) {
+    <div class="subscribers__loading">
+      @for (_ of [1,2,3,4,5]; track _) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
+  } @else if (subscribers().length === 0) {
+    <div class="subscribers__empty">No subscribers yet.</div>
+  } @else {
+    <div class="subscribers__table-wrapper">
+      <table class="subscribers__table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Email</th>
+            <th>Date Subscribed</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (sub of subscribers(); track sub.id; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td class="subscribers__table-email">{{ sub.email }}</td>
+              <td class="subscribers__table-date">{{ sub.createdAt | date:'mediumDate' }}</td>
+              <td>
+                <button class="icon-btn" (click)="confirmDelete(sub.id)" title="Delete">🗑</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+    </div>
+  </div>
+</div>

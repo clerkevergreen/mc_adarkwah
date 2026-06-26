@@ -1,0 +1,355 @@
+@use '../../../../styles/variables' as *;
+
+$gold-accent: #C9A84C;
+$dark-bg: #0F0F1A;
+$card-bg: rgba(255, 255, 255, 0.03);
+$border-light: rgba(255, 255, 255, 0.06);
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: $dark-bg;
+
+  &__main {
+    flex: 1;
+    margin-left: 220px;
+    min-height: 100vh;
+
+    @media (max-width: 1023px) {
+      margin-left: 0;
+    }
+  }
+
+  &__content {
+    padding: 1.5rem;
+    margin-top: 64px;
+  }
+
+  &__sidebar-backdrop {
+    display: none;
+
+    @media (max-width: 768px) {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+  }
+}
+
+.page {
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 0.85rem;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+  }
+
+  &__input {
+    padding: 0.65rem 1rem 0.65rem 2.4rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+    outline: none;
+    min-width: 240px;
+    transition: border-color 0.2s;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    &:focus {
+      border-color: $gold-accent;
+    }
+  }
+
+  &__select {
+    padding: 0.65rem 2rem 0.65rem 0.85rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+
+    &:focus {
+      border-color: $gold-accent;
+    }
+
+    option {
+      background: #1a1a2e;
+      color: rgba(255, 255, 255, 0.85);
+    }
+  }
+
+  &__chips {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  &__chip {
+    padding: 0.4rem 0.85rem;
+    border-radius: 50px;
+    border: 1px solid $border-light;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: rgba($gold-accent, 0.3);
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    &--active {
+      background: rgba($gold-accent, 0.12);
+      border-color: rgba($gold-accent, 0.3);
+      color: $gold-accent;
+    }
+  }
+
+  &__header-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+  }
+
+  &__btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    background: linear-gradient(135deg, $gold-accent, darken($gold-accent, 10%));
+    border: none;
+    border-radius: 8px;
+    color: #12121F;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba($gold-accent, 0.3);
+    }
+
+    svg {
+      stroke: #12121F;
+    }
+  }
+}
+
+.form {
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    &--full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  &__input,
+  &__select,
+  &__textarea {
+    padding: 0.7rem 0.85rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+    font-family: $font-body;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    &:focus {
+      border-color: $gold-accent;
+      box-shadow: 0 0 0 3px rgba($gold-accent, 0.08);
+    }
+  }
+
+  &__select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2rem;
+
+    option {
+      background: #1a1a2e;
+      color: rgba(255, 255, 255, 0.85);
+    }
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  &__checkbox {
+    flex-direction: row;
+    align-items: center;
+    padding-top: 0.5rem;
+  }
+
+  &__checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+
+    input {
+      width: 18px;
+      height: 18px;
+      accent-color: $gold-accent;
+    }
+  }
+
+  &__btn {
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &--cancel {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.6);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+      }
+    }
+
+    &--save {
+      background: linear-gradient(135deg, $gold-accent, darken($gold-accent, 10%));
+      color: #12121F;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba($gold-accent, 0.3);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(18, 18, 31, 0.2);
+    border-top-color: #12121F;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  &__image-preview {
+    margin-top: 0.5rem;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid $border-light;
+
+    img {
+      display: block;
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+    }
+  }
+
+  &__image-name {
+    display: block;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  &__uploading {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    color: $gold-accent;
+    animation: pulse 1s ease-in-out infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

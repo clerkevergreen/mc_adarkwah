@@ -1,0 +1,75 @@
+<div class="admin">
+  <aside class="admin__sidebar">
+    <div class="admin__logo">
+      <span class="admin__logo-icon">✦</span>
+      <span>MC <span class="text-gold">Adarkwah</span></span>
+    </div>
+    <nav class="admin__nav">
+      <button class="admin__nav-btn" [class.active]="activeTab === 'events'"
+        (click)="switchTab('events')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Events
+      </button>
+      <button class="admin__nav-btn" [class.active]="activeTab === 'gallery'"
+        (click)="switchTab('gallery')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Gallery
+      </button>
+      <button class="admin__nav-btn" [class.active]="activeTab === 'testimonials'"
+        (click)="switchTab('testimonials')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Testimonials
+      </button>
+      <button class="admin__nav-btn" [class.active]="activeTab === 'faqs'"
+        (click)="switchTab('faqs')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        FAQs
+      </button>
+      <button class="admin__nav-btn" [class.active]="activeTab === 'bookings'"
+        (click)="switchTab('bookings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
+        Bookings
+      </button>
+    </nav>
+    <div class="admin__sidebar-footer">
+      <a routerLink="/" class="admin__view-site">View Site</a>
+    </div>
+  </aside>
+
+  <main class="admin__main">
+    <header class="admin__header">
+      <h1>{{ activeTab | titlecase }} Management</h1>
+      <button class="btn btn--gold btn--sm">Add New</button>
+    </header>
+
+    <div class="admin__content">
+      <div class="admin__table" *ngIf="activeTab === 'events'">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Venue</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of events">
+              <td>{{ event.title }}</td>
+              <td>{{ event.date | date }}</td>
+              <td>{{ event.category | titlecase }}</td>
+              <td>{{ event.venue }}</td>
+              <td><span [class.upcoming]="getStatus(event.date.toString()) === 'Upcoming'">{{ getStatus(event.date.toString()) }}</span></td>
+              <td class="admin__actions">
+                <button class="admin__btn admin__btn--edit">Edit</button>
+                <button class="admin__btn admin__btn--delete" (click)="deleteItem('event', event.id)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>

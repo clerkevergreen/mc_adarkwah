@@ -1,0 +1,182 @@
+@use '../../styles/variables' as *;
+
+.contact {
+  background: $dark;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  &__card {
+    text-align: center;
+    padding: 2rem;
+    background: rgba($white, 0.02);
+    border: 1px solid rgba($gold, 0.1);
+    border-radius: 16px;
+    transition: all 0.3s;
+
+    &:hover {
+      transform: translateY(-5px);
+      border-color: rgba($gold, 0.3);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    h3 {
+      color: $white;
+      font-family: $font-heading;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    a, p {
+      color: rgba($white, 0.6);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+
+    a:hover { color: $gold; }
+  }
+
+  &__card-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($gold, 0.1);
+    border-radius: 12px;
+    color: $gold;
+
+    svg { width: 22px; height: 22px; }
+  }
+
+  &__map {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba($gold, 0.1);
+    aspect-ratio: 16/9;
+  }
+
+  &__map-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  &__map-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, rgba($gold, 0.05), rgba($gold, 0.02));
+    gap: 1rem;
+
+    svg {
+      width: 48px;
+      height: 48px;
+      color: $gold;
+      opacity: 0.5;
+    }
+
+    p {
+      color: rgba($white, 0.5);
+      font-size: 0.95rem;
+    }
+  }
+
+  &__form-wrapper {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+  }
+
+  &__form-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba($gold, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+
+  &__form-title {
+    font-family: $font-heading;
+    font-size: 1.2rem;
+    color: $white;
+    margin-bottom: 1.5rem;
+  }
+
+  &__form-success {
+    text-align: center;
+    padding: 2rem;
+
+    p {
+      color: rgba($white, 0.7);
+      font-size: 0.95rem;
+      margin-top: 1rem;
+    }
+  }
+
+  &__form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: $breakpoint-mobile) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__form-group {
+    margin-bottom: 1rem;
+  }
+
+  &__form-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba($gold, 0.12);
+    border-radius: 8px;
+    color: $white;
+    font-size: 0.9rem;
+    font-family: $font-body;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+
+    &:focus {
+      border-color: $gold;
+    }
+
+    &::placeholder {
+      color: rgba($white, 0.2);
+    }
+  }
+
+  &__form-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  &__form-error {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .contact__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .contact__grid {
+    grid-template-columns: 1fr;
+  }
+}

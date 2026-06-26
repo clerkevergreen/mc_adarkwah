@@ -1,0 +1,25 @@
+<section class="faq section" id="faq">
+  <div class="container">
+    <div class="section__header" appScrollReveal>
+      <span class="section__badge">FAQ</span>
+      <h2 class="section__title">Frequently Asked <span class="text-gold">Questions</span></h2>
+      <p class="section__desc">Find answers to common questions about booking, pricing, and services.</p>
+    </div>
+
+    <div class="faq__list" appScrollReveal>
+      <div class="faq__item" *ngFor="let faq of faqs; let i = index"
+        [class.faq__item--open]="faq.isOpen">
+        <button class="faq__question" (click)="toggleFAQ(faq.id)">
+          <span class="faq__number">{{ i + 1 | number:'2.0' }}</span>
+          <span>{{ faq.question }}</span>
+          <span class="faq__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="faq__answer" [style.maxHeight]="faq.isOpen ? '200px' : '0'">
+          <p>{{ faq.answer }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

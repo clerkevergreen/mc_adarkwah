@@ -1,0 +1,21 @@
+<div class="app-toast-container">
+  @for (toast of toasts; track toast.id) {
+    <div
+      class="app-toast"
+      [class.app-toast--success]="toast.type === 'success'"
+      [class.app-toast--error]="toast.type === 'error'"
+      [class.app-toast--warning]="toast.type === 'warning'"
+    >
+      <svg class="app-toast__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path [attr.d]="iconPath(toast.type)" />
+      </svg>
+      <span class="app-toast__text">{{ toast.text }}</span>
+      <button class="app-toast__dismiss" (click)="dismiss(toast.id)" aria-label="Dismiss">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  }
+</div>

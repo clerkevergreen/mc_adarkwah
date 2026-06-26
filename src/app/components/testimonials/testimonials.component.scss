@@ -1,0 +1,177 @@
+@use '../../styles/variables' as *;
+
+.testimonials {
+  background: $dark;
+  position: relative;
+
+  &__carousel {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  &__track {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    min-height: 300px;
+  }
+
+  &__slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.5s ease;
+    pointer-events: none;
+
+    &--active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+      position: relative;
+    }
+  }
+
+  &__card {
+    background: rgba($white, 0.03);
+    border: 1px solid rgba($gold, 0.1);
+    border-radius: 20px;
+    padding: 2.5rem;
+    text-align: center;
+  }
+
+  &__stars {
+    display: flex;
+    justify-content: center;
+    gap: 0.3rem;
+    margin-bottom: 1.5rem;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      color: #f59e0b;
+    }
+  }
+
+  &__review {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba($white, 0.75);
+    font-style: italic;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__author {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  &__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid $gold;
+  }
+
+  &__avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, $gold, darken($gold, 10%));
+    color: $dark;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  &__info {
+    text-align: left;
+
+    h4 {
+      color: $white;
+      font-family: $font-heading;
+      font-size: 1rem;
+    }
+  }
+
+  &__event {
+    display: block;
+    color: $gold;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  &__designation {
+    display: block;
+    color: rgba($white, 0.4);
+    font-size: 0.75rem;
+    margin-top: 0.15rem;
+  }
+
+  &__nav {
+    background: rgba($gold, 0.1);
+    border: 1px solid rgba($gold, 0.15);
+    color: $gold;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+
+    &:hover {
+      background: $gold;
+      color: $dark;
+    }
+
+    svg { width: 20px; height: 20px; }
+  }
+
+  &__dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba($gold, 0.2);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &--active {
+      background: $gold;
+      width: 30px;
+      border-radius: 5px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .testimonials__carousel {
+    flex-direction: column;
+  }
+
+  .testimonials__card {
+    padding: 1.5rem;
+  }
+}
