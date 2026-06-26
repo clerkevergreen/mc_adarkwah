@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const connectDB = require('./config/db');
 const swaggerSpec = require('./config/swagger');
 const swaggerUi = require('swagger-ui-express');
@@ -11,12 +12,28 @@ const app = express();
 
 connectDB();
 
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:4200', credentials: true }));
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:4200',
+  'https://mc-adarkwah.vercel.app',
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 const frontendDist = path.join(__dirname, '../../mc-adarkwa/dist/mc-adarkwa/browser');
-app.use(express.static(frontendDist));
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+}
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
@@ -47,9 +64,11 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'MC Adarkwah API is running', timestamp: new Date().toISOString() });
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(frontendDist, 'index.html'));
-});
+if (fs.existsSync(frontendDist)) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 app.use(errorHandler);
 

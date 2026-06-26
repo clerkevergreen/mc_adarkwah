@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { Event, EventCategory, Testimonial } from '../models/event.model';
 import { GalleryItem, GalleryCategory } from '../models/gallery.model';
@@ -14,17 +15,22 @@ export class DataService {
 
   getNavItems(): Observable<NavItem[]> {
     return this.api.getNavItems().pipe(
-      map(items => items.length > 0 ? items : [
-        { label: 'Home', path: '/', fragment: 'hero', icon: 'home' },
-        { label: 'About', path: '/', fragment: 'about', icon: 'user' },
-        { label: 'Events', path: '/', fragment: 'events', icon: 'calendar' },
-        { label: 'Gallery', path: '/', fragment: 'gallery', icon: 'image' },
-        { label: 'Services', path: '/', fragment: 'services', icon: 'star' },
-        { label: 'Testimonials', path: '/', fragment: 'testimonials', icon: 'message-circle' },
-        { label: 'Booking', path: '/', fragment: 'booking', icon: 'calendar-check' },
-        { label: 'Contact', path: '/', fragment: 'contact', icon: 'phone' },
-      ])
+      map(items => items.length > 0 ? items : this.defaultNavItems),
+      catchError(() => of(this.defaultNavItems))
     );
+  }
+
+  private get defaultNavItems(): NavItem[] {
+    return [
+      { label: 'Home', path: '/', fragment: 'hero', icon: 'home' },
+      { label: 'About', path: '/', fragment: 'about', icon: 'user' },
+      { label: 'Events', path: '/', fragment: 'events', icon: 'calendar' },
+      { label: 'Gallery', path: '/', fragment: 'gallery', icon: 'image' },
+      { label: 'Services', path: '/', fragment: 'services', icon: 'star' },
+      { label: 'Testimonials', path: '/', fragment: 'testimonials', icon: 'message-circle' },
+      { label: 'Booking', path: '/', fragment: 'booking', icon: 'calendar-check' },
+      { label: 'Contact', path: '/', fragment: 'contact', icon: 'phone' },
+    ];
   }
 
   getUpcomingEvents(): Observable<Event[]> {
@@ -81,13 +87,18 @@ export class DataService {
 
   getStatistics(): Observable<any[]> {
     return this.api.getStatistics().pipe(
-      map(stats => stats.length > 0 ? stats : [
-        { id: '1', value: 500, suffix: '+', label: 'Events Hosted', icon: 'calendar-check' },
-        { id: '2', value: 50, suffix: '+', label: 'Corporate Clients', icon: 'briefcase' },
-        { id: '3', value: 20, suffix: '+', label: 'Awards Won', icon: 'award' },
-        { id: '4', value: 100000, suffix: '+', label: 'Audience Reached', icon: 'users' },
-      ])
+      map(stats => stats.length > 0 ? stats : this.defaultStats),
+      catchError(() => of(this.defaultStats))
     );
+  }
+
+  private get defaultStats(): any[] {
+    return [
+      { id: '1', value: 500, suffix: '+', label: 'Events Hosted', icon: 'calendar-check' },
+      { id: '2', value: 50, suffix: '+', label: 'Corporate Clients', icon: 'briefcase' },
+      { id: '3', value: 20, suffix: '+', label: 'Awards Won', icon: 'award' },
+      { id: '4', value: 100000, suffix: '+', label: 'Audience Reached', icon: 'users' },
+    ];
   }
 
   getAboutInfo() {

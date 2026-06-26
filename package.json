@@ -1,0 +1,18 @@
+{
+  "name": "mc-adarkwah",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MC Adarkwah Event Management Website",
+  "scripts": {
+    "install:frontend": "cd mc-adarkwa && npm install",
+    "install:backend": "cd backend && npm install",
+    "postinstall": "npm run install:frontend && npm run install:backend",
+    "build:frontend": "cd mc-adarkwa && npm run build",
+    "build": "npm run build:frontend",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
