@@ -10,10 +10,15 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
+// Connect DB
 connectDB();
 
+/* =========================
+   CORS CONFIG (FIXED)
+========================= */
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:4200',
+  process.env.FRONTEND_URL,
+  'http://localhost:4200',
   'https://mc-adarkwah.vercel.app',
 ].filter(Boolean);
 
@@ -27,18 +32,32 @@ app.use(cors({
   },
   credentials: true,
 }));
+
+/* =========================
+   BODY PARSER
+========================= */
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-const frontendDist = path.join(__dirname, '../../dist/mc-adarkwa/browser');
-if (fs.existsSync(frontendDist)) {
-  app.use(express.static(frontendDist));
+/* =========================
+   UPLOADS (FIXED FOR RENDER)
+========================= */
+const uploadDir = path.join(__dirname, 'uploads');
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static(uploadDir));
 
+/* =========================
+   API DOCS
+========================= */
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
 
+/* =========================
+   API ROUTES
+========================= */
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/events', require('./routes/events'));
 app.use('/api/gallery', require('./routes/gallery'));
@@ -60,19 +79,40 @@ app.use('/api/hero', require('./routes/hero'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/nav', require('./routes/nav'));
 
+/* =========================
+   HEALTH CHECK
+========================= */
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'MC Adarkwah API is running', timestamp: new Date().toISOString() });
+  res.json({
+    success: true,
+    message: 'MC Adarkwah API is running',
+    timestamp: new Date().toISOString()
+  });
 });
 
-if (fs.existsSync(frontendDist)) {
+/* =========================
+   ANGULAR FRONTEND (FIXED)
+========================= */
+const frontendPath = path.join(__dirname, '../../dist/mc-adarkwa/browser');
+
+if (fs.existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
+
   app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendDist, 'index.html'));
+    res.sendFile(path.join(frontendPath, 'index.html'));
   });
 }
 
+/* =========================
+   ERROR HANDLER
+========================= */
 app.use(errorHandler);
 
+/* =========================
+   START SERVER
+========================= */
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`MC Adarkwah API running on port ${PORT}`);
   console.log(`Swagger docs: http://localhost:${PORT}/api-docs`);
