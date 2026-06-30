@@ -1,0 +1,43 @@
+<div class="signup">
+  <div class="signup__overlay"></div>
+  <div class="signup__card">
+    <div class="signup__brand">
+      <span class="signup__logo-icon">✦</span>
+      <h1 class="signup__title">MC Adarkwah</h1>
+      <p class="signup__subtitle">Create Admin Account</p>
+    </div>
+    <div *ngIf="success" class="signup__success">
+      <p>Admin account created successfully!</p>
+      <a routerLink="/admin/dashboard" class="signup__btn signup__btn--success">Go to Dashboard</a>
+    </div>
+    <form *ngIf="!success" class="signup__form" (ngSubmit)="onSubmit()" #signupForm="ngForm">
+      <div class="signup__field">
+        <label class="signup__label" for="name">Name</label>
+        <input id="name" class="signup__input" type="text" placeholder="Admin name" [(ngModel)]="name" name="name" required />
+      </div>
+      <div class="signup__field">
+        <label class="signup__label" for="email">Email</label>
+        <input id="email" class="signup__input" type="email" placeholder="admin@example.com" [(ngModel)]="email" name="email" required />
+      </div>
+      <div class="signup__field">
+        <label class="signup__label" for="password">Password</label>
+        <input id="password" class="signup__input" type="password" placeholder="Min. 6 characters" [(ngModel)]="password" name="password" required />
+      </div>
+      <div class="signup__field">
+        <label class="signup__label" for="confirmPassword">Confirm Password</label>
+        <input id="confirmPassword" class="signup__input" type="password" placeholder="Repeat password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+      </div>
+      <div class="signup__error" *ngIf="error">{{ error }}</div>
+      <button class="signup__btn" type="submit" [disabled]="loading">
+        <span *ngIf="!loading">Create Admin Account</span>
+        <span *ngIf="loading">
+          <span class="signup__spinner"></span>
+          Creating...
+        </span>
+      </button>
+    </form>
+    <div class="signup__footer">
+      <a routerLink="/admin/login">Back to Login</a>
+    </div>
+  </div>
+</div>

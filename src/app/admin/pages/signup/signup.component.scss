@@ -1,6 +1,6 @@
 @use '../../../styles/variables' as *;
 
-.login {
+.signup {
   position: relative;
   display: flex;
   align-items: center;
@@ -27,15 +27,11 @@
     border: 1px solid rgba($gold, 0.12);
     border-radius: 16px;
     backdrop-filter: blur(20px);
-    box-shadow:
-      0 0 40px rgba($gold, 0.05),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    animation: glowPulse 3s ease-in-out infinite;
   }
 
   &__brand {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
   &__logo-icon {
@@ -58,10 +54,21 @@
     color: rgba($white, 0.5);
   }
 
+  &__success {
+    text-align: center;
+    color: #22c55e;
+    font-size: 0.95rem;
+    padding: 1rem 0;
+
+    p {
+      margin-bottom: 1rem;
+    }
+  }
+
   &__form {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
   }
 
   &__field {
@@ -95,28 +102,6 @@
       border-color: $gold;
       box-shadow: 0 0 0 3px rgba($gold, 0.1);
     }
-
-    &:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0 1000px #1a1a2e inset;
-      -webkit-text-fill-color: $white;
-    }
-  }
-
-  &__links {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: -0.5rem;
-  }
-
-  &__forgot {
-    color: rgba($white, 0.4);
-    font-size: 0.8rem;
-    text-decoration: none;
-    transition: color 0.2s;
-
-    &:hover {
-      color: $gold;
-    }
   }
 
   &__error {
@@ -130,7 +115,6 @@
   }
 
   &__btn {
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -156,6 +140,13 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
+
+    &--success {
+      display: inline-block;
+      width: auto;
+      padding: 0.75rem 1.5rem;
+      text-decoration: none;
+    }
   }
 
   &__spinner {
@@ -169,13 +160,13 @@
     vertical-align: middle;
   }
 
-  &__signup {
+  &__footer {
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
 
     a {
       color: rgba($white, 0.4);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       text-decoration: none;
       transition: color 0.2s;
 
@@ -188,18 +179,4 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
-}
-
-@keyframes glowPulse {
-  0%, 100% {
-    box-shadow:
-      0 0 40px rgba($gold, 0.05),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-  50% {
-    box-shadow:
-      0 0 60px rgba($gold, 0.08),
-      0 0 80px rgba($gold, 0.03),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
 }

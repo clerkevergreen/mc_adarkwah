@@ -60,7 +60,7 @@ const { protect } = require('../middleware/auth');
  */
 router.get('/setup', getSetupStatus);
 router.post('/setup', setup);
-router.post('/register', register);
+router.post('/register', protect, register);
 
 /**
  * @swagger
