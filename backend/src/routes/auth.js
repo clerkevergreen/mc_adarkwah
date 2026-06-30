@@ -119,5 +119,23 @@ router.get('/me', protect, getMe);
  *         description: New tokens
  */
 router.post('/refresh', refreshToken);
+router.get('/test-email', (req, res) => {
+  const nodemailer = require('nodemailer');
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_PORT === '465',
+    requireTLS: true,
+    connectionTimeout: 8000,
+    greetingTimeout: 8000,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+  transporter.verify()
+    .then(() => res.json({ success: true, message: 'SMTP connection OK' }))
+    .catch(err => res.status(500).json({ success: false, message: err.message, code: err.code }));
+});
 
 module.exports = router;
