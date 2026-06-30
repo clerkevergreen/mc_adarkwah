@@ -33,12 +33,10 @@ export class LoginComponent implements OnInit {
 
   private checkSetup(): void {
     this.http.get<any>(`${environment.apiUrl}/auth/setup`).subscribe({
-      next: () => {},
-      error: (err) => {
-        if (err.status === 400) {
-          this.router.navigate(['/admin/setup']);
-        }
+      next: () => {
+        this.router.navigate(['/admin/setup']);
       },
+      error: () => {},
     });
   }
 
