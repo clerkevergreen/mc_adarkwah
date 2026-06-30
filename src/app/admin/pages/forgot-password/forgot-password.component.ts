@@ -17,6 +17,7 @@ export class ForgotPasswordComponent {
   loading = false;
   error = '';
   sent = false;
+  resetUrl = '';
 
   constructor(private http: HttpClient) {}
 
@@ -30,9 +31,12 @@ export class ForgotPasswordComponent {
     this.error = '';
 
     this.http.post<any>(`${environment.apiUrl}/auth/forgot-password`, { email: this.email }).subscribe({
-      next: () => {
+      next: (res) => {
         this.sent = true;
         this.loading = false;
+        if (res.data?.resetUrl) {
+          this.resetUrl = res.data.resetUrl;
+        }
       },
       error: (err) => {
         this.loading = false;
