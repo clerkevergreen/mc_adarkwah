@@ -6,8 +6,9 @@ const createTransporter = () => {
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT),
       secure: process.env.SMTP_PORT === '465',
-      connectionTimeout: 5000,
-      greetingTimeout: 5000,
+      requireTLS: true,
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -37,6 +38,7 @@ const sendEmail = async ({ to, subject, html }) => {
     console.error('Email send error:', error.message);
     if (error.response) console.error('SMTP response:', error.response);
     if (error.code) console.error('Error code:', error.code);
+    throw error;
   }
 };
 
