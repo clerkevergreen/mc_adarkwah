@@ -14,6 +14,30 @@ const app = express();
 connectDB();
 
 /* =========================
+   AUTO-SEED DEFAULT ADMIN
+========================= */
+const Admin = require('./models/Admin');
+
+const seedDefaultAdmin = async () => {
+  try {
+    const count = await Admin.countDocuments();
+    if (count === 0) {
+      await Admin.create({
+        name: 'MC Adarkwah',
+        email: 'admin@mcadarkwah.com',
+        password: 'Admin123!',
+        role: 'superadmin',
+      });
+      console.log('Default admin created: admin@mcadarkwah.com / Admin123!');
+    }
+  } catch (err) {
+    console.error('Error seeding admin:', err.message);
+  }
+};
+
+setTimeout(seedDefaultAdmin, 2000);
+
+/* =========================
    CORS CONFIG (FIXED)
 ========================= */
 const allowedOrigins = [
