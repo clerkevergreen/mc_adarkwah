@@ -119,23 +119,28 @@ router.get('/me', protect, getMe);
  *         description: New tokens
  */
 router.post('/refresh', refreshToken);
-router.get('/test-email', (req, res) => {
+router.get('/test-email', async (req, res) => {
   const nodemailer = require('nodemailer');
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_PORT === '465',
-    requireTLS: true,
-    connectionTimeout: 8000,
-    greetingTimeout: 8000,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-  transporter.verify()
-    .then(() => res.json({ success: true, message: 'SMTP connection OK' }))
-    .catch(err => res.status(500).json({ success: false, message: err.message, code: err.code }));
+  const results = {};
+  for (const port of [587, 465]) {
+    try {
+      const t = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port,
+        secure: port === 465,
+        requireTLS: port !== 465,
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      });
+      await t.verify();
+      results[port] = 'OK';
+    } catch (err) {
+      results[port] = err.message;
+    }
+  }
+  const anyOk = Object.values(results).some(v => v === 'OK');
+  res.status(anyOk ? 200 : 500).json({ success: anyOk, results });
 });
 
 module.exports = router;
