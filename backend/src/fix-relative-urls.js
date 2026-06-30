@@ -4,7 +4,7 @@ const connectDB = require('./config/db');
 const Event = require('./models/Event');
 const GalleryItem = require('./models/GalleryItem');
 
-const BASE = process.env.API_URL || 'http://localhost:5000';
+const BASE = process.env.API_URL || 'https://mc-adarkwah.onrender.com';
 
 const fixRelativeUrls = async () => {
   try {

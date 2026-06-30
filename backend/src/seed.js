@@ -205,7 +205,7 @@ const seed = async () => {
 
     console.log('\nSeed completed successfully!');
     console.log('Admin login: admin@mcadarkwah.com / Admin123!');
-    console.log('API docs: http://localhost:5000/api-docs');
+    console.log('https://mc-adarkwah.onrender.com');
 
     process.exit(0);
   } catch (error) {
