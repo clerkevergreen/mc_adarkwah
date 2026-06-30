@@ -11,10 +11,6 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent),
   },
   {
-    path: 'signup',
-    loadComponent: () => import('./pages/signup/signup.component').then(m => m.SignupComponent),
-  },
-  {
     path: 'forgot-password',
     loadComponent: () => import('./pages/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
   },
@@ -28,6 +24,7 @@ export const ADMIN_ROUTES: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      { path: 'signup', loadComponent: () => import('./pages/signup/signup.component').then(m => m.SignupComponent) },
       { path: 'events', loadComponent: () => import('./pages/management/events/events.component').then(m => m.EventsComponent) },
       { path: 'bookings', loadComponent: () => import('./pages/management/bookings/bookings.component').then(m => m.BookingsComponent) },
       { path: 'registrations', loadComponent: () => import('./pages/management/registrations/registrations.component').then(m => m.RegistrationsComponent) },

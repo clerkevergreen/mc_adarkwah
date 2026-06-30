@@ -168,21 +168,36 @@
     animation: spin 0.6s linear infinite;
     vertical-align: middle;
   }
+}
 
-  &__signup {
-    text-align: center;
-    margin-top: 0.5rem;
+.password-wrap {
+  position: relative;
 
-    a {
-      color: rgba($white, 0.4);
-      font-size: 0.85rem;
-      text-decoration: none;
-      transition: color 0.2s;
+  .password-input {
+    padding-right: 2.5rem;
+  }
+}
 
-      &:hover {
-        color: $gold;
-      }
-    }
+.eye-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: rgba($white, 0.4);
+  transition: color 0.2s;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  &:hover {
+    color: $gold;
   }
 }
 

@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
 
   email = '';
   password = '';
+  showPassword = false;
   loading = false;
   error = '';
 

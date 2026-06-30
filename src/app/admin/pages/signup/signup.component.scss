@@ -1,5 +1,36 @@
 @use '../../../styles/variables' as *;
 
+.password-wrap {
+  position: relative;
+
+  .password-input {
+    padding-right: 2.5rem;
+  }
+}
+
+.eye-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: rgba($white, 0.4);
+  transition: color 0.2s;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  &:hover {
+    color: $gold;
+  }
+}
+
 .signup {
   position: relative;
   display: flex;
