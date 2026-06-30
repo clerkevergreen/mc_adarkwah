@@ -1,5 +1,7 @@
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
+const { sendPasswordResetEmail } = require('../utils/email');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
@@ -7,6 +9,46 @@ const generateToken = (id) => {
 
 const generateRefreshToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '30d' });
+};
+
+exports.getSetupStatus = async (req, res, next) => {
+  try {
+    const count = await Admin.countDocuments();
+    if (count > 0) {
+      return res.status(400).json({ success: false, message: 'Admin already exists. Please login instead.' });
+    }
+    res.json({ success: true, message: 'Setup required' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.setup = async (req, res, next) => {
+  try {
+    const count = await Admin.countDocuments();
+    if (count > 0) {
+      return res.status(400).json({ success: false, message: 'Admin already exists. Please login instead.' });
+    }
+
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Name, email, and password are required' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    }
+
+    const admin = await Admin.create({ name, email, password, role: 'superadmin' });
+    const token = generateToken(admin._id);
+    const refreshToken = generateRefreshToken(admin._id);
+
+    res.status(201).json({
+      success: true,
+      data: { admin, token, refreshToken },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 exports.register = async (req, res, next) => {
@@ -50,6 +92,77 @@ exports.login = async (req, res, next) => {
     res.json({
       success: true,
       data: { admin, token, refreshToken },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Please provide your email' });
+    }
+
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'No admin found with that email' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    admin.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    admin.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
+    await admin.save({ validateBeforeSave: false });
+
+    const resetUrl = `${process.env.FRONTEND_URL || 'https://mc-adarkwah.onrender.com'}/admin/reset-password/${resetToken}`;
+
+    try {
+      await sendPasswordResetEmail(admin.email, resetUrl);
+      res.json({ success: true, message: 'Password reset link sent to your email' });
+    } catch (err) {
+      admin.resetPasswordToken = undefined;
+      admin.resetPasswordExpires = undefined;
+      await admin.save({ validateBeforeSave: false });
+      return res.status(500).json({ success: false, message: 'Failed to send email. Try again later.' });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) {
+      return res.status(400).json({ success: false, message: 'Token and new password are required' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    }
+
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const admin = await Admin.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!admin) {
+      return res.status(400).json({ success: false, message: 'Token is invalid or has expired' });
+    }
+
+    admin.password = password;
+    admin.resetPasswordToken = undefined;
+    admin.resetPasswordExpires = undefined;
+    await admin.save();
+
+    const jwtToken = generateToken(admin._id);
+    const refreshToken = generateRefreshToken(admin._id);
+
+    res.json({
+      success: true,
+      message: 'Password reset successful',
+      data: { token: jwtToken, refreshToken },
     });
   } catch (error) {
     next(error);

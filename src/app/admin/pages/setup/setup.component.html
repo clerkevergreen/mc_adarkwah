@@ -1,0 +1,34 @@
+<div class="setup">
+  <div class="setup__overlay"></div>
+  <div class="setup__card">
+    <div class="setup__brand">
+      <span class="setup__logo-icon">✦</span>
+      <h1 class="setup__title">MC Adarkwah</h1>
+      <p class="setup__subtitle">Set Up Admin Account</p>
+    </div>
+    <p class="setup__info">Create your admin account to manage the website.</p>
+    <form class="setup__form" (ngSubmit)="onSubmit()" #setupForm="ngForm">
+      <div class="setup__field">
+        <label class="setup__label" for="name">Name</label>
+        <input id="name" class="setup__input" type="text" placeholder="Your name" [(ngModel)]="name" name="name" required />
+      </div>
+      <div class="setup__field">
+        <label class="setup__label" for="email">Email</label>
+        <input id="email" class="setup__input" type="email" placeholder="admin@example.com" [(ngModel)]="email" name="email" required />
+      </div>
+      <div class="setup__field">
+        <label class="setup__label" for="password">Password</label>
+        <input id="password" class="setup__input" type="password" placeholder="Min. 6 characters" [(ngModel)]="password" name="password" required />
+      </div>
+      <div class="setup__field">
+        <label class="setup__label" for="confirmPassword">Confirm Password</label>
+        <input id="confirmPassword" class="setup__input" type="password" placeholder="Repeat password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+      </div>
+      <div class="setup__error" *ngIf="error">{{ error }}</div>
+      <button class="setup__btn" type="submit" [disabled]="loading">
+        <span *ngIf="!loading">Create Admin Account</span>
+        <span *ngIf="loading">Creating...</span>
+      </button>
+    </form>
+  </div>
+</div>

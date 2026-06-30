@@ -3,8 +3,20 @@ import { adminGuard } from './admin.guard';
 
 export const ADMIN_ROUTES: Routes = [
   {
+    path: 'setup',
+    loadComponent: () => import('./pages/setup/setup.component').then(m => m.SetupComponent),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent),
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./pages/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
+  },
+  {
+    path: 'reset-password/:token',
+    loadComponent: () => import('./pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
   },
   {
     path: '',

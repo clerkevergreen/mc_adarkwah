@@ -33,6 +33,9 @@
           required
         />
       </div>
+      <div class="login__links">
+        <a routerLink="/admin/forgot-password" class="login__forgot">Forgot password?</a>
+      </div>
       <div class="login__error" *ngIf="error">
         {{ error }}
       </div>

@@ -240,4 +240,25 @@ const sendRegistrationConfirmed = async (registration, event) => {
   return sendEmail({ to: registration.email, subject: `✓ Registration Confirmed - ${eventTitle} - MC Adarkwah`, html });
 };
 
-module.exports = { sendEmail, sendBookingConfirmation, sendContactNotification, sendAdminNotification, sendBookingConfirmed, sendQuoteNotification, sendQuoteConfirmation, sendQuoteStatusUpdate, sendRegistrationConfirmed, sendRegistrationAdminNotification };
+const sendPasswordResetEmail = async (email, resetUrl) => {
+  const html = `
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0a0a0a;color:#fff;padding:2rem;border:1px solid #d4a84b;border-radius:12px;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <h1 style="color:#d4a84b;font-family:Georgia,serif;">MC Adarkwah</h1>
+        <p style="color:#999;">Admin Password Reset</p>
+      </div>
+      <h2 style="color:#d4a84b;">Reset Your Password</h2>
+      <p>You requested a password reset. Click the button below to set a new password:</p>
+      <div style="text-align:center;margin:2rem 0;">
+        <a href="${resetUrl}" style="display:inline-block;padding:0.9rem 2rem;background:linear-gradient(135deg,#d4a84b,#b8912e);color:#0a0a0a;text-decoration:none;border-radius:8px;font-weight:600;font-size:1rem;">Reset Password</a>
+      </div>
+      <p style="color:#999;">This link expires in 1 hour.</p>
+      <p style="color:#666;font-size:0.8rem;">If you didn't request this, please ignore this email.</p>
+      <hr style="border-color:#333;margin:2rem 0;">
+      <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
+    </div>
+  `;
+  return sendEmail({ to: email, subject: 'Password Reset - MC Adarkwah Admin', html });
+};
+
+module.exports = { sendEmail, sendBookingConfirmation, sendContactNotification, sendAdminNotification, sendBookingConfirmed, sendQuoteNotification, sendQuoteConfirmation, sendQuoteStatusUpdate, sendRegistrationConfirmed, sendRegistrationAdminNotification, sendPasswordResetEmail };

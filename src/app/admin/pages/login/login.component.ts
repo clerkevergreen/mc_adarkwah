@@ -2,7 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +16,7 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent implements OnInit {
   private auth = inject(AuthService);
   private router = inject(Router);
+  private http = inject(HttpClient);
 
   email = '';
   password = '';
@@ -23,7 +26,20 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (this.auth.isAuthenticated()) {
       this.router.navigate(['/admin/dashboard']);
+      return;
     }
+    this.checkSetup();
+  }
+
+  private checkSetup(): void {
+    this.http.get<any>(`${environment.apiUrl}/auth/setup`).subscribe({
+      next: () => {},
+      error: (err) => {
+        if (err.status === 400) {
+          this.router.navigate(['/admin/setup']);
+        }
+      },
+    });
   }
 
   onSubmit(): void {
