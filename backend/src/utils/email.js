@@ -38,7 +38,7 @@ const sendEmail = async ({ to, subject, html }) => {
     console.error('Email send error:', error.message);
     if (error.response) console.error('SMTP response:', error.response);
     if (error.code) console.error('Error code:', error.code);
-    throw error;
+    return false;
   }
 };
 

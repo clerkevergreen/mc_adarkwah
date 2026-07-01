@@ -117,15 +117,12 @@ exports.forgotPassword = async (req, res, next) => {
 
     const resetUrl = `${process.env.FRONTEND_URL || 'https://mc-adarkwah.onrender.com'}/admin/reset-password/${resetToken}`;
 
-      try {
-        await sendPasswordResetEmail(admin.email, resetUrl);
-        res.json({ success: true, message: 'Password reset link sent to your email', data: { resetUrl } });
-      } catch (err) {
-        admin.resetPasswordToken = undefined;
-        admin.resetPasswordExpires = undefined;
-        await admin.save({ validateBeforeSave: false });
-        return res.status(500).json({ success: false, message: 'Failed to send email: ' + err.message });
-      }
+      const sent = await sendPasswordResetEmail(admin.email, resetUrl);
+      res.json({
+        success: true,
+        message: sent ? 'Password reset link sent to your email' : 'Email unavailable — use the link below to reset',
+        data: { resetUrl, emailSent: sent },
+      });
   } catch (error) {
     next(error);
   }
