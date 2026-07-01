@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const net = require('net'); // ✅ ADDED FOR SMTP TEST
 const connectDB = require('./config/db');
 const swaggerSpec = require('./config/swagger');
 const swaggerUi = require('swagger-ui-express');
@@ -12,8 +13,6 @@ const app = express();
 
 // Connect DB
 connectDB();
-
-
 
 /* =========================
    CORS CONFIG (FIXED)
@@ -80,6 +79,48 @@ app.use('/api/statistics', require('./routes/statistics'));
 app.use('/api/hero', require('./routes/hero'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/nav', require('./routes/nav'));
+
+/* =========================
+   SMTP DEBUG ROUTE (ADDED)
+========================= */
+app.get('/api/smtp-debug', (req, res) => {
+  const result = {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    userExists: !!process.env.SMTP_USER,
+    passExists: !!process.env.SMTP_PASS,
+    contactExists: !!process.env.CONTACT_EMAIL
+  };
+
+  res.json(result);
+});
+
+/* =========================
+   SMTP CONNECTION TEST (ADDED)
+========================= */
+app.get('/api/smtp-test-connection', (req, res) => {
+  const host = process.env.SMTP_HOST;
+  const port = parseInt(process.env.SMTP_PORT);
+
+  const socket = new net.Socket();
+  socket.setTimeout(5000);
+
+  socket.on('connect', () => {
+    res.json({ success: true, message: 'Connected to SMTP server' });
+    socket.destroy();
+  });
+
+  socket.on('error', (err) => {
+    res.json({ success: false, error: err.message });
+  });
+
+  socket.on('timeout', () => {
+    res.json({ success: false, error: 'Connection timeout' });
+    socket.destroy();
+  });
+
+  socket.connect(port, host);
+});
 
 /* =========================
    HEALTH CHECK
