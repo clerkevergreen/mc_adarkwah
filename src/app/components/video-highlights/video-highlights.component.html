@@ -24,20 +24,23 @@
     </div>
   </div>
 
+  <button class="videos__modal-close" *ngIf="activeVideo" (click)="closeVideo()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
   <div class="videos__modal" *ngIf="activeVideo" (click)="closeVideo()">
     <div class="videos__modal-content" (click)="$event.stopPropagation()">
-      <button class="videos__modal-close" (click)="closeVideo()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
       <div class="videos__modal-player">
         @if (activeVideoUrl) {
-          <iframe
-            [src]="activeVideoUrl"
-            class="videos__modal-iframe"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
+          <div class="videos__modal-iframe-wrapper">
+            <iframe
+              [src]="activeVideoUrl"
+              class="videos__modal-iframe"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
         } @else {
           <div class="videos__modal-placeholder">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
