@@ -20,45 +20,23 @@ export class HeroComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initVideo();
-  }
-
-  private getVideo(): HTMLVideoElement | null {
-    return this.heroVideo?.nativeElement ?? document.querySelector<HTMLVideoElement>('.hero__video');
-  }
-
-  private initVideo(): void {
-    const video = this.getVideo();
+    const video = this.heroVideo?.nativeElement ?? document.querySelector<HTMLVideoElement>('.hero__video');
     if (!video) return;
-
-    video.addEventListener('canplay', () => this.playVideo(video), { once: true });
-    video.addEventListener('loadeddata', () => this.playVideo(video), { once: true });
-
-    this.playVideo(video);
-
-    let attempts = 0;
-    const interval = setInterval(() => {
-      attempts++;
-      if (attempts > 10 || !video.paused) {
-        clearInterval(interval);
-        return;
-      }
-      this.playVideo(video);
-    }, 1000);
+    video.load();
+    this.attemptPlay(video);
   }
 
-  private playVideo(video: HTMLVideoElement): void {
+  private attemptPlay(video: HTMLVideoElement, retries = 5): void {
     if (!video.paused) return;
     video.play().catch(() => {
-      const playOnInteraction = () => {
-        video.play();
-        document.removeEventListener('click', playOnInteraction);
-        document.removeEventListener('touchstart', playOnInteraction);
-        document.removeEventListener('scroll', playOnInteraction);
-      };
-      document.addEventListener('click', playOnInteraction, { once: true });
-      document.addEventListener('touchstart', playOnInteraction, { once: true });
-      document.addEventListener('scroll', playOnInteraction, { once: true });
+      if (retries <= 0) {
+        const resume = () => { video.play(); };
+        document.addEventListener('click', resume, { once: true });
+        document.addEventListener('touchstart', resume, { once: true });
+        document.addEventListener('scroll', resume, { once: true });
+        return;
+      }
+      setTimeout(() => this.attemptPlay(video, retries - 1), 1000);
     });
   }
 
