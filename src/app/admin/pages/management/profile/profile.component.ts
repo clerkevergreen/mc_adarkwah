@@ -6,7 +6,7 @@ import { SidebarComponent } from '../../../components/sidebar/sidebar.component'
 import { TopbarComponent } from '../../../components/topbar/topbar.component';
 import { ToastService } from '../../../components/toast/toast.service';
 import { ProfileService, Profile } from '../../../services/profile.service';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-profile',
