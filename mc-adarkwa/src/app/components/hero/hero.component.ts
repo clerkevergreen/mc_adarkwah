@@ -32,11 +32,27 @@ export class HeroComponent implements OnInit, AfterViewInit {
     video.loop = true;
     video.playsInline = true;
     video.preload = 'auto';
+    video.poster = 'video/hero_poster.jpg';
     const source = document.createElement('source');
     source.src = 'video/hero_vid.mp4';
     source.type = 'video/mp4';
     video.appendChild(source);
     bg.insertBefore(video, bg.firstChild);
+    this.tryPlay(video);
+  }
+
+  private tryPlay(video: HTMLVideoElement): void {
+    video.play().catch(() => {
+      const playOnInteraction = () => {
+        video.play();
+        document.removeEventListener('click', playOnInteraction);
+        document.removeEventListener('touchstart', playOnInteraction);
+        document.removeEventListener('scroll', playOnInteraction);
+      };
+      document.addEventListener('click', playOnInteraction);
+      document.addEventListener('touchstart', playOnInteraction);
+      document.addEventListener('scroll', playOnInteraction);
+    });
   }
 
   scrollTo(section: string): void {
