@@ -184,17 +184,16 @@
     width: 100%;
     border-radius: 12px;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
   }
 
   &__modal-iframe-wrapper {
     position: relative;
-    width: 100%;
-    max-width: calc(80dvh * 16 / 9);
-    max-height: 80dvh;
+    width: min(100%, calc(80vh * 16 / 9));
     aspect-ratio: 16 / 9;
     overflow: hidden;
     border-radius: 12px;
-    margin: 0 auto;
   }
 
   &__modal-iframe {
