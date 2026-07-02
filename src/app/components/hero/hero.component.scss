@@ -373,11 +373,49 @@
     }
 
     &__floating-card--1 {
-      right: -10%;
+      right: -5%;
     }
 
     &__floating-card--2 {
-      left: -10%;
+      left: -5%;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .hero {
+    padding: 5rem 1rem 3rem;
+
+    &__title {
+      font-size: clamp(1.8rem, 7vw, 2.2rem);
+    }
+
+    &__image-wrapper {
+      width: 220px;
+      height: 280px;
+    }
+
+    &__floating-card {
+      padding: 0.5rem 0.8rem;
+      gap: 0.5rem;
+
+      strong { font-size: 0.9rem; }
+      small { font-size: 0.65rem; }
+    }
+
+    &__floating-card--1 {
+      right: 0;
+      top: 5%;
+    }
+
+    &__floating-card--2 {
+      left: 0;
+      bottom: 10%;
+    }
+
+    &__actions .btn {
+      font-size: 0.8rem;
+      padding: 0.65rem 1rem;
     }
   }
 }

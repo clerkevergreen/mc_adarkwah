@@ -12,10 +12,10 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
 })
 export class VideoHighlightsComponent {
   videos = [
-    { id: 'v1', title: 'Corporate Awards Night 2025 Highlights', thumbnail: 'assets/images/videos/video1-thumb.jpg', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-    { id: 'v2', title: 'Wedding MC Moments - Best of 2025', thumbnail: 'assets/images/videos/video2-thumb.jpg', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-    { id: 'v3', title: 'Conference Moderation Excellence', thumbnail: 'assets/images/videos/video3-thumb.jpg', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-    { id: 'v4', title: 'Concert Hosting Highlights', thumbnail: 'assets/images/videos/video4-thumb.jpg', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+    { id: 'v1', title: 'Corporate Awards Night 2025 Highlights', thumbnail: 'https://placehold.co/480x270/d4a84b/0a0a0a?text=Corporate+Awards', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+    { id: 'v2', title: 'Wedding MC Moments - Best of 2025', thumbnail: 'https://placehold.co/480x270/d4a84b/0a0a0a?text=Wedding+MC', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+    { id: 'v3', title: 'Conference Moderation Excellence', thumbnail: 'https://placehold.co/480x270/d4a84b/0a0a0a?text=Conference', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+    { id: 'v4', title: 'Concert Hosting Highlights', thumbnail: 'https://placehold.co/480x270/d4a84b/0a0a0a?text=Concert+Hosting', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
   ];
 
   activeVideo: any = null;

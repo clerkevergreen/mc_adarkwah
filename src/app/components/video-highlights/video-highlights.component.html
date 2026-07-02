@@ -10,9 +10,8 @@
       <div class="videos__card" *ngFor="let video of videos; let i = index"
         appScrollReveal [delay]="i * 150" (click)="openVideo(video)">
         <div class="videos__thumbnail">
-          <div class="videos__placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </div>
+          <img [src]="video.thumbnail" [alt]="video.title" class="videos__img"
+            (error)="video.thumbnail = 'https://placehold.co/480x270/d4a84b/0a0a0a?text=Video+Highlight'" loading="lazy">
           <div class="videos__play-btn">
             <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
