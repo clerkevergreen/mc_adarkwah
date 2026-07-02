@@ -1,10 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
 import { TopbarComponent } from '../../../components/topbar/topbar.component';
 import { ToastService } from '../../../components/toast/toast.service';
 import { ProfileService, Profile } from '../../../services/profile.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -14,6 +16,7 @@ import { ProfileService, Profile } from '../../../services/profile.service';
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
+  private http = inject(HttpClient);
   private profileService = inject(ProfileService);
   private toast = inject(ToastService);
 
@@ -42,6 +45,25 @@ export class ProfileComponent implements OnInit {
         this.loading = false;
       },
       error: () => { this.toast.show('Failed to load profile', 'error'); this.loading = false; },
+    });
+  }
+
+  onFileSelected(event: Event, field: 'image' | 'image2'): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.uploadFile(file, field);
+  }
+
+  private uploadFile(file: File, field: 'image' | 'image2'): void {
+    const formData = new FormData();
+    formData.append('image', file);
+    this.http.post<{ success: boolean; data: { url: string } }>(`${environment.apiUrl}/upload`, formData).subscribe({
+      next: (res) => {
+        this.form[field] = res.data.url;
+        this.toast.show('Image uploaded', 'success');
+      },
+      error: () => this.toast.show('Upload failed', 'error'),
     });
   }
 

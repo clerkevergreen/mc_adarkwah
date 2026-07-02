@@ -10,12 +10,14 @@ import { DataService } from '../../services/data.service';
   styleUrls: ['./hero.component.scss'],
 })
 export class HeroComponent implements OnInit, AfterViewInit {
-  socialMedia: any;
+  socialMedia: any = {};
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.socialMedia = this.dataService.getAboutInfo().socialMedia;
+    this.dataService.getAboutInfo().subscribe(data => {
+      if (data) this.socialMedia = data.socialMedia;
+    });
   }
 
   ngAfterViewInit(): void {

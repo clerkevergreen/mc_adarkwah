@@ -3,6 +3,29 @@ import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data.service';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
+const defaultAboutInfo = {
+  name: 'MC Adarkwah',
+  title: 'Professional Master of Ceremonies & Event Host',
+  bio: 'Meet MC Adarkwah, one of Africa\'s most sought-after professional Masters of Ceremonies. With over a decade of experience hosting events across Africa and internationally, she has earned a reputation for excellence, elegance, and unmatched stage presence.',
+  achievements: [
+    'Best Event Host - Ghana Events Awards 2024',
+    'Event Host of the Year - African Entertainment Awards 2023',
+    'Top 50 Most Influential Women in Events - 2024',
+    'Professional MC Certification - International Association of Professional MCs',
+  ],
+  milestones: [
+    { year: 2014, title: 'First Professional Event', description: 'Hosted first corporate event for a telecommunications company.' },
+    { year: 2016, title: 'Major Breakthrough', description: 'Hosted the Ghana Music Awards, reaching national recognition.' },
+    { year: 2018, title: 'International Debut', description: 'First international event hosting in Nigeria.' },
+    { year: 2020, title: 'Digital Innovation', description: 'Launched virtual event hosting services during the pandemic.' },
+    { year: 2022, title: 'Pan-African Recognition', description: 'Hosted events in 10+ African countries.' },
+    { year: 2024, title: 'Award-Winning MC', description: 'Won multiple awards and recognized as top MC in Africa.' },
+    { year: 2026, title: 'Global Stage', description: 'Expanding to international events and launching MC academy.' },
+  ],
+  socialMedia: {},
+  contact: {},
+};
+
 @Component({
   selector: 'app-about',
   standalone: true,
@@ -11,7 +34,7 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
   styleUrls: ['./about.component.scss'],
 })
 export class AboutComponent implements OnInit, AfterViewInit {
-  aboutInfo: any;
+  aboutInfo: any = defaultAboutInfo;
   statistics: any[] = [];
   counters: { current: number; target: number; suffix: string }[] = [];
   isCounting = false;
@@ -19,7 +42,9 @@ export class AboutComponent implements OnInit, AfterViewInit {
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.aboutInfo = this.dataService.getAboutInfo();
+    this.dataService.getAboutInfo().subscribe(data => {
+      if (data) this.aboutInfo = data;
+    });
     this.dataService.getStatistics().subscribe(stats => {
       this.statistics = stats;
     });

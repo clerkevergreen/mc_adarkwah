@@ -1,0 +1,24 @@
+.upload-area {
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  transition: border-color 0.2s;
+}
+.upload-area:hover {
+  border-color: #d4a84b;
+}
+.upload-preview {
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+.upload-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+}

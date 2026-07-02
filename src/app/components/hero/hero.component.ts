@@ -11,12 +11,14 @@ import { DataService } from '../../services/data.service';
 })
 export class HeroComponent implements OnInit, AfterViewInit {
   @ViewChild('heroVideo') heroVideo!: ElementRef<HTMLVideoElement>;
-  socialMedia: any;
+  socialMedia: any = {};
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.socialMedia = this.dataService.getAboutInfo().socialMedia;
+    this.dataService.getAboutInfo().subscribe(data => {
+      if (data) this.socialMedia = data.socialMedia;
+    });
   }
 
   ngAfterViewInit(): void {

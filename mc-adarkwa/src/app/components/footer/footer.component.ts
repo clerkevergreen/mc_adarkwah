@@ -14,7 +14,7 @@ import { CurrencyService, CurrencyCode } from '../../services/currency.service';
   styleUrls: ['./footer.component.scss'],
 })
 export class FooterComponent implements OnInit {
-  aboutInfo: any;
+  aboutInfo: any = {};
   currentYear = new Date().getFullYear();
   subscribeEmail = '';
   subscribeMessage = '';
@@ -30,7 +30,9 @@ export class FooterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.aboutInfo = this.dataService.getAboutInfo();
+    this.dataService.getAboutInfo().subscribe(data => {
+      if (data) this.aboutInfo = data;
+    });
   }
 
   subscribe(): void {

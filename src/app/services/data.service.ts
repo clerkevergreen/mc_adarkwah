@@ -101,46 +101,9 @@ export class DataService {
     ];
   }
 
-  getAboutInfo() {
-    return {
-      name: 'MC Adarkwah',
-      title: 'Professional Master of Ceremonies & Event Host',
-      bio: 'Meet MC Adarkwah, Ghana\'s most sought-after professional Master of Ceremonies. With over a decade of experience hosting events across Africa and internationally, she has earned a reputation for excellence, elegance, and unmatched stage presence. Her journey began with a passion for public speaking and event coordination, which has blossomed into a thriving career hosting some of the continent\'s most prestigious events. From intimate private celebrations to large-scale corporate conferences and international concerts, MC Adarkwah brings energy, professionalism, and a unique ability to connect with any audience.',
-      fullBio: 'With a background in Communication Studies and Event Management, MC Adarkwah has mastered the art of event hosting. She has shared the stage with global icons, moderated high-level panels, and entertained audiences of over 25,000 people. Her ability to adapt to any event type, audience, or culture makes her one of the most versatile MCs in Africa. She is fluent in English, Twi, and Ga, allowing her to connect authentically with diverse audiences. Beyond hosting, MC Adarkwah is a mentor to aspiring emcees and a passionate advocate for women in the events industry.',
-      image: 'assets/images/about/mc-adarkwah.jpg',
-      image2: 'assets/images/about/mc-adarkwah-2.jpg',
-      yearsExperience: 10,
-      achievements: [
-        'Best Event Host - Ghana Events Awards 2024',
-        'Event Host of the Year - African Entertainment Awards 2023',
-        'Top 50 Most Influential Women in Events - 2024',
-        'Professional MC Certification - International Association of Professional MCs',
-      ],
-      milestones: [
-        { year: 2014, title: 'First Professional Event', description: 'Hosted first corporate event for a telecommunications company.' },
-        { year: 2016, title: 'Major Breakthrough', description: 'Hosted the Ghana Music Awards, reaching national recognition.' },
-        { year: 2018, title: 'International Debut', description: 'First international event hosting in Nigeria.' },
-        { year: 2020, title: 'Digital Innovation', description: 'Launched virtual event hosting services during the pandemic.' },
-        { year: 2022, title: 'Pan-African Recognition', description: 'Hosted events in 10+ African countries.' },
-        { year: 2024, title: 'Award-Winning MC', description: 'Won multiple awards and recognized as top MC in Africa.' },
-        { year: 2026, title: 'Global Stage', description: 'Expanding to international events and launching MC academy.' },
-      ],
-      socialMedia: {
-        instagram: 'https://instagram.com/mc_adarkwah',
-        twitter: 'https://twitter.com/mc_adarkwah',
-        facebook: 'https://facebook.com/mc_adarkwah',
-        youtube: 'https://youtube.com/@mc_adarkwah',
-        linkedin: 'https://linkedin.com/in/mc-adarkwah',
-        tiktok: 'https://tiktok.com/@mc_adarkwah',
-      },
-      contact: {
-        phone: '+44 7507 615314',
-        phone2: '+233 55 291 7251',
-        whatsapp: '+44 7507 615314',
-        email: 'mcadarkwah@gmail.com',
-        address: 'Ghana & United Kingdom',
-        office: 'Accra, Ghana & London, UK',
-      },
-    };
+  getAboutInfo(): Observable<any> {
+    return this.api.getProfile().pipe(
+      catchError(() => of(null))
+    );
   }
 }

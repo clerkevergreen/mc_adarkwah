@@ -146,6 +146,11 @@ export class ApiService {
       .pipe(map(res => (res.data || []).map(e => mapId(e))));
   }
 
+  getProfile(): Observable<any> {
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/profile`)
+      .pipe(map(res => res.data ? mapId(res.data) : null));
+  }
+
   login(email: string, password: string): Observable<{ token: string; admin: any }> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password })
       .pipe(map(res => res.data));
