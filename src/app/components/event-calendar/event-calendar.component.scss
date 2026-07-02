@@ -10,6 +10,14 @@
     border: 1px solid rgba($gold, 0.1);
     border-radius: 20px;
     padding: 2rem;
+
+    @media (max-width: $breakpoint-mobile) {
+      padding: 1.2rem;
+    }
+
+    @media (max-width: $breakpoint-small) {
+      padding: 0.8rem;
+    }
   }
 
   &__header {
@@ -79,6 +87,10 @@
     position: relative;
     cursor: default;
 
+    @media (max-width: $breakpoint-small) {
+      font-size: 0.75rem;
+    }
+
     &--empty {
       visibility: hidden;
     }
@@ -96,6 +108,12 @@
     border-radius: 50%;
     position: absolute;
     bottom: 4px;
+
+    @media (max-width: $breakpoint-small) {
+      width: 3px;
+      height: 3px;
+      bottom: 2px;
+    }
   }
 
   &__events {
@@ -126,6 +144,11 @@
     color: $gold;
     font-weight: 600;
     min-width: 55px;
+
+    @media (max-width: $breakpoint-small) {
+      min-width: 40px;
+      font-size: 0.65rem;
+    }
   }
 
   &__event-title {

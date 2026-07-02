@@ -9,6 +9,10 @@
     margin-left: 220px;
     display: flex;
     flex-direction: column;
+
+    @media (max-width: 1023px) {
+      margin-left: 0;
+    }
   }
 }
 

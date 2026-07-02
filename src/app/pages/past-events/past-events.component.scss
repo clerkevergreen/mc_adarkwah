@@ -23,6 +23,7 @@
     color: $white;
     font-size: 0.9rem;
     outline: none;
+    max-width: 100%;
 
     &:focus { border-color: $gold; }
     &::placeholder { color: rgba($white, 0.25); }
@@ -40,6 +41,10 @@
 
     &:focus { border-color: $gold; }
     option { background: $dark; }
+
+    @media (max-width: $breakpoint-mobile) {
+      width: 100%;
+    }
   }
 
   &__clear {
@@ -61,6 +66,11 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
+
+    @media (max-width: $breakpoint-small) {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
   }
 
   &__card {

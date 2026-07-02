@@ -195,4 +195,12 @@ img {
 @media (max-width: v.$breakpoint-mobile) {
   .container { padding: 0 1.2rem; }
   .section { padding: 3rem 0; }
+  .section__title { font-size: 1.6rem; }
+}
+
+@media (max-width: v.$breakpoint-small) {
+  .container { padding: 0 1rem; }
+  .section { padding: 2.5rem 0; }
+  .section__title { font-size: 1.4rem; }
+  .btn { padding: 0.7rem 1.2rem; font-size: 0.85rem; }
 }

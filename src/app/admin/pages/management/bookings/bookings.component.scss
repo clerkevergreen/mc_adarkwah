@@ -128,6 +128,10 @@ $border-light: rgba(255, 255, 255, 0.06);
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     margin-bottom: 1.5rem;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__item {

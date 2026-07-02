@@ -182,6 +182,10 @@ $border-light: rgba(255, 255, 255, 0.06);
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__field {

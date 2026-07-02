@@ -159,6 +159,10 @@
     display: flex;
     gap: 0.5rem;
     margin-top: 0.8rem;
+
+    @media (max-width: $breakpoint-small) {
+      flex-direction: column;
+    }
   }
 
   &__newsletter-input {
