@@ -27,7 +27,6 @@ export class HeroComponent implements OnInit, AfterViewInit {
     if (!bg || bg.querySelector('.hero__video')) return;
     const video = document.createElement('video');
     video.className = 'hero__video';
-    video.autoplay = true;
     video.muted = true;
     video.loop = true;
     video.playsInline = true;
@@ -38,20 +37,31 @@ export class HeroComponent implements OnInit, AfterViewInit {
     source.type = 'video/mp4';
     video.appendChild(source);
     bg.insertBefore(video, bg.firstChild);
-    this.tryPlay(video);
+    this.initVideo(video);
   }
 
-  private tryPlay(video: HTMLVideoElement): void {
+  private initVideo(video: HTMLVideoElement): void {
+    video.addEventListener('canplay', () => this.playVideo(video), { once: true });
+    video.addEventListener('loadeddata', () => this.playVideo(video), { once: true });
+    this.playVideo(video);
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      if (attempts > 10 || !video.paused) {
+        clearInterval(interval);
+        return;
+      }
+      this.playVideo(video);
+    }, 1000);
+  }
+
+  private playVideo(video: HTMLVideoElement): void {
+    if (!video.paused) return;
     video.play().catch(() => {
-      const playOnInteraction = () => {
-        video.play();
-        document.removeEventListener('click', playOnInteraction);
-        document.removeEventListener('touchstart', playOnInteraction);
-        document.removeEventListener('scroll', playOnInteraction);
-      };
-      document.addEventListener('click', playOnInteraction);
-      document.addEventListener('touchstart', playOnInteraction);
-      document.addEventListener('scroll', playOnInteraction);
+      const playOnInteraction = () => { video.play(); };
+      document.addEventListener('click', playOnInteraction, { once: true });
+      document.addEventListener('touchstart', playOnInteraction, { once: true });
+      document.addEventListener('scroll', playOnInteraction, { once: true });
     });
   }
 

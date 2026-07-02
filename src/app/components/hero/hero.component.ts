@@ -20,12 +20,35 @@ export class HeroComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.tryPlay();
+    this.initVideo();
   }
 
-  private tryPlay(): void {
-    const video = this.heroVideo?.nativeElement;
+  private getVideo(): HTMLVideoElement | null {
+    return this.heroVideo?.nativeElement ?? document.querySelector<HTMLVideoElement>('.hero__video');
+  }
+
+  private initVideo(): void {
+    const video = this.getVideo();
     if (!video) return;
+
+    video.addEventListener('canplay', () => this.playVideo(video), { once: true });
+    video.addEventListener('loadeddata', () => this.playVideo(video), { once: true });
+
+    this.playVideo(video);
+
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      if (attempts > 10 || !video.paused) {
+        clearInterval(interval);
+        return;
+      }
+      this.playVideo(video);
+    }, 1000);
+  }
+
+  private playVideo(video: HTMLVideoElement): void {
+    if (!video.paused) return;
     video.play().catch(() => {
       const playOnInteraction = () => {
         video.play();
@@ -33,9 +56,9 @@ export class HeroComponent implements OnInit, AfterViewInit {
         document.removeEventListener('touchstart', playOnInteraction);
         document.removeEventListener('scroll', playOnInteraction);
       };
-      document.addEventListener('click', playOnInteraction);
-      document.addEventListener('touchstart', playOnInteraction);
-      document.addEventListener('scroll', playOnInteraction);
+      document.addEventListener('click', playOnInteraction, { once: true });
+      document.addEventListener('touchstart', playOnInteraction, { once: true });
+      document.addEventListener('scroll', playOnInteraction, { once: true });
     });
   }
 
