@@ -125,11 +125,12 @@
     padding: 2rem;
 
     @media (max-width: $breakpoint-mobile) {
-      padding: 1rem;
+      padding: 0.5rem;
     }
   }
 
   &__modal-content {
+    position: relative;
     max-width: 800px;
     width: 100%;
     text-align: center;
@@ -137,21 +138,37 @@
     h3 {
       color: $white;
       font-family: $font-heading;
-      margin-top: 1rem;
-      font-size: 1.2rem;
+      margin-top: 0.75rem;
+      font-size: 1rem;
+
+      @media (max-width: $breakpoint-mobile) {
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+      }
     }
   }
 
   &__modal-close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: transparent;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(0, 0, 0, 0.6);
     border: none;
+    border-radius: 50%;
     color: $white;
     cursor: pointer;
+    z-index: 1;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    svg { width: 32px; height: 32px; }
+    svg { width: 20px; height: 20px; }
+
+    &:hover {
+      background: rgba($gold, 0.3);
+    }
   }
 
   &__modal-player {
@@ -159,6 +176,11 @@
     aspect-ratio: 16/9;
     border-radius: 12px;
     overflow: hidden;
+    max-height: 70vh;
+
+    @media (orientation: landscape) {
+      max-height: 80vh;
+    }
   }
 
   &__modal-iframe {
