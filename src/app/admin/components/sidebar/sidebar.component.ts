@@ -27,6 +27,7 @@ export class SidebarComponent {
 
   navItems: NavItem[] = [
     { label: 'Dashboard', route: '/admin/dashboard', icon: 'grid' },
+    { label: 'Profile', route: '/admin/profile', icon: 'user' },
     { label: 'Events', route: '/admin/events', icon: 'calendar' },
     { label: 'Bookings', route: '/admin/bookings', icon: 'clipboard' },
     { label: 'Registrations', route: '/admin/registrations', icon: 'calendar' },
