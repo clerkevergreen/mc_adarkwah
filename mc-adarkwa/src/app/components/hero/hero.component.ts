@@ -31,7 +31,6 @@ export class HeroComponent implements OnInit, AfterViewInit {
     video.loop = true;
     video.playsInline = true;
     video.preload = 'auto';
-    video.poster = 'video/hero_poster.jpg';
     const source = document.createElement('source');
     source.src = 'video/hero_vid.mp4';
     source.type = 'video/mp4';
