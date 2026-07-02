@@ -3,7 +3,7 @@ const path = require('path');
 const sharp = require('sharp');
 const fs = require('fs');
 
-const uploadDir = path.join(__dirname, '../../', process.env.UPLOAD_DIR || 'uploads');
+const uploadDir = path.join(__dirname, '../', process.env.UPLOAD_DIR || 'uploads');
 
 const getFullUrl = (req, filename) => {
   const baseUrl = process.env.API_URL || `${req.protocol}://${req.get('host')}`;
