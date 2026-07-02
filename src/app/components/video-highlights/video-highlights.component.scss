@@ -189,10 +189,12 @@
   &__modal-iframe-wrapper {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%;
-    height: 0;
+    max-width: calc(80dvh * 16 / 9);
+    max-height: 80dvh;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
     border-radius: 12px;
+    margin: 0 auto;
   }
 
   &__modal-iframe {

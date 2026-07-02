@@ -33,7 +33,7 @@ export class VideoHighlightsComponent {
     const youtubeId = this.getYoutubeId(video.url);
     if (youtubeId) {
       this.activeVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-        `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`
+        `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&playsinline=1`
       );
     }
     document.body.style.overflow = 'hidden';
