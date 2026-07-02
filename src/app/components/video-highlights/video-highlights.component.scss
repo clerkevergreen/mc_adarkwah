@@ -127,7 +127,7 @@
     overflow-y: auto;
 
     @media (max-width: $breakpoint-mobile) {
-      padding: 0.5rem;
+      padding: 0;
     }
   }
 
@@ -136,6 +136,10 @@
     width: 100%;
     text-align: center;
 
+    @media (max-width: $breakpoint-mobile) {
+      max-width: none;
+    }
+
     h3 {
       color: $white;
       font-family: $font-heading;
@@ -143,8 +147,10 @@
       font-size: 1rem;
 
       @media (max-width: $breakpoint-mobile) {
-        margin-top: 0.5rem;
+        margin-top: 0.4rem;
+        margin-bottom: 0.4rem;
         font-size: 0.85rem;
+        padding: 0 0.5rem;
       }
     }
   }
@@ -184,13 +190,11 @@
     width: 100%;
     border-radius: 12px;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
   }
 
   &__modal-iframe-wrapper {
     position: relative;
-    width: min(100%, calc(80vh * 16 / 9));
+    width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
     border-radius: 12px;
