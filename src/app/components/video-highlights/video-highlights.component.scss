@@ -37,6 +37,7 @@
     position: relative;
     aspect-ratio: 16/9;
     overflow: hidden;
+    background: linear-gradient(135deg, rgba($gold, 0.08), rgba($gold, 0.03));
   }
 
   &__img {
@@ -123,6 +124,7 @@
     align-items: center;
     justify-content: center;
     padding: 2rem;
+    overflow-y: auto;
 
     @media (max-width: $breakpoint-mobile) {
       padding: 0.5rem;
@@ -191,7 +193,6 @@
     height: 0;
     overflow: hidden;
     border-radius: 12px;
-    max-height: 80vh;
   }
 
   &__modal-iframe {
