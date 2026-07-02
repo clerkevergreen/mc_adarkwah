@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data.service';
 
@@ -9,34 +9,13 @@ import { DataService } from '../../services/data.service';
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.scss'],
 })
-export class HeroComponent implements OnInit, AfterViewInit {
+export class HeroComponent implements OnInit {
   socialMedia: any;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
     this.socialMedia = this.dataService.getAboutInfo().socialMedia;
-  }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => this.addVideo(), 2500);
-  }
-
-  private addVideo(): void {
-    const bg = document.querySelector('.hero__bg');
-    if (!bg || bg.querySelector('.hero__video')) return;
-    const video = document.createElement('video');
-    video.className = 'hero__video';
-    video.autoplay = true;
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.preload = 'auto';
-    const source = document.createElement('source');
-    source.src = 'video/hero_vid.mp4';
-    source.type = 'video/mp4';
-    video.appendChild(source);
-    bg.insertBefore(video, bg.firstChild);
   }
 
   scrollTo(section: string): void {
