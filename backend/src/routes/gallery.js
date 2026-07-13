@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getItems, getItem, createItem, updateItem, deleteItem } = require('../controllers/galleryController');
 const { protect } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -51,7 +52,7 @@ router.get('/:id', getItem);
  *       201:
  *         description: Gallery item created
  */
-router.post('/', protect, createItem);
+router.post('/', protect, validate.gallery.create, createItem);
 
 /**
  * @swagger
@@ -65,7 +66,7 @@ router.post('/', protect, createItem);
  *       200:
  *         description: Gallery item updated
  */
-router.put('/:id', protect, updateItem);
+router.put('/:id', protect, validate.gallery.update, updateItem);
 
 /**
  * @swagger
@@ -79,6 +80,6 @@ router.put('/:id', protect, updateItem);
  *       200:
  *         description: Gallery item deleted
  */
-router.delete('/:id', protect, deleteItem);
+router.delete('/:id', protect, validate.idParam, deleteItem);
 
 module.exports = router;

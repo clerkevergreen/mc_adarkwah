@@ -15,7 +15,8 @@ exports.getTestimonials = async (req, res, next) => {
 
 exports.createTestimonial = async (req, res, next) => {
   try {
-    const testimonial = await Testimonial.create(req.body);
+    const { name, email, photo, eventName, rating, review, designation } = req.body;
+    const testimonial = await Testimonial.create({ name, email, photo, eventName, rating, review, designation });
     res.status(201).json({ success: true, data: testimonial, message: 'Thank you for your testimonial! It will be displayed after approval.' });
   } catch (error) {
     next(error);
@@ -24,7 +25,10 @@ exports.createTestimonial = async (req, res, next) => {
 
 exports.updateTestimonial = async (req, res, next) => {
   try {
-    const testimonial = await Testimonial.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { name, email, photo, eventName, rating, review, designation, isApproved } = req.body;
+    const updateData = { name, email, photo, eventName, rating, review, designation, isApproved };
+    Object.keys(updateData).forEach(k => updateData[k] === undefined && delete updateData[k]);
+    const testimonial = await Testimonial.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!testimonial) return res.status(404).json({ success: false, message: 'Testimonial not found' });
     res.json({ success: true, data: testimonial });
   } catch (error) {

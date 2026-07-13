@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createMessage, getMessages, deleteMessage } = require('../controllers/contactController');
 const { protect } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -24,7 +25,7 @@ const { protect } = require('../middleware/auth');
  *       201:
  *         description: Message sent
  */
-router.post('/', createMessage);
+router.post('/', validate.contact.create, createMessage);
 
 /**
  * @swagger
@@ -58,6 +59,6 @@ router.get('/', protect, getMessages);
  *       200:
  *         description: Message deleted
  */
-router.delete('/:id', protect, deleteMessage);
+router.delete('/:id', protect, validate.idParam, deleteMessage);
 
 module.exports = router;

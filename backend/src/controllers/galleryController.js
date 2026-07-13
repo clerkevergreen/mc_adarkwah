@@ -26,9 +26,8 @@ exports.getItem = async (req, res, next) => {
 
 exports.createItem = async (req, res, next) => {
   try {
-    const data = { ...req.body };
-    if (data.date) data.date = new Date(data.date);
-    const item = await GalleryItem.create(data);
+    const { title, description, imageUrl, thumbnailUrl, category, type, videoUrl, featured } = req.body;
+    const item = await GalleryItem.create({ title, description, imageUrl, thumbnailUrl, category, type, videoUrl, featured, date: new Date() });
     res.status(201).json({ success: true, data: item });
   } catch (error) {
     next(error);
@@ -37,7 +36,11 @@ exports.createItem = async (req, res, next) => {
 
 exports.updateItem = async (req, res, next) => {
   try {
-    const item = await GalleryItem.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { title, description, imageUrl, thumbnailUrl, category, type, videoUrl, featured, date } = req.body;
+    const updateData = { title, description, imageUrl, thumbnailUrl, category, type, videoUrl, featured };
+    if (date) updateData.date = new Date(date);
+    Object.keys(updateData).forEach(k => updateData[k] === undefined && delete updateData[k]);
+    const item = await GalleryItem.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!item) return res.status(404).json({ success: false, message: 'Gallery item not found' });
     res.json({ success: true, data: item });
   } catch (error) {

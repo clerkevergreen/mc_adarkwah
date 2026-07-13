@@ -4,10 +4,11 @@ const { sendRegistrationConfirmed, sendRegistrationAdminNotification } = require
 
 exports.createRegistration = async (req, res, next) => {
   try {
-    const registration = await EventRegistration.create(req.body);
+    const { fullName, email, phone, event: eventId, message } = req.body;
+    const registration = await EventRegistration.create({ fullName, email, phone, event: eventId, message });
 
-    const event = await Event.findById(registration.event).select('title date venue time');
-    sendRegistrationAdminNotification(registration, event);
+    const eventDoc = await Event.findById(registration.event).select('title date venue time');
+    sendRegistrationAdminNotification(registration, eventDoc);
 
     res.status(201).json({ success: true, data: registration, message: 'Registration successful!' });
   } catch (error) {

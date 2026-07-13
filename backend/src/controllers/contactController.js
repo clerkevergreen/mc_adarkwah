@@ -3,7 +3,8 @@ const { sendContactNotification } = require('../utils/email');
 
 exports.createMessage = async (req, res, next) => {
   try {
-    const message = await ContactMessage.create(req.body);
+    const { name, email, subject, message: msgText } = req.body;
+    const message = await ContactMessage.create({ name, email, subject, message: msgText });
 
     sendContactNotification(message);
     res.status(201).json({ success: true, data: message, message: 'Your message has been received. We will get back to you soon.' });

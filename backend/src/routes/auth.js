@@ -3,6 +3,7 @@ const router = express.Router();
 const { getSetupStatus, setup, register, login, forgotPassword, resetPassword, getMe, refreshToken } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { authLimiter } = require('../middleware/rateLimiter');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -60,8 +61,8 @@ const { authLimiter } = require('../middleware/rateLimiter');
  *               $ref: '#/components/schemas/AuthResponse'
  */
 router.get('/setup', getSetupStatus);
-router.post('/setup', setup);
-router.post('/register', protect, register);
+router.post('/setup', validate.auth.setup, setup);
+router.post('/register', protect, validate.auth.register, register);
 
 /**
  * @swagger
@@ -83,9 +84,9 @@ router.post('/register', protect, register);
  *             schema:
  *               $ref: '#/components/schemas/AuthResponse'
  */
-router.post('/login', authLimiter, login);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
+router.post('/login', authLimiter, validate.auth.login, login);
+router.post('/forgot-password', authLimiter, validate.auth.forgotPassword, forgotPassword);
+router.post('/reset-password', validate.auth.resetPassword, resetPassword);
 
 /**
  * @swagger
@@ -103,6 +104,7 @@ router.get('/me', protect, getMe);
 
 /**
  * @swagger
+ * @swagger
  * /api/auth/refresh:
  *   post:
  *     tags: [Auth]
@@ -119,7 +121,7 @@ router.get('/me', protect, getMe);
  *       200:
  *         description: New tokens
  */
-router.post('/refresh', refreshToken);
+router.post('/refresh', validate.auth.refresh, refreshToken);
 router.get('/test-email', async (req, res) => {
   const nodemailer = require('nodemailer');
   const results = {};

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getTestimonials, createTestimonial, updateTestimonial, deleteTestimonial, approveTestimonial } = require('../controllers/testimonialController');
 const { protect } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -40,7 +41,7 @@ router.get('/', getTestimonials);
  *       201:
  *         description: Testimonial submitted
  */
-router.post('/', createTestimonial);
+router.post('/', validate.testimonial.create, createTestimonial);
 
 /**
  * @swagger
@@ -54,7 +55,7 @@ router.post('/', createTestimonial);
  *       200:
  *         description: Testimonial updated
  */
-router.put('/:id', protect, updateTestimonial);
+router.put('/:id', protect, validate.testimonial.update, updateTestimonial);
 
 /**
  * @swagger
@@ -68,7 +69,7 @@ router.put('/:id', protect, updateTestimonial);
  *       200:
  *         description: Testimonial deleted
  */
-router.delete('/:id', protect, deleteTestimonial);
+router.delete('/:id', protect, validate.idParam, deleteTestimonial);
 
 /**
  * @swagger
@@ -82,6 +83,6 @@ router.delete('/:id', protect, deleteTestimonial);
  *       200:
  *         description: Approval toggled
  */
-router.patch('/:id/approve', protect, approveTestimonial);
+router.patch('/:id/approve', protect, validate.idParam, approveTestimonial);
 
 module.exports = router;

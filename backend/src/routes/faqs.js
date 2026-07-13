@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getFAQs, createFAQ, updateFAQ, deleteFAQ, reorderFAQs } = require('../controllers/faqController');
 const { protect } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -27,7 +28,7 @@ router.get('/', getFAQs);
  *       200:
  *         description: FAQs reordered
  */
-router.put('/reorder', protect, reorderFAQs);
+router.put('/reorder', protect, validate.faq.reorder, reorderFAQs);
 
 /**
  * @swagger
@@ -41,7 +42,7 @@ router.put('/reorder', protect, reorderFAQs);
  *       201:
  *         description: FAQ created
  */
-router.post('/', protect, createFAQ);
+router.post('/', protect, validate.faq.create, createFAQ);
 
 /**
  * @swagger
@@ -55,7 +56,7 @@ router.post('/', protect, createFAQ);
  *       200:
  *         description: FAQ updated
  */
-router.put('/:id', protect, updateFAQ);
+router.put('/:id', protect, validate.faq.update, updateFAQ);
 
 /**
  * @swagger
@@ -69,6 +70,6 @@ router.put('/:id', protect, updateFAQ);
  *       200:
  *         description: FAQ deleted
  */
-router.delete('/:id', protect, deleteFAQ);
+router.delete('/:id', protect, validate.idParam, deleteFAQ);
 
 module.exports = router;

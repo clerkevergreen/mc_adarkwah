@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getNews, getNewsBySlug, createNews, updateNews, deleteNews } = require('../controllers/newsController');
 const { protect } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -52,7 +53,7 @@ router.get('/:slug', getNewsBySlug);
  *       201:
  *         description: News created
  */
-router.post('/', protect, createNews);
+router.post('/', protect, validate.news.create, createNews);
 
 /**
  * @swagger
@@ -66,7 +67,7 @@ router.post('/', protect, createNews);
  *       200:
  *         description: News updated
  */
-router.put('/:id', protect, updateNews);
+router.put('/:id', protect, validate.news.update, updateNews);
 
 /**
  * @swagger
@@ -80,6 +81,6 @@ router.put('/:id', protect, updateNews);
  *       200:
  *         description: News deleted
  */
-router.delete('/:id', protect, deleteNews);
+router.delete('/:id', protect, validate.idParam, deleteNews);
 
 module.exports = router;

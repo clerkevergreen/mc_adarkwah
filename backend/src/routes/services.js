@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getServices, createService, updateService, deleteService } = require('../controllers/serviceController');
 const { protect } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -27,7 +28,7 @@ router.get('/', getServices);
  *       201:
  *         description: Service created
  */
-router.post('/', protect, createService);
+router.post('/', protect, validate.service.create, createService);
 
 /**
  * @swagger
@@ -41,7 +42,7 @@ router.post('/', protect, createService);
  *       200:
  *         description: Service updated
  */
-router.put('/:id', protect, updateService);
+router.put('/:id', protect, validate.service.update, updateService);
 
 /**
  * @swagger
@@ -55,6 +56,6 @@ router.put('/:id', protect, updateService);
  *       200:
  *         description: Service deleted
  */
-router.delete('/:id', protect, deleteService);
+router.delete('/:id', protect, validate.idParam, deleteService);
 
 module.exports = router;

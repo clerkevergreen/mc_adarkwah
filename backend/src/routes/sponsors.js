@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getSponsors, createSponsor, updateSponsor, deleteSponsor } = require('../controllers/sponsorController');
 const { protect } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -27,7 +28,7 @@ router.get('/', getSponsors);
  *       201:
  *         description: Sponsor created
  */
-router.post('/', protect, createSponsor);
+router.post('/', protect, validate.sponsor.create, createSponsor);
 
 /**
  * @swagger
@@ -41,7 +42,7 @@ router.post('/', protect, createSponsor);
  *       200:
  *         description: Sponsor updated
  */
-router.put('/:id', protect, updateSponsor);
+router.put('/:id', protect, validate.sponsor.update, updateSponsor);
 
 /**
  * @swagger
@@ -55,6 +56,6 @@ router.put('/:id', protect, updateSponsor);
  *       200:
  *         description: Sponsor deleted
  */
-router.delete('/:id', protect, deleteSponsor);
+router.delete('/:id', protect, validate.idParam, deleteSponsor);
 
 module.exports = router;

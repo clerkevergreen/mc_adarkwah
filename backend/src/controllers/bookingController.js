@@ -3,7 +3,8 @@ const { sendBookingConfirmation, sendAdminNotification, sendBookingConfirmed } =
 
 exports.createBooking = async (req, res, next) => {
   try {
-    const booking = await Booking.create(req.body);
+    const { fullName, email, phone, eventType, eventDate, eventLocation, guestCount, budgetRange, additionalNotes, agreeToTerms } = req.body;
+    const booking = await Booking.create({ fullName, email, phone, eventType, eventDate: new Date(eventDate), eventLocation, guestCount: parseInt(guestCount) || 0, budgetRange, additionalNotes, agreeToTerms });
 
     sendBookingConfirmation(booking);
     sendAdminNotification(booking);

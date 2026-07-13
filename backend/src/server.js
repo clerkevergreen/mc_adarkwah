@@ -1,13 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const path = require('path');
 const fs = require('fs');
-const net = require('net'); // ✅ ADDED FOR SMTP TEST
+const net = require('net');
 const connectDB = require('./config/db');
 const swaggerSpec = require('./config/swagger');
 const swaggerUi = require('swagger-ui-express');
 const errorHandler = require('./middleware/errorHandler');
+const { sanitizeQuery, sanitizeBody } = require('./middleware/sanitize');
 
 const app = express();
 
@@ -35,10 +37,21 @@ app.use(cors({
 }));
 
 /* =========================
+   SECURITY HEADERS
+========================= */
+app.use(helmet());
+
+/* =========================
+   QUERY SANITIZATION
+========================= */
+app.use(sanitizeQuery);
+
+/* =========================
    BODY PARSER
 ========================= */
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use('/api', sanitizeBody);
 
 /* =========================
    UPLOADS (FIXED FOR RENDER)

@@ -20,7 +20,8 @@ exports.getAllVideos = async (req, res, next) => {
 
 exports.createVideo = async (req, res, next) => {
   try {
-    const video = await VideoHighlight.create(req.body);
+    const { title, thumbnail, url, order, isActive } = req.body;
+    const video = await VideoHighlight.create({ title, thumbnail, url, order, isActive });
     res.status(201).json({ success: true, data: video });
   } catch (error) {
     next(error);
@@ -29,7 +30,10 @@ exports.createVideo = async (req, res, next) => {
 
 exports.updateVideo = async (req, res, next) => {
   try {
-    const video = await VideoHighlight.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { title, thumbnail, url, order, isActive } = req.body;
+    const updateData = { title, thumbnail, url, order, isActive };
+    Object.keys(updateData).forEach(k => updateData[k] === undefined && delete updateData[k]);
+    const video = await VideoHighlight.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!video) return res.status(404).json({ success: false, message: 'Video not found' });
     res.json({ success: true, data: video });
   } catch (error) {

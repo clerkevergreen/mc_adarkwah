@@ -14,11 +14,14 @@ exports.getHeroContent = async (req, res, next) => {
 
 exports.updateHeroContent = async (req, res, next) => {
   try {
+    const { badge, title, subtitle, primaryBtnText, primaryBtnAction, secondaryBtnText, secondaryBtnAction, isActive, stat1, stat2 } = req.body;
+    const heroData = { badge, title, subtitle, primaryBtnText, primaryBtnAction, secondaryBtnText, secondaryBtnAction, isActive, stat1, stat2 };
+    Object.keys(heroData).forEach(k => heroData[k] === undefined && delete heroData[k]);
     let hero = await HeroContent.findOne();
     if (!hero) {
-      hero = await HeroContent.create(req.body);
+      hero = await HeroContent.create(heroData);
     } else {
-      Object.assign(hero, req.body);
+      Object.assign(hero, heroData);
       await hero.save();
     }
     res.json({ success: true, data: hero });

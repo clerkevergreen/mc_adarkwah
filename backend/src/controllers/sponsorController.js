@@ -9,14 +9,18 @@ exports.getSponsors = async (req, res, next) => {
 
 exports.createSponsor = async (req, res, next) => {
   try {
-    const sponsor = await Sponsor.create(req.body);
+    const { name, logo, website, order } = req.body;
+    const sponsor = await Sponsor.create({ name, logo, website, order });
     res.status(201).json({ success: true, data: sponsor });
   } catch (error) { next(error); }
 };
 
 exports.updateSponsor = async (req, res, next) => {
   try {
-    const sponsor = await Sponsor.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { name, logo, website, order } = req.body;
+    const updateData = { name, logo, website, order };
+    Object.keys(updateData).forEach(k => updateData[k] === undefined && delete updateData[k]);
+    const sponsor = await Sponsor.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!sponsor) return res.status(404).json({ success: false, message: 'Sponsor not found' });
     res.json({ success: true, data: sponsor });
   } catch (error) { next(error); }

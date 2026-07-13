@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { subscribe, getSubscribers, deleteSubscriber } = require('../controllers/subscriberController');
 const { protect } = require('../middleware/auth');
+const { subscribeLimiter } = require('../middleware/rateLimiter');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -21,7 +23,7 @@ const { protect } = require('../middleware/auth');
  *       201:
  *         description: Subscribed successfully
  */
-router.post('/', subscribe);
+router.post('/', subscribeLimiter, validate.subscriber.create, subscribe);
 
 /**
  * @swagger
@@ -55,6 +57,6 @@ router.get('/', protect, getSubscribers);
  *       200:
  *         description: Subscriber deleted
  */
-router.delete('/:id', protect, deleteSubscriber);
+router.delete('/:id', protect, validate.idParam, deleteSubscriber);
 
 module.exports = router;

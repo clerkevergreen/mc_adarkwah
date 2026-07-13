@@ -11,7 +11,8 @@ exports.getStatistics = async (req, res, next) => {
 
 exports.createStatistic = async (req, res, next) => {
   try {
-    const stat = await Statistic.create(req.body);
+    const { label, value, suffix, icon, order } = req.body;
+    const stat = await Statistic.create({ label, value: parseInt(value), suffix, icon, order });
     res.status(201).json({ success: true, data: stat });
   } catch (error) {
     next(error);
@@ -20,7 +21,10 @@ exports.createStatistic = async (req, res, next) => {
 
 exports.updateStatistic = async (req, res, next) => {
   try {
-    const stat = await Statistic.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { label, value, suffix, icon, order } = req.body;
+    const updateData = { label, value: value !== undefined ? parseInt(value) : undefined, suffix, icon, order };
+    Object.keys(updateData).forEach(k => updateData[k] === undefined && delete updateData[k]);
+    const stat = await Statistic.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!stat) return res.status(404).json({ success: false, message: 'Statistic not found' });
     res.json({ success: true, data: stat });
   } catch (error) {

@@ -9,14 +9,18 @@ exports.getFAQs = async (req, res, next) => {
 
 exports.createFAQ = async (req, res, next) => {
   try {
-    const faq = await FAQ.create(req.body);
+    const { question, answer, category, order } = req.body;
+    const faq = await FAQ.create({ question, answer, category, order });
     res.status(201).json({ success: true, data: faq });
   } catch (error) { next(error); }
 };
 
 exports.updateFAQ = async (req, res, next) => {
   try {
-    const faq = await FAQ.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { question, answer, category, order } = req.body;
+    const updateData = { question, answer, category, order };
+    Object.keys(updateData).forEach(k => updateData[k] === undefined && delete updateData[k]);
+    const faq = await FAQ.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!faq) return res.status(404).json({ success: false, message: 'FAQ not found' });
     res.json({ success: true, data: faq });
   } catch (error) { next(error); }

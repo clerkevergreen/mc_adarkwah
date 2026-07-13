@@ -30,7 +30,8 @@ exports.getNewsBySlug = async (req, res, next) => {
 
 exports.createNews = async (req, res, next) => {
   try {
-    const data = { ...req.body };
+    const { title, excerpt, content, imageUrl, category, author, tags, featured } = req.body;
+    const data = { title, excerpt, content, imageUrl, category, author, tags, featured };
     data.slug = slugify(data.title, { lower: true, strict: true }) + '-' + Date.now();
     const item = await NewsItem.create(data);
     res.status(201).json({ success: true, data: item });
@@ -39,7 +40,9 @@ exports.createNews = async (req, res, next) => {
 
 exports.updateNews = async (req, res, next) => {
   try {
-    const data = { ...req.body };
+    const { title, excerpt, content, imageUrl, category, author, tags, featured } = req.body;
+    const data = { title, excerpt, content, imageUrl, category, author, tags, featured };
+    Object.keys(data).forEach(k => data[k] === undefined && delete data[k]);
     delete data.slug;
     const item = await NewsItem.findByIdAndUpdate(req.params.id, data, { new: true, runValidators: true });
     if (!item) return res.status(404).json({ success: false, message: 'News item not found' });

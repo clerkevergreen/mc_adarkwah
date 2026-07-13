@@ -4,6 +4,7 @@ const {
   getEvents, getEventBySlug, createEvent, updateEvent, deleteEvent, toggleFeature,
 } = require('../controllers/eventController');
 const { protect } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -122,7 +123,7 @@ router.get('/:slug', getEventBySlug);
  *       201:
  *         description: Event created
  */
-router.post('/', protect, createEvent);
+router.post('/', protect, validate.event.create, createEvent);
 
 /**
  * @swagger
@@ -147,7 +148,7 @@ router.post('/', protect, createEvent);
  *       200:
  *         description: Event updated
  */
-router.put('/:id', protect, updateEvent);
+router.put('/:id', protect, validate.event.update, updateEvent);
 
 /**
  * @swagger
@@ -166,7 +167,7 @@ router.put('/:id', protect, updateEvent);
  *       200:
  *         description: Event deleted
  */
-router.delete('/:id', protect, deleteEvent);
+router.delete('/:id', protect, validate.idParam, deleteEvent);
 
 /**
  * @swagger
@@ -185,6 +186,6 @@ router.delete('/:id', protect, deleteEvent);
  *       200:
  *         description: Featured status toggled
  */
-router.patch('/:id/toggle-feature', protect, toggleFeature);
+router.patch('/:id/toggle-feature', protect, validate.event.toggleFeature, toggleFeature);
 
 module.exports = router;

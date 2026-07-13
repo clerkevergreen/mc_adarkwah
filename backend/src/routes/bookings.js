@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createBooking, getBookings, updateStatus, deleteBooking } = require('../controllers/bookingController');
 const { protect } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 /**
  * @swagger
@@ -28,7 +29,7 @@ const { protect } = require('../middleware/auth');
  *       201:
  *         description: Booking created
  */
-router.post('/', createBooking);
+router.post('/', validate.booking.create, createBooking);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.get('/', protect, getBookings);
  *       200:
  *         description: Booking status updated
  */
-router.patch('/:id/status', protect, updateStatus);
+router.patch('/:id/status', protect, validate.booking.statusUpdate, updateStatus);
 
 /**
  * @swagger
@@ -85,6 +86,6 @@ router.patch('/:id/status', protect, updateStatus);
  *       200:
  *         description: Booking deleted
  */
-router.delete('/:id', protect, deleteBooking);
+router.delete('/:id', protect, validate.idParam, deleteBooking);
 
 module.exports = router;

@@ -3,7 +3,8 @@ const { sendQuoteNotification, sendQuoteConfirmation, sendQuoteStatusUpdate } = 
 
 exports.createQuote = async (req, res, next) => {
   try {
-    const quote = await Quote.create(req.body);
+    const { name, email, phone, eventType, eventDate, guestCount, message } = req.body;
+    const quote = await Quote.create({ name, email, phone, eventType, eventDate: eventDate ? new Date(eventDate) : undefined, guestCount: parseInt(guestCount) || 0, message });
 
     sendQuoteNotification(quote);
     sendQuoteConfirmation(quote);
