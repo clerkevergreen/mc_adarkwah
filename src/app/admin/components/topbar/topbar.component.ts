@@ -20,6 +20,6 @@ export class TopbarComponent {
   }
 
   get adminEmail(): string {
-    return localStorage.getItem('admin_email') || 'admin@mcadarkwah.com';
+    return localStorage.getItem('admin_email') || 'Admin';
   }
 }

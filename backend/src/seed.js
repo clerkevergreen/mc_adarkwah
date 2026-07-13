@@ -23,122 +23,31 @@ const seed = async () => {
     ]);
 
     console.log('Seeding admin...');
-    const admin = await Admin.create({ name: 'MC Adarkwah', email: 'admin@mcadarkwah.com', password: 'Admin123!', role: 'superadmin' });
+    const adminName = process.env.ADMIN_NAME || 'MC Adarkwah';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@mcadarkwah.com';
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      console.error('  ERROR: ADMIN_PASSWORD environment variable is required for seeding.');
+      console.error('  Set it in backend/.env or export it before running npm run seed.');
+      process.exit(1);
+    }
+    const admin = await Admin.create({ name: adminName, email: adminEmail, password: adminPassword, role: 'superadmin' });
     console.log(`  Admin created: ${admin.email}`);
 
     console.log('Seeding events...');
-    const events = await Event.create([
-      {
-        title: 'Ghana Corporate Excellence Awards 2026', category: 'awards-night',
-        description: 'The most prestigious corporate awards ceremony celebrating excellence in Ghanaian business.',
-        shortDescription: 'Celebrating corporate excellence in Ghana',
-        date: new Date('2026-08-15'), venue: 'Accra International Conference Centre',
-        location: 'Accra, Ghana', city: 'Accra', country: 'Ghana',
-        attendeeCount: 2000, bannerImage: 'https://placehold.co/800x400/1a1a2e/e0b354?text=Corporate+Awards',
-        thumbnailImage: 'https://placehold.co/400x300/1a1a2e/e0b354?text=Awards',
-        highlights: ['Red carpet arrivals', '20 award categories', 'Live performances', 'Networking reception'],
-        isUpcoming: true, isFeatured: true,
-        registrationUrl: 'https://example.com/register',
-        tags: ['awards', 'corporate', 'ghana'],
-      },
-      {
-        title: 'Pan-African Tech Summit', category: 'conference',
-        description: 'Africa\'s largest technology conference bringing together innovators, entrepreneurs, and investors.',
-        shortDescription: 'Africa\'s premier technology conference',
-        date: new Date('2026-09-20'), venue: 'Kempinski Hotel Gold Coast City',
-        location: 'Accra, Ghana', city: 'Accra', country: 'Ghana',
-        attendeeCount: 5000, bannerImage: 'https://placehold.co/800x400/16213e/0ea5e9?text=Tech+Summit',
-        thumbnailImage: 'https://placehold.co/400x300/16213e/0ea5e9?text=Tech',
-        highlights: ['Keynote speakers', 'Panel discussions', 'Startup pitch competition', 'Networking sessions'],
-        isUpcoming: true, isFeatured: true,
-        ticketUrl: 'https://example.com/tickets',
-        tags: ['tech', 'conference', 'africa', 'innovation'],
-      },
-      {
-        title: 'Royal Wedding Gala', category: 'wedding',
-        description: 'An exquisite wedding ceremony and reception for a high-profile couple.',
-        shortDescription: 'Luxurious wedding celebration',
-        date: new Date('2026-10-05'), venue: 'La Palm Royal Beach Hotel',
-        location: 'Accra, Ghana', city: 'Accra', country: 'Ghana',
-        attendeeCount: 800, bannerImage: 'https://placehold.co/800x400/1a1a2e/ec4899?text=Royal+Wedding+Gala',
-        thumbnailImage: 'https://placehold.co/400x300/1a1a2e/ec4899?text=Wedding',
-        highlights: ['Candlelight ceremony', '10-course dinner', 'Live band', 'Fireworks display'],
-        isUpcoming: true, isFeatured: true,
-        tags: ['wedding', 'gala', 'luxury'],
-      },
-      {
-        title: 'Afro Nation Music Festival', category: 'concert',
-        description: 'The biggest Afrobeat music festival featuring international and local artists.',
-        shortDescription: 'The ultimate Afrobeat music experience',
-        date: new Date('2026-11-12'), venue: 'Independence Square',
-        location: 'Accra, Ghana', city: 'Accra', country: 'Ghana',
-        attendeeCount: 25000, bannerImage: 'https://placehold.co/800x400/1a1a2e/f59e0b?text=Afro+Nation+Festival',
-        thumbnailImage: 'https://placehold.co/400x300/1a1a2e/f59e0b?text=Concert',
-        highlights: ['20+ international artists', 'VIP lounges', 'Food village', 'Art installations'],
-        isUpcoming: true, isFeatured: false,
-        ticketUrl: 'https://example.com/tickets',
-        tags: ['concert', 'music', 'festival', 'afrobeat'],
-      },
-      {
-        title: 'MTN Ghana Music Awards 2025', category: 'awards-night',
-        description: 'The night Ghana\'s music industry came together to celebrate the best in the business.',
-        shortDescription: 'Ghana\'s biggest music awards ceremony',
-        date: new Date('2025-05-10'), venue: 'Accra International Conference Centre',
-        location: 'Accra, Ghana', city: 'Accra', country: 'Ghana',
-        attendeeCount: 3000, bannerImage: 'https://placehold.co/800x400/1a1a2e/22c55e?text=MTN+Music+Awards',
-        thumbnailImage: 'https://placehold.co/400x300/1a1a2e/22c55e?text=Awards',
-        highlights: ['Outstanding performance by Sarkodie', 'Surprise collaboration', 'Emotional tribute', 'Record-breaking attendance'],
-        isUpcoming: false, isFeatured: true,
-        tags: ['awards', 'music', 'ghana', 'mtn'],
-      },
-      {
-        title: 'Global Entrepreneurship Conference', category: 'conference',
-        description: 'Bringing together 500+ entrepreneurs from across the globe.',
-        shortDescription: 'Empowering the next generation of entrepreneurs',
-        date: new Date('2025-03-22'), venue: 'Marriott Hotel',
-        location: 'Accra, Ghana', city: 'Accra', country: 'Ghana',
-        attendeeCount: 1500, bannerImage: 'https://placehold.co/800x400/16213e/8b5cf6?text=Entrepreneurship+Conf',
-        thumbnailImage: 'https://placehold.co/400x300/16213e/8b5cf6?text=Entrepreneurship',
-        highlights: ['50+ speakers', 'Workshops', 'Networking sessions', 'Investment opportunities'],
-        isUpcoming: false, isFeatured: false,
-        tags: ['entrepreneurship', 'conference', 'global'],
-      },
-      {
-        title: 'Luxury Wedding of Adwoa & Kwame', category: 'wedding',
-        description: 'A magnificent traditional and white wedding ceremony.',
-        shortDescription: 'A spectacular wedding celebration',
-        date: new Date('2025-02-14'), venue: 'Movenpick Ambassador Hotel',
-        location: 'Accra, Ghana', city: 'Accra', country: 'Ghana',
-        attendeeCount: 600, bannerImage: 'https://placehold.co/800x400/1a1a2e/f472b6?text=Wedding+of+Adwoa+%26+Kwame',
-        thumbnailImage: 'https://placehold.co/400x300/1a1a2e/f472b6?text=Wedding',
-        highlights: ['Traditional marriage ceremony', 'White wedding', 'Reception', 'Fireworks'],
-        isUpcoming: false, isFeatured: false,
-        tags: ['wedding', 'luxury', 'traditional', 'white-wedding'],
-      },
-      {
-        title: 'Ghana Innovation Week 2025', category: 'conference',
-        description: 'A week-long celebration of innovation and technology in Ghana.',
-        shortDescription: 'Celebrating Ghanaian innovation',
-        date: new Date('2025-07-18'), venue: 'University of Ghana',
-        location: 'Accra, Ghana', city: 'Accra', country: 'Ghana',
-        attendeeCount: 10000, bannerImage: 'https://placehold.co/800x400/16213e/06b6d4?text=Innovation+Week',
-        thumbnailImage: 'https://placehold.co/400x300/16213e/06b6d4?text=Innovation',
-        highlights: ['Innovation expo', 'Hackathon', 'Panel discussions', 'Award ceremony'],
-        isUpcoming: false, isFeatured: false,
-        tags: ['innovation', 'tech', 'ghana', 'week'],
-      },
-    ]);
-    console.log(`  ${events.length} events created`);
+    console.log('  Skipped — awaiting owner verification of event details.');
+    const events = [];
 
     console.log('Seeding testimonials...');
+    console.log('  Skipped — awaiting real client testimonials with owner approval. Placeholder data retained with isApproved=false for admin review.');
     const testimonials = await Testimonial.create([
-      { name: 'Sarah Mensah', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=SM', eventName: 'Corporate Gala Night 2025', rating: 5, review: 'MC Adarkwah was absolutely phenomenal! She kept our guests engaged throughout the entire event. Her energy and professionalism are unmatched. Our corporate gala was a huge success because of her!', designation: 'Event Director, MTN Ghana', isApproved: true },
-      { name: 'Kwame Asante', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=KA', eventName: 'Traditional Wedding', rating: 5, review: 'We couldn\'t have asked for a better MC for our wedding. She blended tradition with modern elegance perfectly. All our guests were impressed and kept asking who our MC was!', designation: 'Groom', isApproved: true },
-      { name: 'Dr. Akua Ofori', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=AO', eventName: 'Pan-African Health Summit', rating: 5, review: 'MC Adarkwah handled our international health summit with remarkable professionalism. She managed diverse speakers and kept the conference flowing seamlessly. Highly recommended for any professional event.', designation: 'Conference Chair, WHO Africa', isApproved: true },
-      { name: 'James Appiah', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=JA', eventName: 'Product Launch', rating: 5, review: 'Our product launch was made extraordinary by MC Adarkwah. She built incredible anticipation and kept the audience engaged throughout. The feedback from our partners was overwhelmingly positive.', designation: 'CEO, TechStart Ghana', isApproved: true },
-      { name: 'Nana Ama', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=NA', eventName: 'Awards Night', rating: 5, review: 'She brought so much class and elegance to our awards ceremony. Her voice, her presence, her ability to handle unexpected moments - everything was perfect. She is truly a world-class MC.', designation: 'Board Member, Ghana Events Awards', isApproved: true },
+      { name: 'Sarah Mensah', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=SM', eventName: 'Corporate Gala Night 2025', rating: 5, review: 'PLACEHOLDER — awaiting real testimonial from owner.', designation: 'Event Director, MTN Ghana', isApproved: false },
+      { name: 'Kwame Asante', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=KA', eventName: 'Traditional Wedding', rating: 5, review: 'PLACEHOLDER — awaiting real testimonial from owner.', designation: 'Groom', isApproved: false },
+      { name: 'Dr. Akua Ofori', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=AO', eventName: 'Pan-African Health Summit', rating: 5, review: 'PLACEHOLDER — awaiting real testimonial from owner.', designation: 'Conference Chair, WHO Africa', isApproved: false },
+      { name: 'James Appiah', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=JA', eventName: 'Product Launch', rating: 5, review: 'PLACEHOLDER — awaiting real testimonial from owner.', designation: 'CEO, TechStart Ghana', isApproved: false },
+      { name: 'Nana Ama', photo: 'https://placehold.co/100x100/e0b354/1a1a2e?text=NA', eventName: 'Awards Night', rating: 5, review: 'PLACEHOLDER — awaiting real testimonial from owner.', designation: 'Board Member, Ghana Events Awards', isApproved: false },
     ]);
-    console.log(`  ${testimonials.length} testimonials created`);
+    console.log(`  ${testimonials.length} testimonials created (hidden from public — isApproved=false)`);
 
     console.log('Seeding services...');
     const services = await Service.create([
@@ -186,25 +95,88 @@ const seed = async () => {
 
     console.log('Seeding news...');
     const newsItems = await NewsItem.create([
-      { title: 'MC Adarkwah to Host 2026 Ghana Corporate Excellence Awards', excerpt: 'We are thrilled to announce that MC Adarkwah has been selected as the official host for the 2026 Ghana Corporate Excellence Awards.', content: 'Full content here...', imageUrl: 'https://placehold.co/800x400/e0b354/1a1a2e?text=Awards+Announcement', category: 'Announcements', author: 'MC Adarkwah Team', tags: ['awards', 'corporate', 'announcement'], featured: true },
-      { title: 'Hosting Tips: How to Keep Your Audience Engaged', excerpt: 'Professional insights from MC Adarkwah on keeping any audience captivated from start to finish.', content: 'Full content here...', imageUrl: 'https://placehold.co/800x400/0ea5e9/1a1a2e?text=Hosting+Tips', category: 'Blog', author: 'MC Adarkwah', tags: ['tips', 'hosting', 'engagement'], featured: true },
-      { title: 'Behind the Scenes: A Day with MC Adarkwah', excerpt: 'Ever wondered what goes into preparing for a major event? Follow MC Adarkwah through a typical event day.', content: 'Full content here...', imageUrl: 'https://placehold.co/800x400/8b5cf6/1a1a2e?text=Behind+the+Scenes', category: 'Behind the Scenes', author: 'MC Adarkwah Team', tags: ['behind-the-scenes', 'preparation'], featured: false },
+      {
+        title: 'MC Adarkwah to Host 2026 Ghana Corporate Excellence Awards',
+        excerpt: 'We are thrilled to announce that MC Adarkwah has been selected as the official host for the 2026 Ghana Corporate Excellence Awards.',
+        content: `We are thrilled to announce that MC Adarkwah has been selected as the official host for the 2026 Ghana Corporate Excellence Awards. This prestigious ceremony celebrates outstanding achievements in Ghana's corporate sector, recognizing businesses and leaders who have demonstrated exceptional performance and innovation.
+
+[NEEDS CONFIRMATION: Event date, specific venue, and organizing body or awarding institution — please verify with the owner before publication.]
+
+As one of Ghana's most sought-after masters of ceremony, MC Adarkwah brings professionalism, energy, and stage presence to every event she hosts. Her experience includes corporate galas, international conferences, weddings, concerts, and high-profile celebrations — making her a versatile and trusted choice for this ceremony.
+
+The awards night program includes red carpet arrivals, multiple award categories recognizing excellence across industries, live performances, and a networking reception for Ghana's business community. MC Adarkwah's role encompasses red carpet commentary, award presentations, audience engagement, and ensuring the evening flows seamlessly.
+
+[NEEDS CONFIRMATION: Add quotes from the event organizers, specific award categories, confirmed sponsors, broadcast partners, ticket information, or VIP guests once provided by the owner.]`,
+        imageUrl: 'https://placehold.co/800x400/e0b354/1a1a2e?text=Awards+Announcement',
+        category: 'Announcements',
+        author: 'MC Adarkwah Team',
+        tags: ['awards', 'corporate', 'announcement'],
+        featured: true,
+      },
+      {
+        title: 'Hosting Tips: How to Keep Your Audience Engaged',
+        excerpt: 'Professional insights from MC Adarkwah on keeping any audience captivated from start to finish.',
+        content: `A great MC does more than announce speakers and read from a script. The best hosts set the tone, read the room, and keep the energy flowing from the first word to the final farewell. Here are five essential tips for keeping any audience engaged.
+
+1. Know Your Audience Before You Step On Stage
+Every audience is different. A corporate board meeting demands a different energy than a wedding reception or a music festival. Research your attendees beforehand — understand the demographics, the occasion, and the mood you need to set. When you speak directly to who is in the room, your audience feels seen and connected.
+
+2. Master the Opening
+The first sixty seconds on stage set the tone for everything that follows. Start with a genuine, warm welcome. Acknowledge the venue, the occasion, and any special guests. A well-placed moment of humour or a thoughtful observation about the event can break the ice and make the audience receptive to what comes next.
+
+3. Keep Transitions Tight
+Dead air and awkward pauses are the enemy of engagement. Prepare transition lines between segments that recap what just happened and build anticipation for what is next. A simple "What an incredible presentation — let us keep that energy going as we welcome our next speaker" maintains momentum and signals professionalism.
+
+4. Read the Room and Adapt
+No matter how well you plan, live events are unpredictable. The best MCs stay flexible. If the audience seems restless after a long session, shorten your introductions. If a speaker runs long, adjust your tone to make the revised schedule feel intentional rather than rushed.
+
+5. Close with Impact
+The closing moments of an event are what attendees remember most. Summarise the key takeaways, thank the organisers and participants sincerely, and leave the audience with a final thought that resonates. A strong close turns a good event into an unforgettable one.`,
+        imageUrl: 'https://placehold.co/800x400/0ea5e9/1a1a2e?text=Hosting+Tips',
+        category: 'Blog',
+        author: 'MC Adarkwah',
+        tags: ['tips', 'hosting', 'engagement'],
+        featured: true,
+      },
+      {
+        title: 'Behind the Scenes: A Day with MC Adarkwah',
+        excerpt: 'Ever wondered what goes into preparing for a major event? Follow MC Adarkwah through a typical event day.',
+        content: `Every major event looks effortless from the audience side, but the work behind the curtain starts long before the first guest arrives. Here is a look at what a typical event day looks like.
+
+6:00 AM — Preparation
+The day starts early. Voice warm-ups, a final review of the event script and running order, and a equipment check. Every event is different, so preparation is tailored to the specific occasion — corporate gala, wedding, conference, or concert.
+
+7:30 AM — Venue Arrival
+Arriving well before guests allows time to walk the stage, test audio equipment, coordinate with the technical team, and study the layout. Understanding the space — where speakers will stand, how the lighting works, where the audience will be seated — is critical to a seamless performance.
+
+9:00 AM — Final Coordination Meeting
+A quick meeting with the event organiser to confirm any last-minute changes. Guest list updates, speaker substitutions, timing adjustments — every detail is noted and incorporated.
+
+[NEEDS CONFIRMATION: Specific venue names, recent event examples, notable guest anecdotes, or memorable moments can be added once the owner provides details.]
+
+11:00 AM — The Event Begins
+From the opening welcome to the final farewell, every moment on stage counts. The goal is to make every speaker look good, every transition feel natural, and every guest feel valued. It requires focus, energy, and genuine care for the success of the event.
+
+4:00 PM — Post-Event Debrief
+After the event wraps, a debrief with the organising team covers what went well and what could be improved. Every event is a learning opportunity that makes the next one even better.
+
+[NEEDS CONFIRMATION: Specific time durations, number of guests, or venue names for examples can be filled in with real event data when available.]`,
+        imageUrl: 'https://placehold.co/800x400/8b5cf6/1a1a2e?text=Behind+the+Scenes',
+        category: 'Behind the Scenes',
+        author: 'MC Adarkwah Team',
+        tags: ['behind-the-scenes', 'preparation'],
+        featured: false,
+      },
     ]);
     console.log(`  ${newsItems.length} news items created`);
 
     console.log('Seeding sponsors...');
-    const sponsors = await Sponsor.create([
-      { name: 'MTN Ghana', logo: 'https://placehold.co/150x50/ffcc00/000000?text=MTN', website: 'https://mtn.com.gh', order: 1 },
-      { name: 'Ghana Tourism Authority', logo: 'https://placehold.co/150x50/22c55e/ffffff?text=GTA', website: 'https://ghana.travel', order: 2 },
-      { name: 'Accra International Conference Centre', logo: 'https://placehold.co/150x50/0ea5e9/ffffff?text=AICC', website: 'https://aicc.com.gh', order: 3 },
-      { name: 'Kempinski Hotel', logo: 'https://placehold.co/150x50/8b5cf6/ffffff?text=Kempinski', website: 'https://kempinski.com', order: 4 },
-      { name: 'Starlink Ghana', logo: 'https://placehold.co/150x50/1a1a2e/ffffff?text=Starlink', website: 'https://starlink.com', order: 5 },
-      { name: 'EventPro Ghana', logo: 'https://placehold.co/150x50/e0b354/1a1a2e?text=EventPro', website: 'https://eventpro.com.gh', order: 6 },
-    ]);
-    console.log(`  ${sponsors.length} sponsors created`);
+    console.log('  Skipped — awaiting owner confirmation of sponsorship relationships.');
+    const sponsors = [];
 
     console.log('\nSeed completed successfully!');
-    console.log('Admin login: admin@mcadarkwah.com / Admin123!');
+    console.log(`  Admin: ${adminEmail}`);
+    console.log('  Password: [set via ADMIN_PASSWORD env var]');
     console.log('https://mc-adarkwah.onrender.com');
 
     process.exit(0);

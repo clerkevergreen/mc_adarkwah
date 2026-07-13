@@ -45,6 +45,31 @@ export class EventDetailComponent implements OnInit {
             image: this.event.bannerImage,
             url: `https://mcadarkwah.com/events/${slug}`,
           });
+          this.seo.setStructuredData({
+            '@context': 'https://schema.org',
+            '@type': 'Event',
+            '@id': `https://mcadarkwah.com/events/${slug}`,
+            name: this.event.title,
+            description: this.event.shortDescription,
+            startDate: new Date(this.event.date).toISOString().split('T')[0],
+            eventStatus: this.event.isUpcoming ? 'https://schema.org/EventScheduled' : 'https://schema.org/EventPast',
+            eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+            location: {
+              '@type': 'Place',
+              name: this.event.venue,
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: this.event.city || '',
+                addressCountry: this.event.country || 'GH',
+              },
+            },
+            image: this.event.bannerImage,
+            performer: {
+              '@type': 'Person',
+              name: 'MC Adarkwah',
+              jobTitle: 'Master of Ceremonies',
+            },
+          });
         }
       });
     }

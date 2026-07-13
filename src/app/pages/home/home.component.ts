@@ -55,15 +55,32 @@ export class HomeComponent implements OnInit {
     });
     this.seo.setStructuredData({
       '@context': 'https://schema.org',
-      '@type': 'Person',
+      '@type': 'ProfessionalService',
+      '@id': 'https://mcadarkwah.com',
       name: 'MC Adarkwah',
-      jobTitle: 'Professional Master of Ceremonies',
+      alternateName: 'MC Adarkwah — Professional Master of Ceremonies',
+      description: 'Ghana\'s premier professional Master of Ceremonies. Specializing in corporate events, weddings, conferences, concerts, awards nights, and private celebrations.',
       url: 'https://mcadarkwah.com',
+      image: 'assets/images/og-image.jpg',
+      founder: {
+        '@type': 'Person',
+        name: 'MC Adarkwah',
+        jobTitle: 'Professional Master of Ceremonies',
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Accra',
+        addressCountry: 'GH',
+      },
+      areaServed: [
+        { '@type': 'City', 'name': 'Accra' },
+        { '@type': 'Country', 'name': 'Ghana' },
+      ],
+      priceRange: 'GHS 2,000 — 25,000',
       sameAs: [
         'https://instagram.com/mc_adarkwah',
-        'https://twitter.com/mc_adarkwah',
         'https://facebook.com/mc_adarkwah',
-        'https://youtube.com/@mc_adarkwah',
+        'https://linkedin.com/in/mc-adarkwah',
       ],
     });
 

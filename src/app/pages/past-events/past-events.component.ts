@@ -29,6 +29,11 @@ export class PastEventsComponent implements OnInit {
 
   ngOnInit(): void {
     this.seo.setPageTitle('Past Events');
+    this.seo.setMetaTags({
+      description: 'View MC Adarkwah\'s portfolio of past events — corporate galas, award ceremonies, weddings, conferences, and concerts hosted across Ghana and internationally.',
+      image: 'assets/images/og-image.jpg',
+      url: 'https://mcadarkwah.com/past-events',
+    });
     this.dataService.getPastEvents().subscribe(events => {
       this.allPastEvents = events;
       this.filteredEvents = [...this.allPastEvents];
