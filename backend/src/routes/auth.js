@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getSetupStatus, setup, register, login, forgotPassword, resetPassword, getMe, refreshToken } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
+const { authLimiter } = require('../middleware/rateLimiter');
 
 /**
  * @swagger
@@ -82,7 +83,7 @@ router.post('/register', protect, register);
  *             schema:
  *               $ref: '#/components/schemas/AuthResponse'
  */
-router.post('/login', login);
+router.post('/login', authLimiter, login);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
