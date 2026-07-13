@@ -165,11 +165,13 @@ const sendQuoteConfirmation = async (quote) => {
 
 const sendQuoteStatusUpdate = async (quote) => {
   const statusMessages = {
+    pending: 'Your quote request is currently being reviewed. We will get back to you as soon as possible with a personalized quote.',
     contacted: 'We have reviewed your event requirements and are preparing a personalized quote. A team member will reach out to you shortly with more details.',
     closed: 'Your quote request has been closed. If you have any further questions, please don\'t hesitate to contact us.',
   };
 
   const statusBadgeColors = {
+    pending: '#d4a84b',
     contacted: '#a855f7',
     closed: '#9ca3af',
   };
