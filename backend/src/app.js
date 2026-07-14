@@ -96,11 +96,21 @@ app.use('/api/email', require('./routes/email'));
 /* =========================
    SMTP DIAGNOSTIC
 ========================= */
+const tryTcpConnect = (host, port, timeout = 8000) => {
+  return new Promise((resolve, reject) => {
+    const socket = new net.Socket();
+    socket.setTimeout(timeout);
+    socket.on('connect', () => { socket.destroy(); resolve(); });
+    socket.on('error', (err) => { socket.destroy(); reject(err); });
+    socket.on('timeout', () => { socket.destroy(); reject(new Error('Connection timeout')); });
+    socket.connect(port, host);
+  });
+};
+
 app.get('/api/smtp-diagnose', async (req, res) => {
   const host = process.env.SMTP_HOST;
-  const port = parseInt(process.env.SMTP_PORT) || 587;
+  const configPort = parseInt(process.env.SMTP_PORT) || 587;
   const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_USER ? '****' + process.env.SMTP_PASS.slice(-4) : '(not set)';
   const steps = [];
 
   // Step 1: Config check
@@ -108,9 +118,8 @@ app.get('/api/smtp-diagnose', async (req, res) => {
     step: 'Configuration',
     details: {
       host,
-      port,
+      port: configPort,
       user: user || '(not set)',
-      passHidden: pass,
       passLength: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0,
       contactEmail: process.env.CONTACT_EMAIL || '(not set)',
       isDefaultUser: user === 'your-email@gmail.com',
@@ -126,12 +135,6 @@ app.get('/api/smtp-diagnose', async (req, res) => {
 
   // Step 2: DNS lookup
   try {
-    await new Promise((resolve, reject) => {
-      require('dns').resolve4(host, (err, addresses) => {
-        if (err) reject(err);
-        else resolve(addresses);
-      });
-    });
     const addresses = await new Promise((resolve, reject) => {
       require('dns').resolve4(host, (err, addresses) => {
         if (err) reject(err);
@@ -144,49 +147,67 @@ app.get('/api/smtp-diagnose', async (req, res) => {
     return res.json({ success: false, steps });
   }
 
-  // Step 3: TCP connection
-  try {
-    await new Promise((resolve, reject) => {
-      const socket = new net.Socket();
-      socket.setTimeout(8000);
-      socket.on('connect', () => { socket.destroy(); resolve(); });
-      socket.on('error', (err) => { socket.destroy(); reject(err); });
-      socket.on('timeout', () => { socket.destroy(); reject(new Error('Connection timeout')); });
-      socket.connect(port, host);
-    });
-    steps.push({ step: 'TCP Connect', status: 'ok', details: { host, port } });
-  } catch (err) {
-    steps.push({ step: 'TCP Connect', status: 'fail', error: err.message });
+  // Step 3: TCP connection — try configured port, then fallback to 587
+  const portsToTry = configPort === 587 ? [587] : [configPort, 587];
+  let connectedPort = null;
+  let tcpError = null;
+
+  for (const p of portsToTry) {
+    try {
+      await tryTcpConnect(host, p);
+      connectedPort = p;
+      break;
+    } catch (err) {
+      tcpError = err.message;
+    }
+  }
+
+  if (connectedPort) {
+    steps.push({ step: 'TCP Connect', status: 'ok', details: { host, port: connectedPort, note: connectedPort !== configPort ? `Used fallback port ${connectedPort} (configured: ${configPort})` : undefined } });
+  } else {
+    steps.push({ step: 'TCP Connect', status: 'fail', error: tcpError });
     return res.json({ success: false, steps });
   }
 
-  // Step 4: SMTP handshake + auth via nodemailer verify
-  try {
-    const nodemailer = require('nodemailer');
-    const transporter = nodemailer.createTransport({
-      host,
-      port,
-      secure: port === 465,
-      requireTLS: port === 587,
-      connectionTimeout: 15000,
-      greetingTimeout: 15000,
-      auth: { user, pass: process.env.SMTP_PASS },
-    });
-    const result = await transporter.verify();
-    steps.push({ step: 'SMTP Auth', status: 'ok', details: { verifyResult: result } });
-    res.json({ success: true, steps });
-  } catch (err) {
-    steps.push({
-      step: 'SMTP Auth',
-      status: 'fail',
-      error: err.message,
-      code: err.code,
-      command: err.command,
-      response: err.response,
-      responseCode: err.responseCode,
-    });
-    res.json({ success: false, steps });
+  // Step 4: SMTP handshake + auth
+  const authPortsToTry = connectedPort ? [connectedPort] : [configPort, 587];
+  let authResult = null;
+  let authError = null;
+
+  for (const p of authPortsToTry) {
+    try {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransport({
+        host,
+        port: p,
+        secure: p === 465,
+        requireTLS: p === 587,
+        connectionTimeout: 15000,
+        greetingTimeout: 15000,
+        auth: { user, pass: process.env.SMTP_PASS },
+      });
+      authResult = await transporter.verify();
+      steps.push({
+        step: 'SMTP Auth',
+        status: 'ok',
+        details: { host, port: p, verifyResult: authResult, note: p !== configPort ? `Used port ${p} (configured: ${configPort})` : undefined },
+      });
+      return res.json({ success: true, steps });
+    } catch (err) {
+      authError = { message: err.message, code: err.code, command: err.command, response: err.response, responseCode: err.responseCode };
+    }
   }
+
+  steps.push({
+    step: 'SMTP Auth',
+    status: 'fail',
+    error: authError.message,
+    code: authError.code,
+    command: authError.command,
+    response: authError.response,
+    responseCode: authError.responseCode,
+  });
+  res.json({ success: false, steps });
 });
 
 /* =========================

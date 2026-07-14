@@ -2,76 +2,114 @@ const nodemailer = require('nodemailer');
 const EmailLog = require('../models/EmailLog');
 
 const createTransporter = (debugMode = false) => {
-  if (process.env.SMTP_USER && process.env.SMTP_USER !== 'your-email@gmail.com') {
-    const port = parseInt(process.env.SMTP_PORT) || 587;
+  if (!process.env.SMTP_USER || process.env.SMTP_USER === 'your-email@gmail.com') {
     return nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port,
-      secure: port === 465,
-      requireTLS: port === 587,
-      connectionTimeout: 15000,
-      greetingTimeout: 15000,
-      socketTimeout: 20000,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-      logger: true,
-      debug: debugMode || process.env.NODE_ENV === 'development' || process.env.SMTP_DEBUG === 'true',
+      host: 'localhost',
+      port: 1025,
+      ignoreTLS: true,
     });
   }
 
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const configuredPort = parseInt(process.env.SMTP_PORT) || 587;
+  const port = configuredPort;
+
   return nodemailer.createTransport({
-    host: 'localhost',
-    port: 1025,
-    ignoreTLS: true,
+    host,
+    port,
+    secure: port === 465,
+    requireTLS: port === 587,
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 20000,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+    logger: true,
+    debug: debugMode || process.env.NODE_ENV === 'development' || process.env.SMTP_DEBUG === 'true',
   });
 };
 
+const trySend = async (port, { to, subject, html, type, relatedId }) => {
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    requireTLS: port === 587,
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 20000,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+  const info = await transporter.sendMail({
+    from: `"MC Adarkwah" <${process.env.SMTP_USER || process.env.CONTACT_EMAIL || 'noreply@mcadarkwah.com'}>`,
+    to,
+    subject,
+    html,
+  });
+  return info;
+};
+
 const sendEmail = async ({ to, subject, html, type, relatedId }) => {
-  try {
-    const transporter = createTransporter();
-    const info = await transporter.sendMail({
-      from: `"MC Adarkwah" <${process.env.SMTP_USER || process.env.CONTACT_EMAIL || 'noreply@mcadarkwah.com'}>`,
-      to,
-      subject,
-      html,
-    });
-
-    console.log(`[EMAIL] Sent to ${to}: ${info.messageId}`);
-
-    await EmailLog.create({
-      to,
-      subject,
-      type: type || 'general',
-      relatedId: relatedId || null,
-      status: 'sent',
-      messageId: info.messageId,
-    });
-
-    return true;
-  } catch (error) {
-    const details = {
-      message: error.message,
-      code: error.code,
-      command: error.command,
-      response: error.response,
-      responseCode: error.responseCode,
-    };
-
-    console.error('[EMAIL] FAILED:', JSON.stringify(details, null, 2));
-
-    await EmailLog.create({
-      to,
-      subject,
-      type: type || 'general',
-      relatedId: relatedId || null,
-      status: 'failed',
-      error: JSON.stringify(details),
-    });
-
+  if (!process.env.SMTP_USER || process.env.SMTP_USER === 'your-email@gmail.com') {
+    console.log('[EMAIL] Skipped — SMTP not configured');
     return false;
   }
+
+  const configPort = parseInt(process.env.SMTP_PORT) || 587;
+  const portsToTry = configPort === 587 ? [587] : [configPort, 587];
+  let lastError = null;
+
+  for (const port of portsToTry) {
+    try {
+      const info = await trySend(port, { to, subject, html, type, relatedId });
+      console.log(`[EMAIL] Sent to ${to} (port ${port}): ${info.messageId}`);
+
+      await EmailLog.create({
+        to,
+        subject,
+        type: type || 'general',
+        relatedId: relatedId || null,
+        status: 'sent',
+        messageId: info.messageId,
+      });
+
+      if (port !== configPort) {
+        console.log(`[EMAIL] Used fallback port ${port} (configured: ${configPort})`);
+      }
+
+      return true;
+    } catch (error) {
+      lastError = error;
+      console.warn(`[EMAIL] Port ${port} failed for ${to}: ${error.message}`);
+    }
+  }
+
+  const details = {
+    message: lastError.message,
+    code: lastError.code,
+    command: lastError.command,
+    response: lastError.response,
+    responseCode: lastError.responseCode,
+  };
+
+  console.error('[EMAIL] FAILED on all ports:', JSON.stringify(details, null, 2));
+
+  await EmailLog.create({
+    to,
+    subject,
+    type: type || 'general',
+    relatedId: relatedId || null,
+    status: 'failed',
+    error: JSON.stringify(details),
+  });
+
+  return false;
 };
 
 const sendBookingConfirmation = async (booking) => {
