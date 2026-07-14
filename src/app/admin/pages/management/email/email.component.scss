@@ -3,6 +3,27 @@
 $gold-accent: #C9A84C;
 $border-light: rgba(255, 255, 255, 0.06);
 
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #0F0F1A;
+
+  &__main {
+    flex: 1;
+    margin-left: 220px;
+    min-height: 100vh;
+
+    @media (max-width: 1023px) {
+      margin-left: 0;
+    }
+  }
+
+  &__content {
+    padding: 1.5rem;
+    margin-top: 64px;
+  }
+}
+
 .page {
   &__toolbar {
     display: flex; align-items: center; justify-content: space-between;
