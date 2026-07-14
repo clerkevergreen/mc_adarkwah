@@ -13,3 +13,55 @@
 .page__stat-label {
   font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.5px;
 }
+
+.page__actions {
+  display: flex; gap: 0.75rem;
+}
+
+.diag {
+  display: flex; flex-direction: column; gap: 0.75rem;
+}
+
+.diag__step {
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px; padding: 0.75rem 1rem;
+
+  &--ok { border-left: 3px solid #22c55e; }
+  &--fail { border-left: 3px solid #ef4444; }
+  &--skipped { border-left: 3px solid rgba(255,255,255,0.15); opacity: 0.5; }
+}
+
+.diag__step-header {
+  display: flex; align-items: center; gap: 0.5rem;
+}
+
+.diag__step-icon { font-size: 1rem; width: 20px;
+  .diag__step--ok & { color: #22c55e; }
+  .diag__step--fail & { color: #ef4444; }
+}
+
+.diag__step-name { flex: 1; color: #fff; font-size: 0.9rem; font-weight: 500; }
+
+.diag__step-status {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.15rem 0.5rem;
+  border-radius: 4px; font-weight: 600;
+
+  &--ok { background: rgba(#22c55e, 0.12); color: #22c55e; }
+  &--fail { background: rgba(#ef4444, 0.12); color: #ef4444; }
+}
+
+.diag__details, .diag__error {
+  font-size: 0.75rem; margin: 0.5rem 0 0; padding: 0.5rem;
+  background: rgba(0,0,0,0.3); border-radius: 4px; overflow-x: auto;
+  white-space: pre-wrap; word-break: break-all;
+}
+
+.diag__error { color: #ef4444; }
+
+.diag__reason { font-size: 0.8rem; color: rgba(255,255,255,0.4); margin: 0.5rem 0 0; }
+
+.diag__summary {
+  text-align: center; padding: 0.75rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+  background: rgba(#ef4444, 0.08); color: #ef4444;
+  &--ok { background: rgba(#22c55e, 0.08); color: #22c55e; }
+}

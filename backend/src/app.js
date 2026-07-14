@@ -94,45 +94,99 @@ app.use('/api/portal', require('./routes/portal'));
 app.use('/api/email', require('./routes/email'));
 
 /* =========================
-   SMTP DEBUG ROUTE (ADDED)
+   SMTP DIAGNOSTIC
 ========================= */
-app.get('/api/smtp-debug', (req, res) => {
-  const result = {
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    userExists: !!process.env.SMTP_USER,
-    passExists: !!process.env.SMTP_PASS,
-    contactExists: !!process.env.CONTACT_EMAIL
-  };
-
-  res.json(result);
-});
-
-/* =========================
-   SMTP CONNECTION TEST (ADDED)
-========================= */
-app.get('/api/smtp-test-connection', (req, res) => {
+app.get('/api/smtp-diagnose', async (req, res) => {
   const host = process.env.SMTP_HOST;
-  const port = parseInt(process.env.SMTP_PORT);
+  const port = parseInt(process.env.SMTP_PORT) || 587;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_USER ? '****' + process.env.SMTP_PASS.slice(-4) : '(not set)';
+  const steps = [];
 
-  const socket = new net.Socket();
-  socket.setTimeout(5000);
-
-  socket.on('connect', () => {
-    res.json({ success: true, message: 'Connected to SMTP server' });
-    socket.destroy();
+  // Step 1: Config check
+  steps.push({
+    step: 'Configuration',
+    details: {
+      host,
+      port,
+      user: user || '(not set)',
+      passHidden: pass,
+      passLength: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0,
+      contactEmail: process.env.CONTACT_EMAIL || '(not set)',
+      isDefaultUser: user === 'your-email@gmail.com',
+    },
   });
 
-  socket.on('error', (err) => {
-    res.json({ success: false, error: err.message });
-  });
+  if (!host || !user || user === 'your-email@gmail.com') {
+    steps.push({ step: 'DNS Lookup', status: 'skipped', reason: 'SMTP not configured' });
+    steps.push({ step: 'TCP Connect', status: 'skipped', reason: 'SMTP not configured' });
+    steps.push({ step: 'SMTP Auth', status: 'skipped', reason: 'SMTP not configured' });
+    return res.json({ success: false, steps });
+  }
 
-  socket.on('timeout', () => {
-    res.json({ success: false, error: 'Connection timeout' });
-    socket.destroy();
-  });
+  // Step 2: DNS lookup
+  try {
+    await new Promise((resolve, reject) => {
+      require('dns').resolve4(host, (err, addresses) => {
+        if (err) reject(err);
+        else resolve(addresses);
+      });
+    });
+    const addresses = await new Promise((resolve, reject) => {
+      require('dns').resolve4(host, (err, addresses) => {
+        if (err) reject(err);
+        else resolve(addresses);
+      });
+    });
+    steps.push({ step: 'DNS Lookup', status: 'ok', details: { addresses } });
+  } catch (err) {
+    steps.push({ step: 'DNS Lookup', status: 'fail', error: err.message });
+    return res.json({ success: false, steps });
+  }
 
-  socket.connect(port, host);
+  // Step 3: TCP connection
+  try {
+    await new Promise((resolve, reject) => {
+      const socket = new net.Socket();
+      socket.setTimeout(8000);
+      socket.on('connect', () => { socket.destroy(); resolve(); });
+      socket.on('error', (err) => { socket.destroy(); reject(err); });
+      socket.on('timeout', () => { socket.destroy(); reject(new Error('Connection timeout')); });
+      socket.connect(port, host);
+    });
+    steps.push({ step: 'TCP Connect', status: 'ok', details: { host, port } });
+  } catch (err) {
+    steps.push({ step: 'TCP Connect', status: 'fail', error: err.message });
+    return res.json({ success: false, steps });
+  }
+
+  // Step 4: SMTP handshake + auth via nodemailer verify
+  try {
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      requireTLS: port === 587,
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      auth: { user, pass: process.env.SMTP_PASS },
+    });
+    const result = await transporter.verify();
+    steps.push({ step: 'SMTP Auth', status: 'ok', details: { verifyResult: result } });
+    res.json({ success: true, steps });
+  } catch (err) {
+    steps.push({
+      step: 'SMTP Auth',
+      status: 'fail',
+      error: err.message,
+      code: err.code,
+      command: err.command,
+      response: err.response,
+      responseCode: err.responseCode,
+    });
+    res.json({ success: false, steps });
+  }
 });
 
 /* =========================

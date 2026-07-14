@@ -25,7 +25,12 @@
             </div>
           </div>
 
-          <button class="btn btn--gold btn--sm" (click)="openTestModal()">Send Test</button>
+          <div class="page__actions">
+            <button class="btn btn--outline btn--sm" (click)="runDiagnostic()" [disabled]="diagnosing">
+              {{ diagnosing ? 'Running...' : 'Diagnose' }}
+            </button>
+            <button class="btn btn--gold btn--sm" (click)="openTestModal()">Send Test</button>
+          </div>
         </div>
 
         <div class="page__chips">
@@ -43,6 +48,56 @@
     </div>
   </div>
 </div>
+
+@if (showDiagnostic && diagnosticResult) {
+  <app-modal title="SMTP Diagnosis" size="lg" (close)="closeDiagnostic()">
+    <div class="diag">
+      @for (step of diagnosticResult.steps || []; track step.step) {
+        <div class="diag__step" [class.diag__step--ok]="step.status === 'ok'"
+             [class.diag__step--fail]="step.status === 'fail'"
+             [class.diag__step--skipped]="step.status === 'skipped'">
+          <div class="diag__step-header">
+            <span class="diag__step-icon">
+              @if (step.status === 'ok') { &#10003; }
+              @else if (step.status === 'fail') { &#10007; }
+              @else { &#8212; }
+            </span>
+            <span class="diag__step-name">{{ step.step }}</span>
+            <span class="diag__step-status" [class.diag__step-status--ok]="step.status === 'ok'"
+                  [class.diag__step-status--fail]="step.status === 'fail'">{{ step.status }}</span>
+          </div>
+          @if (step.details) {
+            <pre class="diag__details">{{ step.details | json }}</pre>
+          }
+          @if (step.error) {
+            <pre class="diag__error">{{ step.error }}</pre>
+          }
+          @if (step.reason) {
+            <p class="diag__reason">{{ step.reason }}</p>
+          }
+          @if (step.response) {
+            <pre class="diag__error">SMTP Response: {{ step.response }}</pre>
+          }
+        </div>
+      }
+      @if (diagnosticResult.error && !diagnosticResult.steps) {
+        <div class="diag__step diag__step--fail">
+          <div class="diag__step-header">
+            <span class="diag__step-icon">&#10007;</span>
+            <span class="diag__step-name">Error</span>
+          </div>
+          <pre class="diag__error">{{ diagnosticResult.error }}</pre>
+        </div>
+      }
+      <div class="diag__summary" [class.diag__summary--ok]="diagnosticResult.success">
+        Overall: {{ diagnosticResult.success ? 'SMTP is working' : 'SMTP has issues' }}
+      </div>
+    </div>
+    <div slot="footer">
+      <button class="btn btn--gold" (click)="closeDiagnostic()">Close</button>
+    </div>
+  </app-modal>
+}
 
 @if (showTestModal) {
   <app-modal title="Send Test Email" size="sm" (close)="showTestModal = false">

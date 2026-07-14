@@ -47,4 +47,8 @@ export class EmailService {
   sendTest(to: string): Observable<{ success: boolean; message: string }> {
     return this.http.post<{ success: boolean; message: string }>(`${this.apiUrl}/email/test`, { to });
   }
+
+  diagnose(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/smtp-diagnose`);
+  }
 }

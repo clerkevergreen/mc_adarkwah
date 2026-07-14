@@ -27,6 +27,9 @@ export class EmailComponent implements OnInit {
   testEmail = '';
   sendingTest = false;
   statusFilter: 'all' | 'sent' | 'failed' = 'all';
+  diagnosing = false;
+  showDiagnostic = false;
+  diagnosticResult: any = null;
 
   columns: ColumnDef[] = [
     { key: 'createdAt', label: 'Time', type: 'date', sortable: true },
@@ -78,6 +81,27 @@ export class EmailComponent implements OnInit {
         this.sendingTest = false;
       },
     });
+  }
+
+  runDiagnostic(): void {
+    this.diagnosing = true;
+    this.emailService.diagnose().subscribe({
+      next: (res) => {
+        this.diagnosticResult = res;
+        this.showDiagnostic = true;
+        this.diagnosing = false;
+      },
+      error: (err) => {
+        this.diagnosticResult = { success: false, error: err.message || 'Failed to run diagnostic' };
+        this.showDiagnostic = true;
+        this.diagnosing = false;
+      },
+    });
+  }
+
+  closeDiagnostic(): void {
+    this.showDiagnostic = false;
+    this.diagnosticResult = null;
   }
 
   getStatusClass(status: string): string {

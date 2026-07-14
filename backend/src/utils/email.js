@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const EmailLog = require('../models/EmailLog');
 
-const createTransporter = () => {
+const createTransporter = (debugMode = false) => {
   if (process.env.SMTP_USER && process.env.SMTP_USER !== 'your-email@gmail.com') {
     const port = parseInt(process.env.SMTP_PORT) || 587;
     return nodemailer.createTransport({
@@ -9,14 +9,15 @@ const createTransporter = () => {
       port,
       secure: port === 465,
       requireTLS: port === 587,
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-      logger: process.env.NODE_ENV === 'development',
-      debug: process.env.NODE_ENV === 'development',
+      logger: true,
+      debug: debugMode || process.env.NODE_ENV === 'development' || process.env.SMTP_DEBUG === 'true',
     });
   }
 
@@ -37,7 +38,7 @@ const sendEmail = async ({ to, subject, html, type, relatedId }) => {
       html,
     });
 
-    console.log(`Email sent to ${to}: ${info.messageId}`);
+    console.log(`[EMAIL] Sent to ${to}: ${info.messageId}`);
 
     await EmailLog.create({
       to,
@@ -50,8 +51,15 @@ const sendEmail = async ({ to, subject, html, type, relatedId }) => {
 
     return true;
   } catch (error) {
-    console.error('Email send error:', error.message);
-    if (error.response) console.error('SMTP response:', error.response);
+    const details = {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode,
+    };
+
+    console.error('[EMAIL] FAILED:', JSON.stringify(details, null, 2));
 
     await EmailLog.create({
       to,
@@ -59,7 +67,7 @@ const sendEmail = async ({ to, subject, html, type, relatedId }) => {
       type: type || 'general',
       relatedId: relatedId || null,
       status: 'failed',
-      error: error.message,
+      error: JSON.stringify(details),
     });
 
     return false;
