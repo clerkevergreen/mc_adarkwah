@@ -14,7 +14,7 @@ import { CurrencyService, CurrencyCode } from '../../services/currency.service';
   styleUrls: ['./footer.component.scss'],
 })
 export class FooterComponent implements OnInit {
-  aboutInfo: any = {};
+  aboutInfo: any = { socialMedia: {} };
   currentYear = new Date().getFullYear();
   subscribeEmail = '';
   subscribeMessage = '';
