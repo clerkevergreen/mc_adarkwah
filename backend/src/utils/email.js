@@ -1,116 +1,113 @@
 const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 const EmailLog = require('../models/EmailLog');
 
-const createTransporter = (debugMode = false) => {
+const fromAddress = `"MC Adarkwah" <${process.env.SMTP_USER || process.env.CONTACT_EMAIL || 'noreply@mcadarkwah.com'}>`;
+
+/* ---------- SendGrid (primary) ---------- */
+
+const initSendGrid = () => {
+  if (!process.env.SENDGRID_API_KEY) return false;
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  return true;
+};
+
+const sendViaSendGrid = async (msg) => {
+  if (!initSendGrid()) return false;
+  await sgMail.send({ ...msg, from: fromAddress });
+  return true;
+};
+
+/* ---------- SMTP (fallback) ---------- */
+
+const sendViaSmtp = async (msg) => {
   if (!process.env.SMTP_USER || process.env.SMTP_USER === 'your-email@gmail.com') {
-    return nodemailer.createTransport({
-      host: 'localhost',
-      port: 1025,
-      ignoreTLS: true,
-    });
+    throw new Error('SMTP not configured');
   }
 
   const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const configuredPort = parseInt(process.env.SMTP_PORT) || 587;
-  const port = configuredPort;
-
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    requireTLS: port === 587,
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-    logger: true,
-    debug: debugMode || process.env.NODE_ENV === 'development' || process.env.SMTP_DEBUG === 'true',
-  });
-};
-
-const trySend = async (port, { to, subject, html, type, relatedId }) => {
-  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    requireTLS: port === 587,
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-  const info = await transporter.sendMail({
-    from: `"MC Adarkwah" <${process.env.SMTP_USER || process.env.CONTACT_EMAIL || 'noreply@mcadarkwah.com'}>`,
-    to,
-    subject,
-    html,
-  });
-  return info;
-};
-
-const sendEmail = async ({ to, subject, html, type, relatedId }) => {
-  if (!process.env.SMTP_USER || process.env.SMTP_USER === 'your-email@gmail.com') {
-    console.log('[EMAIL] Skipped — SMTP not configured');
-    return false;
-  }
-
   const configPort = parseInt(process.env.SMTP_PORT) || 587;
   const portsToTry = configPort === 587 ? [587] : [configPort, 587];
   let lastError = null;
 
   for (const port of portsToTry) {
     try {
-      const info = await trySend(port, { to, subject, html, type, relatedId });
-      console.log(`[EMAIL] Sent to ${to} (port ${port}): ${info.messageId}`);
-
-      await EmailLog.create({
-        to,
-        subject,
-        type: type || 'general',
-        relatedId: relatedId || null,
-        status: 'sent',
-        messageId: info.messageId,
+      const transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465,
+        requireTLS: port === 587,
+        connectionTimeout: 15000,
+        greetingTimeout: 15000,
+        socketTimeout: 20000,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
       });
-
+      const info = await transporter.sendMail({ ...msg, from: fromAddress });
       if (port !== configPort) {
         console.log(`[EMAIL] Used fallback port ${port} (configured: ${configPort})`);
       }
-
-      return true;
-    } catch (error) {
-      lastError = error;
-      console.warn(`[EMAIL] Port ${port} failed for ${to}: ${error.message}`);
+      return info;
+    } catch (err) {
+      lastError = err;
+      console.warn(`[EMAIL] SMTP port ${port} failed: ${err.message}`);
     }
   }
 
-  const details = {
-    message: lastError.message,
-    code: lastError.code,
-    command: lastError.command,
-    response: lastError.response,
-    responseCode: lastError.responseCode,
-  };
-
-  console.error('[EMAIL] FAILED on all ports:', JSON.stringify(details, null, 2));
-
-  await EmailLog.create({
-    to,
-    subject,
-    type: type || 'general',
-    relatedId: relatedId || null,
-    status: 'failed',
-    error: JSON.stringify(details),
-  });
-
-  return false;
+  throw lastError;
 };
+
+/* ---------- Core send ---------- */
+
+const sendEmail = async ({ to, subject, html, type, relatedId }) => {
+  const useSendGrid = initSendGrid();
+
+  try {
+    let info;
+
+    if (useSendGrid) {
+      await sendViaSendGrid({ to, subject, html });
+      info = { messageId: 'sendgrid-' + Date.now() };
+      console.log(`[EMAIL] Sent via SendGrid to ${to}`);
+    } else {
+      info = await sendViaSmtp({ to, subject, html });
+      console.log(`[EMAIL] Sent via SMTP to ${to}: ${info.messageId}`);
+    }
+
+    await EmailLog.create({
+      to,
+      subject,
+      type: type || 'general',
+      relatedId: relatedId || null,
+      status: 'sent',
+      messageId: info.messageId,
+    });
+
+    return true;
+  } catch (error) {
+    const details = {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode,
+    };
+
+    console.error(`[EMAIL] FAILED${useSendGrid ? ' (SendGrid)' : ' (SMTP)'}:`, JSON.stringify(details, null, 2));
+
+    await EmailLog.create({
+      to,
+      subject,
+      type: type || 'general',
+      relatedId: relatedId || null,
+      status: 'failed',
+      error: JSON.stringify(details),
+    });
+
+    return false;
+  }
+};
+
+/* ---------- Template helpers ---------- */
 
 const sendBookingConfirmation = async (booking) => {
   const html = `

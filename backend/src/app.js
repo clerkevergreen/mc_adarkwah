@@ -96,118 +96,50 @@ app.use('/api/email', require('./routes/email'));
 /* =========================
    SMTP DIAGNOSTIC
 ========================= */
-const tryTcpConnect = (host, port, timeout = 8000) => {
-  return new Promise((resolve, reject) => {
-    const socket = new net.Socket();
-    socket.setTimeout(timeout);
-    socket.on('connect', () => { socket.destroy(); resolve(); });
-    socket.on('error', (err) => { socket.destroy(); reject(err); });
-    socket.on('timeout', () => { socket.destroy(); reject(new Error('Connection timeout')); });
-    socket.connect(port, host);
-  });
-};
-
 app.get('/api/smtp-diagnose', async (req, res) => {
-  const host = process.env.SMTP_HOST;
-  const configPort = parseInt(process.env.SMTP_PORT) || 587;
-  const user = process.env.SMTP_USER;
+  const sgKey = process.env.SENDGRID_API_KEY;
   const steps = [];
 
   // Step 1: Config check
   steps.push({
     step: 'Configuration',
     details: {
-      host,
-      port: configPort,
-      user: user || '(not set)',
-      passLength: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0,
+      sendgridKeySet: !!sgKey,
+      sendgridKeyPrefix: sgKey ? sgKey.substring(0, 8) + '...' : '(not set)',
+      smtpHost: process.env.SMTP_HOST || '(not set)',
+      smtpPort: process.env.SMTP_PORT || '(not set)',
+      smtpUser: process.env.SMTP_USER || '(not set)',
       contactEmail: process.env.CONTACT_EMAIL || '(not set)',
-      isDefaultUser: user === 'your-email@gmail.com',
     },
   });
 
-  if (!host || !user || user === 'your-email@gmail.com') {
-    steps.push({ step: 'DNS Lookup', status: 'skipped', reason: 'SMTP not configured' });
-    steps.push({ step: 'TCP Connect', status: 'skipped', reason: 'SMTP not configured' });
-    steps.push({ step: 'SMTP Auth', status: 'skipped', reason: 'SMTP not configured' });
-    return res.json({ success: false, steps });
-  }
-
-  // Step 2: DNS lookup
-  try {
-    const addresses = await new Promise((resolve, reject) => {
-      require('dns').resolve4(host, (err, addresses) => {
-        if (err) reject(err);
-        else resolve(addresses);
-      });
-    });
-    steps.push({ step: 'DNS Lookup', status: 'ok', details: { addresses } });
-  } catch (err) {
-    steps.push({ step: 'DNS Lookup', status: 'fail', error: err.message });
-    return res.json({ success: false, steps });
-  }
-
-  // Step 3: TCP connection — try configured port, then fallback to 587
-  const portsToTry = configPort === 587 ? [587] : [configPort, 587];
-  let connectedPort = null;
-  let tcpError = null;
-
-  for (const p of portsToTry) {
-    try {
-      await tryTcpConnect(host, p);
-      connectedPort = p;
-      break;
-    } catch (err) {
-      tcpError = err.message;
-    }
-  }
-
-  if (connectedPort) {
-    steps.push({ step: 'TCP Connect', status: 'ok', details: { host, port: connectedPort, note: connectedPort !== configPort ? `Used fallback port ${connectedPort} (configured: ${configPort})` : undefined } });
+  if (!sgKey) {
+    steps.push({ step: 'SendGrid', status: 'skipped', reason: 'SENDGRID_API_KEY not set' });
   } else {
-    steps.push({ step: 'TCP Connect', status: 'fail', error: tcpError });
-    return res.json({ success: false, steps });
-  }
-
-  // Step 4: SMTP handshake + auth
-  const authPortsToTry = connectedPort ? [connectedPort] : [configPort, 587];
-  let authResult = null;
-  let authError = null;
-
-  for (const p of authPortsToTry) {
     try {
-      const nodemailer = require('nodemailer');
-      const transporter = nodemailer.createTransport({
-        host,
-        port: p,
-        secure: p === 465,
-        requireTLS: p === 587,
-        connectionTimeout: 15000,
-        greetingTimeout: 15000,
-        auth: { user, pass: process.env.SMTP_PASS },
+      const https = require('https');
+      await new Promise((resolve, reject) => {
+        const req = https.get('https://api.sendgrid.com/v3/scopes', {
+          headers: { Authorization: `Bearer ${sgKey}` },
+        }, (res) => {
+          let data = '';
+          res.on('data', (c) => data += c);
+          res.on('end', () => {
+            if (res.statusCode === 200) resolve();
+            else reject(new Error(`SendGrid API returned ${res.statusCode}: ${data.substring(0, 200)}`));
+          });
+        });
+        req.on('error', reject);
+        req.setTimeout(10000, () => { req.destroy(); reject(new Error('SendGrid API timeout')); });
       });
-      authResult = await transporter.verify();
-      steps.push({
-        step: 'SMTP Auth',
-        status: 'ok',
-        details: { host, port: p, verifyResult: authResult, note: p !== configPort ? `Used port ${p} (configured: ${configPort})` : undefined },
-      });
-      return res.json({ success: true, steps });
+      steps.push({ step: 'SendGrid', status: 'ok', details: { transport: 'HTTPS (port 443) — bypasses Render port blocks' } });
     } catch (err) {
-      authError = { message: err.message, code: err.code, command: err.command, response: err.response, responseCode: err.responseCode };
+      steps.push({ step: 'SendGrid', status: 'fail', error: err.message });
+      return res.json({ success: false, steps });
     }
   }
 
-  steps.push({
-    step: 'SMTP Auth',
-    status: 'fail',
-    error: authError.message,
-    code: authError.code,
-    command: authError.command,
-    response: authError.response,
-    responseCode: authError.responseCode,
-  });
-  res.json({ success: false, steps });
+  res.json({ success: !!sgKey, steps });
 });
 
 /* =========================
