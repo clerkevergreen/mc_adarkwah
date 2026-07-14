@@ -45,7 +45,7 @@ export class EmailComponent implements OnInit {
     this.emailService.getStats().subscribe(s => this.stats.set(s));
 
     const params: Record<string, any> = {};
-    if (this.statusFilter !== 'all') params.status = this.statusFilter;
+    if (this.statusFilter !== 'all') params['status'] = this.statusFilter;
 
     this.emailService.getLogs(params).subscribe({
       next: (data) => { this.logs.set(data); this.loading = false; },
