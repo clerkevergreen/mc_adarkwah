@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 import { ApiService } from '../../services/api.service';
 import { CurrencyService, CurrencyCode } from '../../services/currency.service';
+import { ToastService } from '../../shared/services/toast.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -49,6 +50,8 @@ export class BookingComponent implements OnInit, OnDestroy {
     'Awards Night', 'Concert Hosting', 'Church Program', 'Private Event',
     'Special Ceremony', 'Other'
   ];
+
+  private toast = inject(ToastService);
 
   constructor(
     private api: ApiService,
@@ -96,11 +99,13 @@ export class BookingComponent implements OnInit, OnDestroy {
       next: () => {
         this.isSubmitting = false;
         this.isSubmitted = true;
+        this.toast.show('Booking request submitted successfully!', 'success');
         this.resetForm(form);
       },
       error: (err) => {
         this.isSubmitting = false;
         this.submitError = err.error?.message || 'Failed to submit booking. Please try again.';
+        this.toast.show(this.submitError, 'error');
       },
     });
   }
@@ -115,11 +120,13 @@ export class BookingComponent implements OnInit, OnDestroy {
       next: () => {
         this.isSubmitting = false;
         this.isSubmitted = true;
+        this.toast.show('Quote request submitted successfully!', 'success');
         this.resetQuoteForm(form);
       },
       error: (err) => {
         this.isSubmitting = false;
         this.submitError = err.error?.message || 'Failed to submit quote request. Please try again.';
+        this.toast.show(this.submitError, 'error');
       },
     });
   }

@@ -14,12 +14,14 @@ import { FAQ } from '../../models/faq.model';
 })
 export class FaqComponent implements OnInit {
   faqs: FAQ[] = [];
+  loading = true;
 
   constructor(private dataService: DataService, private seo: SeoService) {}
 
   ngOnInit(): void {
     this.dataService.getFAQs().subscribe(data => {
       this.faqs = data.map(f => ({ ...f, isOpen: false }));
+      this.loading = false;
       if (data.length > 0) {
         this.seo.setStructuredData({
           '@context': 'https://schema.org',

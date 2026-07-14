@@ -18,6 +18,7 @@ export class GalleryComponent implements OnInit {
   filteredItems: GalleryItem[] = [];
   lightboxOpen = false;
   lightboxIndex = 0;
+  loading = true;
 
   constructor(private dataService: DataService) {}
 
@@ -25,6 +26,7 @@ export class GalleryComponent implements OnInit {
     this.dataService.getGalleryItems().subscribe(data => {
       this.galleryItems = data;
       this.filterItems('all');
+      this.loading = false;
     });
     this.categories = this.dataService.getGalleryCategories();
   }

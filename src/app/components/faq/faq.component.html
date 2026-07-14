@@ -6,7 +6,22 @@
       <p class="section__desc">Find answers to common questions about booking, pricing, and services.</p>
     </div>
 
-    <div class="faq__list" appScrollReveal>
+    <div class="faq__list" appScrollReveal *ngIf="loading">
+      <div class="faq__item" *ngFor="let _ of [1,2,3,4]">
+        <div class="faq__question" style="cursor:default;">
+          <span class="faq__number skeleton" style="width:32px;height:32px;border-radius:8px;display:inline-block;"></span>
+          <span class="skeleton" style="flex:1;height:18px;display:inline-block;"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && faqs.length === 0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <h3>No FAQs Yet</h3>
+      <p>Frequently asked questions will be added soon.</p>
+    </div>
+
+    <div class="faq__list" appScrollReveal *ngIf="!loading && faqs.length > 0">
       <div class="faq__item" *ngFor="let faq of faqs; let i = index"
         [class.faq__item--open]="faq.isOpen">
         <button class="faq__question" (click)="toggleFAQ(faq.id)">

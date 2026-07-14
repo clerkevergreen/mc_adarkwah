@@ -6,7 +6,25 @@
       <p class="section__desc">Stay informed with the latest news, announcements, and event updates from MC Adarkwah.</p>
     </div>
 
-    <div class="news__grid">
+    <div *ngIf="loading" class="news__grid">
+      <div class="skeleton-card" *ngFor="let _ of [1,2,3]">
+        <div class="skeleton-card__image"></div>
+        <div class="skeleton-card__body">
+          <div class="skeleton-card__line--short"></div>
+          <div class="skeleton-card__title"></div>
+          <div class="skeleton-card__line--full"></div>
+          <div class="skeleton-card__line--medium"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && newsItems.length === 0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-4 0v-9"/><polyline points="2 15 6 15 6 10 10 10"/></svg>
+      <h3>No News Yet</h3>
+      <p>Latest updates and announcements will appear here.</p>
+    </div>
+
+    <div class="news__grid" *ngIf="!loading && newsItems.length > 0">
       <div class="news__card" *ngFor="let item of newsItems; let i = index"
         appScrollReveal [delay]="i * 100">
         <div class="news__image">

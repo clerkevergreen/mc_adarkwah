@@ -14,6 +14,7 @@ import { Testimonial } from '../../models/event.model';
 export class TestimonialsComponent implements OnInit, OnDestroy {
   testimonials: Testimonial[] = [];
   currentIndex = 0;
+  loading = true;
   private autoSlideInterval: any;
 
   constructor(private dataService: DataService) {}
@@ -21,6 +22,7 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.dataService.getTestimonials().subscribe(data => {
       this.testimonials = data;
+      this.loading = false;
       this.startAutoSlide();
     });
   }

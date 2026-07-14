@@ -6,7 +6,29 @@
       <p class="section__desc">Hear from clients who have experienced the magic of MC Adarkwah at their events.</p>
     </div>
 
-    <div class="testimonials__carousel" appScrollReveal>
+    <div *ngIf="loading" class="testimonials__carousel" appScrollReveal>
+      <div class="testimonials__track" style="max-width:600px;margin:0 auto;">
+        <div class="testimonials__card" style="text-align:center;padding:2rem;">
+          <div class="skeleton" style="width:200px;height:24px;margin:0 auto 1rem;"></div>
+          <div class="skeleton" style="width:100%;height:80px;margin-bottom:1.5rem;"></div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;">
+            <div class="skeleton" style="width:50px;height:50px;border-radius:50%;"></div>
+            <div>
+              <div class="skeleton" style="width:120px;height:16px;margin-bottom:0.3rem;"></div>
+              <div class="skeleton" style="width:80px;height:12px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && testimonials.length === 0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <h3>No Testimonials Yet</h3>
+      <p>Client testimonials will appear here once added.</p>
+    </div>
+
+    <div class="testimonials__carousel" appScrollReveal *ngIf="!loading && testimonials.length > 0">
       <button class="testimonials__nav testimonials__nav--prev" (click)="prev()" aria-label="Previous">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
@@ -42,7 +64,7 @@
       </button>
     </div>
 
-    <div class="testimonials__dots">
+    <div class="testimonials__dots" *ngIf="testimonials.length > 0">
       <button class="testimonials__dot" *ngFor="let t of testimonials; let i = index"
         [class.testimonials__dot--active]="i === currentIndex"
         (click)="goTo(i)" [attr.aria-label]="'Go to testimonial ' + (i + 1)"></button>

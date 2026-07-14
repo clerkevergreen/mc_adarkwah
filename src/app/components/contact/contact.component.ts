@@ -4,6 +4,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../../services/data.service';
 import { ApiService } from '../../services/api.service';
+import { ToastService } from '../../shared/services/toast.service';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
@@ -16,6 +17,7 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
 export class ContactComponent implements OnInit {
   private apiService = inject(ApiService);
   private sanitizer = inject(DomSanitizer);
+  private toast = inject(ToastService);
 
   contactInfo: any = {};
   formData = { name: '', email: '', subject: '', message: '' };
@@ -49,10 +51,12 @@ export class ContactComponent implements OnInit {
         this.submitted = true;
         this.submitting = false;
         this.formData = { name: '', email: '', subject: '', message: '' };
+        this.toast.show('Message sent successfully!', 'success');
       },
       error: () => {
         this.error = 'Failed to send message. Please try again.';
         this.submitting = false;
+        this.toast.show(this.error, 'error');
       },
     });
   }

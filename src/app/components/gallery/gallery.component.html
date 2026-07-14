@@ -6,7 +6,7 @@
       <p class="section__desc">Browse through memorable moments captured at events hosted by MC Adarkwah.</p>
     </div>
 
-    <div class="gallery__filters" appScrollReveal>
+    <div class="gallery__filters" appScrollReveal *ngIf="!loading && galleryItems.length > 0">
       <button class="gallery__filter-btn" *ngFor="let cat of categories"
         [class.active]="activeCategory === cat.value"
         (click)="filterItems(cat.value)">
@@ -14,7 +14,19 @@
       </button>
     </div>
 
-    <div class="gallery__grid" appScrollReveal>
+    <div *ngIf="loading" class="gallery__grid" appScrollReveal>
+      <div class="gallery__item" *ngFor="let _ of [1,2,3,4,5,6,7,8]">
+        <div class="skeleton" style="width:100%;height:100%;border-radius:12px;"></div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && galleryItems.length === 0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <h3>No Gallery Images</h3>
+      <p>Gallery images will appear here once added.</p>
+    </div>
+
+    <div class="gallery__grid" appScrollReveal *ngIf="!loading && galleryItems.length > 0">
       <div class="gallery__item" *ngFor="let item of filteredItems; let i = index"
         [class.gallery__item--wide]="i % 5 === 0"
         [class.gallery__item--tall]="i % 7 === 0"

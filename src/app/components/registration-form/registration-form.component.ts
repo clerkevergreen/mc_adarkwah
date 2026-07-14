@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ToastService } from '../../shared/services/toast.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -25,11 +26,20 @@ import { environment } from '../../../environments/environment';
           <div class="reg-form">
             <div class="reg-field">
               <label>Full Name *</label>
-              <input type="text" [(ngModel)]="form.fullName" name="fullName" required placeholder="Your full name" />
+              <input type="text" #rName="ngModel" [(ngModel)]="form.fullName" name="fullName" required placeholder="Your full name"
+                [class.reg-field__input--error]="rName.invalid && (rName.dirty || rName.touched)" />
+              <div class="reg-field__error" *ngIf="rName.invalid && (rName.dirty || rName.touched)">
+                <span *ngIf="rName.errors?.['required']">Name is required</span>
+              </div>
             </div>
             <div class="reg-field">
               <label>Email *</label>
-              <input type="email" [(ngModel)]="form.email" name="email" required placeholder="your@email.com" />
+              <input type="email" #rEmail="ngModel" [(ngModel)]="form.email" name="email" required placeholder="your@email.com"
+                [class.reg-field__input--error]="rEmail.invalid && (rEmail.dirty || rEmail.touched)" />
+              <div class="reg-field__error" *ngIf="rEmail.invalid && (rEmail.dirty || rEmail.touched)">
+                <span *ngIf="rEmail.errors?.['required']">Email is required</span>
+                <span *ngIf="rEmail.errors?.['email']">Enter a valid email</span>
+              </div>
             </div>
             <div class="reg-field">
               <label>Phone</label>
@@ -91,6 +101,9 @@ import { environment } from '../../../environments/environment';
     }
     .reg-field input:focus, .reg-field textarea:focus { border-color: rgba(201,168,76,0.4); }
     .reg-field textarea { resize: vertical; font-family: inherit; }
+    .reg-field__input--error { border-color: #ef4444 !important; }
+    .reg-field__input--error:focus { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(#ef4444, 0.15) !important; }
+    .reg-field__error { color: #ef4444; font-size: 0.7rem; margin-top: 0.2rem; }
     .reg-error { color: #ef4444; font-size: 0.8rem; }
     .reg-submit {
       width: 100%; padding: 0.85rem; background: #C9A84C; color: #1a1a1a;
@@ -117,6 +130,7 @@ export class RegistrationFormComponent {
   @Output() close = new EventEmitter<void>();
 
   private http = inject(HttpClient);
+  private toast = inject(ToastService);
   private apiUrl = environment.apiUrl;
 
   form = { fullName: '', email: '', phone: '', message: '' };
@@ -138,8 +152,8 @@ export class RegistrationFormComponent {
       message: this.form.message,
       event: this.eventId,
     }).subscribe({
-      next: () => { this.saving = false; this.submitted = true; },
-      error: () => { this.saving = false; this.error = 'Something went wrong. Please try again.'; },
+      next: () => { this.saving = false; this.submitted = true; this.toast.show('Registration successful!', 'success'); },
+      error: () => { this.saving = false; this.error = 'Something went wrong. Please try again.'; this.toast.show(this.error, 'error'); },
     });
   }
 }

@@ -16,6 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class ServicesComponent implements OnInit, OnDestroy {
   services: Service[] = [];
   selectedService: Service | null = null;
+  loading = true;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -35,7 +36,10 @@ export class ServicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dataService.getServices().subscribe(data => this.services = data);
+    this.dataService.getServices().subscribe(data => {
+      this.services = data;
+      this.loading = false;
+    });
   }
 
   selectService(service: Service): void {

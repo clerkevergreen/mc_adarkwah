@@ -52,17 +52,32 @@
           <form (ngSubmit)="submitForm()" #contactForm="ngForm">
             <div class="contact__form-row">
               <div class="contact__form-group">
-                <input class="contact__form-input" type="text" [(ngModel)]="formData.name" name="name" placeholder="Your Name" required />
+                <input class="contact__form-input" type="text" #cName="ngModel" [(ngModel)]="formData.name" name="name" placeholder="Your Name" required
+                  [class.contact__form-input--error]="cName.invalid && (cName.dirty || cName.touched)" />
+                @if (cName.invalid && (cName.dirty || cName.touched)) {
+                  <div class="contact__field-error" [style.margin-top]="'0.2rem'">Name is required</div>
+                }
               </div>
               <div class="contact__form-group">
-                <input class="contact__form-input" type="email" [(ngModel)]="formData.email" name="email" placeholder="Your Email" required />
+                <input class="contact__form-input" type="email" #cEmail="ngModel" [(ngModel)]="formData.email" name="email" placeholder="Your Email" required
+                  [class.contact__form-input--error]="cEmail.invalid && (cEmail.dirty || cEmail.touched)" />
+                @if (cEmail.invalid && (cEmail.dirty || cEmail.touched)) {
+                  <div class="contact__field-error" [style.margin-top]="'0.2rem'">
+                    @if (cEmail.errors?.['required']) { Email is required }
+                    @if (cEmail.errors?.['email']) { Enter a valid email }
+                  </div>
+                }
               </div>
             </div>
             <div class="contact__form-group">
               <input class="contact__form-input" type="text" [(ngModel)]="formData.subject" name="subject" placeholder="Subject (optional)" />
             </div>
             <div class="contact__form-group">
-              <textarea class="contact__form-input contact__form-textarea" [(ngModel)]="formData.message" name="message" placeholder="Your Message" rows="4" required></textarea>
+              <textarea class="contact__form-input contact__form-textarea" #cMessage="ngModel" [(ngModel)]="formData.message" name="message" placeholder="Your Message" rows="4" required
+                [class.contact__form-input--error]="cMessage.invalid && (cMessage.dirty || cMessage.touched)"></textarea>
+              @if (cMessage.invalid && (cMessage.dirty || cMessage.touched)) {
+                <div class="contact__field-error">Message is required</div>
+              }
             </div>
             @if (error) {
               <div class="contact__form-error">{{ error }}</div>

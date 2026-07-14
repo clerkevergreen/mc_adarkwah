@@ -12,10 +12,14 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
 })
 export class SponsorsComponent implements OnInit {
   sponsors: any[] = [];
+  loading = true;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getSponsors().subscribe(data => this.sponsors = data);
+    this.dataService.getSponsors().subscribe(data => {
+      this.sponsors = data;
+      this.loading = false;
+    });
   }
 }

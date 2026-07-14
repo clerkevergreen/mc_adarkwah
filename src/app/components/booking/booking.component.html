@@ -60,35 +60,56 @@
         <div class="booking__form-row">
           <div class="booking__form-group">
             <label>Full Name *</label>
-            <input type="text" name="fullName" [(ngModel)]="bookingData.fullName" required
-              placeholder="Your full name" class="booking__input" />
+            <input type="text" name="fullName" #fullName="ngModel" [(ngModel)]="bookingData.fullName" required
+              placeholder="Your full name" class="booking__input"
+              [class.booking__input--error]="fullName.invalid && (fullName.dirty || fullName.touched)" />
+            <div class="booking__field-error" *ngIf="fullName.invalid && (fullName.dirty || fullName.touched)">
+              <span *ngIf="fullName.errors?.['required']">Full name is required</span>
+            </div>
           </div>
           <div class="booking__form-group">
             <label>Email Address *</label>
-            <input type="email" name="email" [(ngModel)]="bookingData.email" required email
-              placeholder="your@email.com" class="booking__input" />
+            <input type="email" name="email" #email="ngModel" [(ngModel)]="bookingData.email" required email
+              placeholder="your@email.com" class="booking__input"
+              [class.booking__input--error]="email.invalid && (email.dirty || email.touched)" />
+            <div class="booking__field-error" *ngIf="email.invalid && (email.dirty || email.touched)">
+              <span *ngIf="email.errors?.['required']">Email is required</span>
+              <span *ngIf="email.errors?.['email']">Enter a valid email address</span>
+            </div>
           </div>
         </div>
 
         <div class="booking__form-row">
           <div class="booking__form-group">
             <label>Phone Number *</label>
-            <input type="tel" name="phone" [(ngModel)]="bookingData.phone" required
-                 placeholder="+44 XX XXX XXXX" class="booking__input" />
+            <input type="tel" name="phone" #phone="ngModel" [(ngModel)]="bookingData.phone" required
+                 placeholder="+44 XX XXX XXXX" class="booking__input"
+                 [class.booking__input--error]="phone.invalid && (phone.dirty || phone.touched)" />
+            <div class="booking__field-error" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
+              <span *ngIf="phone.errors?.['required']">Phone number is required</span>
+            </div>
             </div>
             <div class="booking__form-group">
               <label>Event Type *</label>
-            <select name="eventType" [(ngModel)]="bookingData.eventType" required class="booking__input">
+            <select name="eventType" #eventType="ngModel" [(ngModel)]="bookingData.eventType" required class="booking__input"
+              [class.booking__input--error]="eventType.invalid && (eventType.dirty || eventType.touched)">
               <option value="" disabled>Select event type</option>
               <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
             </select>
+            <div class="booking__field-error" *ngIf="eventType.invalid && (eventType.dirty || eventType.touched)">
+              <span *ngIf="eventType.errors?.['required']">Please select an event type</span>
+            </div>
           </div>
         </div>
 
         <div class="booking__form-row">
           <div class="booking__form-group">
             <label>Event Date *</label>
-            <input type="date" name="eventDate" [(ngModel)]="bookingData.eventDate" required class="booking__input" />
+            <input type="date" name="eventDate" #eventDate="ngModel" [(ngModel)]="bookingData.eventDate" required class="booking__input"
+              [class.booking__input--error]="eventDate.invalid && (eventDate.dirty || eventDate.touched)" />
+            <div class="booking__field-error" *ngIf="eventDate.invalid && (eventDate.dirty || eventDate.touched)">
+              <span *ngIf="eventDate.errors?.['required']">Event date is required</span>
+            </div>
           </div>
           <div class="booking__form-group">
             <label>Event Location</label>
@@ -119,8 +140,11 @@
         </div>
 
         <div class="booking__form-checkbox">
-          <input type="checkbox" name="agreeToTerms" [(ngModel)]="bookingData.agreeToTerms" required />
+          <input type="checkbox" name="agreeToTerms" #agreeToTerms="ngModel" [(ngModel)]="bookingData.agreeToTerms" required />
           <label>I agree to the terms and conditions and privacy policy *</label>
+        </div>
+        <div class="booking__field-error" *ngIf="agreeToTerms.invalid && (agreeToTerms.dirty || agreeToTerms.touched)">
+          <span *ngIf="agreeToTerms.errors?.['required']">You must agree to the terms</span>
         </div>
 
         <div class="booking__form-actions">
@@ -147,28 +171,45 @@
           <div class="booking__form-row">
             <div class="booking__form-group">
               <label>Full Name *</label>
-              <input type="text" name="name" [(ngModel)]="quoteData.name" required
-                placeholder="Your full name" class="booking__input" />
+              <input type="text" name="name" #qName="ngModel" [(ngModel)]="quoteData.name" required
+                placeholder="Your full name" class="booking__input"
+                [class.booking__input--error]="qName.invalid && (qName.dirty || qName.touched)" />
+              <div class="booking__field-error" *ngIf="qName.invalid && (qName.dirty || qName.touched)">
+                <span *ngIf="qName.errors?.['required']">Name is required</span>
+              </div>
             </div>
             <div class="booking__form-group">
               <label>Email Address *</label>
-              <input type="email" name="email" [(ngModel)]="quoteData.email" required email
-                placeholder="your@email.com" class="booking__input" />
+              <input type="email" name="email" #qEmail="ngModel" [(ngModel)]="quoteData.email" required email
+                placeholder="your@email.com" class="booking__input"
+                [class.booking__input--error]="qEmail.invalid && (qEmail.dirty || qEmail.touched)" />
+              <div class="booking__field-error" *ngIf="qEmail.invalid && (qEmail.dirty || qEmail.touched)">
+                <span *ngIf="qEmail.errors?.['required']">Email is required</span>
+                <span *ngIf="qEmail.errors?.['email']">Enter a valid email address</span>
+              </div>
             </div>
           </div>
 
           <div class="booking__form-row">
             <div class="booking__form-group">
               <label>Phone Number *</label>
-              <input type="tel" name="phone" [(ngModel)]="quoteData.phone" required
-                placeholder="+44 XX XXX XXXX" class="booking__input" />
+              <input type="tel" name="phone" #qPhone="ngModel" [(ngModel)]="quoteData.phone" required
+                placeholder="+44 XX XXX XXXX" class="booking__input"
+                [class.booking__input--error]="qPhone.invalid && (qPhone.dirty || qPhone.touched)" />
+              <div class="booking__field-error" *ngIf="qPhone.invalid && (qPhone.dirty || qPhone.touched)">
+                <span *ngIf="qPhone.errors?.['required']">Phone number is required</span>
+              </div>
             </div>
             <div class="booking__form-group">
               <label>Event Type *</label>
-              <select name="eventType" [(ngModel)]="quoteData.eventType" required class="booking__input">
+              <select name="eventType" #qEventType="ngModel" [(ngModel)]="quoteData.eventType" required class="booking__input"
+                [class.booking__input--error]="qEventType.invalid && (qEventType.dirty || qEventType.touched)">
                 <option value="" disabled>Select event type</option>
                 <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
               </select>
+              <div class="booking__field-error" *ngIf="qEventType.invalid && (qEventType.dirty || qEventType.touched)">
+                <span *ngIf="qEventType.errors?.['required']">Please select an event type</span>
+              </div>
             </div>
           </div>
 

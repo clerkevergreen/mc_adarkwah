@@ -13,10 +13,14 @@ import { NewsItem } from '../../models/news.model';
 })
 export class NewsComponent implements OnInit {
   newsItems: NewsItem[] = [];
+  loading = true;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getNewsItems().subscribe(data => this.newsItems = data);
+    this.dataService.getNewsItems().subscribe(data => {
+      this.newsItems = data;
+      this.loading = false;
+    });
   }
 }

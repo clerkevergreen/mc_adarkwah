@@ -16,12 +16,20 @@ import { Event } from '../../models/event.model';
 export class EventsComponent implements OnInit {
   upcomingEvents: Event[] = [];
   featuredEvents: Event[] = [];
+  loadingFeatured = true;
+  loadingUpcoming = true;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getUpcomingEvents().subscribe(data => this.upcomingEvents = data);
-    this.dataService.getFeaturedEvents().subscribe(data => this.featuredEvents = data);
+    this.dataService.getUpcomingEvents().subscribe(data => {
+      this.upcomingEvents = data;
+      this.loadingUpcoming = false;
+    });
+    this.dataService.getFeaturedEvents().subscribe(data => {
+      this.featuredEvents = data;
+      this.loadingFeatured = false;
+    });
   }
 
   scrollTo(section: string): void {

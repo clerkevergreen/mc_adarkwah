@@ -119,6 +119,8 @@
     font-size: 0.9rem;
     outline: none;
     transition: all 0.3s;
+    width: 100%;
+    box-sizing: border-box;
 
     &:focus {
       border-color: $gold;
@@ -133,6 +135,21 @@
       background: $dark;
       color: $white;
     }
+
+    &--error {
+      border-color: #ef4444;
+
+      &:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 2px rgba(#ef4444, 0.15);
+      }
+    }
+  }
+
+  &__field-error {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
   }
 
   &__textarea {
