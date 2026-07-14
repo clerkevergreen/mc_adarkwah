@@ -9,7 +9,11 @@ exports.createBooking = async (req, res, next) => {
     sendBookingConfirmation(booking);
     sendAdminNotification(booking);
 
-    res.status(201).json({ success: true, data: booking, message: 'Booking request received. We will contact you within 24 hours.' });
+    res.status(201).json({
+      success: true,
+      data: booking,
+      message: `Booking request received. Your reference code is ${booking.referenceCode}. We will contact you within 24 hours.`,
+    });
   } catch (error) {
     next(error);
   }

@@ -18,6 +18,7 @@
           <button class="navbar__currency-btn" [class.active]="currency === 'GHS'" (click)="currencyService.setCurrency('GHS')">₵ GHS</button>
           <button class="navbar__currency-btn" [class.active]="currency === 'USD'" (click)="currencyService.setCurrency('USD')">$ USD</button>
         </div>
+        <a class="navbar__portal-link navbar__portal-link--mobile" routerLink="/portal" (click)="closeMobileMenu()">Client Portal</a>
         <a class="btn btn--gold" (click)="scrollToSection('booking')">Book Now</a>
       </div>
     </div>
@@ -27,6 +28,7 @@
         <button class="navbar__currency-btn" [class.active]="currency === 'GHS'" (click)="currencyService.setCurrency('GHS')">₵</button>
         <button class="navbar__currency-btn" [class.active]="currency === 'USD'" (click)="currencyService.setCurrency('USD')">$</button>
       </div>
+      <a class="navbar__portal-link" routerLink="/portal">Portal</a>
       <a class="btn btn--gold btn--sm navbar__cta" (click)="scrollToSection('booking')">Book Now</a>
       <button class="navbar__hamburger" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen"
         aria-label="Toggle menu">

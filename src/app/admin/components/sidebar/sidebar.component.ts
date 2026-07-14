@@ -30,6 +30,8 @@ export class SidebarComponent {
     { label: 'Profile', route: '/admin/profile', icon: 'user' },
     { label: 'Events', route: '/admin/events', icon: 'calendar' },
     { label: 'Bookings', route: '/admin/bookings', icon: 'clipboard' },
+    { label: 'Availability', route: '/admin/availability', icon: 'calendar' },
+    { label: 'Email Logs', route: '/admin/email', icon: 'mail' },
     { label: 'Registrations', route: '/admin/registrations', icon: 'calendar' },
     { label: 'Services', route: '/admin/services', icon: 'star' },
     { label: 'Testimonials', route: '/admin/testimonials', icon: 'message-circle' },

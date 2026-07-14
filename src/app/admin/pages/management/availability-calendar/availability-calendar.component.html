@@ -1,0 +1,110 @@
+<div class="layout">
+  <app-sidebar></app-sidebar>
+  <div class="layout__main">
+    <app-topbar pageTitle="Availability Calendar"></app-topbar>
+    <div class="content">
+      <div class="avail">
+        <div class="avail__header">
+          <h1 class="avail__title">Availability Calendar</h1>
+          <div class="avail__actions">
+            <button class="btn btn--outline btn--sm" (click)="syncBookings()">Sync Bookings</button>
+          </div>
+        </div>
+
+        <div class="avail__legend">
+          <span class="avail__legend-item"><span class="avail__dot avail__dot--available"></span> Available</span>
+          <span class="avail__legend-item"><span class="avail__dot avail__dot--blocked"></span> Blocked</span>
+          <span class="avail__legend-item"><span class="avail__dot avail__dot--booked"></span> Booked</span>
+        </div>
+
+        @if (loading()) {
+          <div class="avail__loading">
+            @for (_ of [1,2,3,4]; track _) { <div class="skeleton-row"></div> }
+          </div>
+        } @else {
+          <div class="avail__calendar">
+            <div class="avail__nav">
+              <button class="avail__nav-btn" (click)="prevMonth()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <span class="avail__month">{{ viewYear }} - {{ viewMonth + 1 | number:'2.0' }}</span>
+              <button class="avail__nav-btn" (click)="nextMonth()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+
+            <div class="avail__weekdays">
+              @for (day of weekDays; track day) {
+                <span class="avail__weekday">{{ day }}</span>
+              }
+            </div>
+
+            <div class="avail__days">
+              @for (day of daysInMonth; track $index) {
+                @if (day === null) {
+                  <span class="avail__day avail__day--empty"></span>
+                } @else {
+                  @let entry = getEntryForDay(day);
+                  <button class="avail__day"
+                    [class.avail__day--today]="isToday(day)"
+                    [class.avail__day--past]="isPast(day)"
+                    [class.avail__day--available]="!isPast(day) && !entry"
+                    [class.avail__day--blocked]="entry?.status === 'blocked'"
+                    [class.avail__day--booked]="entry?.status === 'booked'"
+                    [disabled]="isPast(day)"
+                    (click)="selectDay(day)">
+                    {{ day }}
+                  </button>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="avail__summary">
+            <h3>Blocked Dates</h3>
+            @let blocked = entries().filter(e => e.status === 'blocked');
+            @if (blocked.length === 0) {
+              <p class="avail__empty">No blocked dates this month.</p>
+            } @else {
+              <div class="avail__list">
+                @for (entry of blocked; track entry.id) {
+                  <div class="avail__list-item">
+                    <span class="avail__list-date">{{ entry.date | date:'mediumDate' }}</span>
+                    <span class="avail__list-reason">{{ entry.reason || 'No reason given' }}</span>
+                    <button class="avail__list-unblock" (click)="deletingId = entry.id; showConfirm = true">Unblock</button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (showBlockForm) {
+  <div class="avail__overlay" (click)="cancelBlock()">
+    <div class="avail__dialog" (click)="$event.stopPropagation()">
+      <h3>Block Date</h3>
+      <p class="avail__dialog-date">{{ selectedDate | date:'fullDate' }}</p>
+      <div class="form-group">
+        <label class="form-label">Reason (optional)</label>
+        <input class="form-input" [(ngModel)]="blockReason" placeholder="e.g. Personal day, holiday" />
+      </div>
+      <div class="avail__dialog-actions">
+        <button class="btn btn--ghost" (click)="cancelBlock()">Cancel</button>
+        <button class="btn btn--gold" (click)="blockDate()">Block Date</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showConfirm) {
+  <app-confirm-dialog
+    title="Unblock Date"
+    message="Are you sure you want to unblock this date? It will become available for booking."
+    (confirm)="confirmUnblock()"
+    (cancel)="cancelDelete()"
+  ></app-confirm-dialog>
+}

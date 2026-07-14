@@ -180,6 +180,15 @@
     }
   }
 
+  &__portal-link {
+    color: rgba($white, 0.45); text-decoration: none; font-size: 0.8rem;
+    transition: color 0.3s; padding: 0.35rem 0;
+
+    &:hover { color: $gold; }
+
+    &--mobile { display: block; padding: 0.8rem 1rem; font-size: 0.9rem; }
+  }
+
   &__overlay {
     display: none;
   }

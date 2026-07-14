@@ -382,6 +382,15 @@ exports.statistic = {
   ],
 };
 
+exports.availability = {
+  block: [
+    body('dates').isArray({ min: 1 }).withMessage('Dates array is required'),
+    body('dates.*').isISO8601().withMessage('Each date must be a valid date'),
+    body('reason').optional().trim(),
+    validate,
+  ],
+};
+
 exports.profile = {
   update: [
     body('name').optional().trim(),

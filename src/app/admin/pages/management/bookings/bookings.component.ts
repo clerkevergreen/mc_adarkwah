@@ -152,6 +152,21 @@ export class BookingsComponent implements OnInit {
     this.onView(booking);
   }
 
+  downloadContract(booking: Booking): void {
+    this.bookingsService.downloadContract(booking.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `contract-${booking.fullName.replace(/\s+/g, '-').toLowerCase()}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.toast.show('Contract downloaded', 'success');
+      },
+      error: () => this.toast.show('Failed to download contract', 'error'),
+    });
+  }
+
   trackById(_index: number, item: Booking): string {
     return item.id;
   }

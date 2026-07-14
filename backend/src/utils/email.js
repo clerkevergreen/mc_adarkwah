@@ -1,18 +1,22 @@
 const nodemailer = require('nodemailer');
+const EmailLog = require('../models/EmailLog');
 
 const createTransporter = () => {
   if (process.env.SMTP_USER && process.env.SMTP_USER !== 'your-email@gmail.com') {
+    const port = parseInt(process.env.SMTP_PORT) || 587;
     return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT),
-      secure: process.env.SMTP_PORT === '465',
-      requireTLS: true,
-      connectionTimeout: 8000,
-      greetingTimeout: 8000,
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port,
+      secure: port === 465,
+      requireTLS: port === 587,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      logger: process.env.NODE_ENV === 'development',
+      debug: process.env.NODE_ENV === 'development',
     });
   }
 
@@ -23,21 +27,41 @@ const createTransporter = () => {
   });
 };
 
-const sendEmail = async ({ to, subject, html }) => {
+const sendEmail = async ({ to, subject, html, type, relatedId }) => {
   try {
     const transporter = createTransporter();
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: `"MC Adarkwah" <${process.env.SMTP_USER || process.env.CONTACT_EMAIL || 'noreply@mcadarkwah.com'}>`,
       to,
       subject,
       html,
     });
-    console.log(`Email sent to ${to}`);
+
+    console.log(`Email sent to ${to}: ${info.messageId}`);
+
+    await EmailLog.create({
+      to,
+      subject,
+      type: type || 'general',
+      relatedId: relatedId || null,
+      status: 'sent',
+      messageId: info.messageId,
+    });
+
     return true;
   } catch (error) {
     console.error('Email send error:', error.message);
     if (error.response) console.error('SMTP response:', error.response);
-    if (error.code) console.error('Error code:', error.code);
+
+    await EmailLog.create({
+      to,
+      subject,
+      type: type || 'general',
+      relatedId: relatedId || null,
+      status: 'failed',
+      error: error.message,
+    });
+
     return false;
   }
 };
@@ -64,7 +88,7 @@ const sendBookingConfirmation = async (booking) => {
       <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
     </div>
   `;
-  return sendEmail({ to: booking.email, subject: 'Booking Confirmation - MC Adarkwah', html });
+  return sendEmail({ to: booking.email, subject: 'Booking Confirmation - MC Adarkwah', html, type: 'booking_confirmation', relatedId: booking._id });
 };
 
 const sendContactNotification = async (contact) => {
@@ -78,7 +102,7 @@ const sendContactNotification = async (contact) => {
       <p style="color:#999;">${contact.message}</p>
     </div>
   `;
-  return sendEmail({ to: process.env.CONTACT_EMAIL, subject: `New Contact: ${contact.subject || 'No Subject'}`, html });
+  return sendEmail({ to: process.env.CONTACT_EMAIL, subject: `New Contact: ${contact.subject || 'No Subject'}`, html, type: 'contact_notification' });
 };
 
 const sendAdminNotification = async (booking) => {
@@ -94,7 +118,7 @@ const sendAdminNotification = async (booking) => {
       </table>
     </div>
   `;
-  return sendEmail({ to: process.env.CONTACT_EMAIL, subject: `New Booking: ${booking.fullName} - ${booking.eventType}`, html });
+  return sendEmail({ to: process.env.CONTACT_EMAIL, subject: `New Booking: ${booking.fullName} - ${booking.eventType}`, html, type: 'admin_booking_notification', relatedId: booking._id });
 };
 
 const sendBookingConfirmed = async (booking) => {
@@ -120,7 +144,7 @@ const sendBookingConfirmed = async (booking) => {
       <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
     </div>
   `;
-  return sendEmail({ to: booking.email, subject: '✓ Booking Confirmed - MC Adarkwah', html });
+  return sendEmail({ to: booking.email, subject: '✓ Booking Confirmed - MC Adarkwah', html, type: 'booking_confirmed', relatedId: booking._id });
 };
 
 const sendQuoteNotification = async (quote) => {
@@ -137,7 +161,7 @@ const sendQuoteNotification = async (quote) => {
       </table>
     </div>
   `;
-  return sendEmail({ to: process.env.CONTACT_EMAIL, subject: `New Quote Request: ${quote.name} - ${quote.eventType}`, html });
+  return sendEmail({ to: process.env.CONTACT_EMAIL, subject: `New Quote Request: ${quote.name} - ${quote.eventType}`, html, type: 'quote_notification', relatedId: quote._id });
 };
 
 const sendQuoteConfirmation = async (quote) => {
@@ -160,7 +184,7 @@ const sendQuoteConfirmation = async (quote) => {
       <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
     </div>
   `;
-  return sendEmail({ to: quote.email, subject: 'Quote Request Received - MC Adarkwah', html });
+  return sendEmail({ to: quote.email, subject: 'Quote Request Received - MC Adarkwah', html, type: 'quote_confirmation', relatedId: quote._id });
 };
 
 const sendQuoteStatusUpdate = async (quote) => {
@@ -193,7 +217,7 @@ const sendQuoteStatusUpdate = async (quote) => {
       <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
     </div>
   `;
-  return sendEmail({ to: quote.email, subject: `Quote ${quote.status.charAt(0).toUpperCase() + quote.status.slice(1)} - MC Adarkwah`, html });
+  return sendEmail({ to: quote.email, subject: `Quote ${quote.status.charAt(0).toUpperCase() + quote.status.slice(1)} - MC Adarkwah`, html, type: 'quote_status_update', relatedId: quote._id });
 };
 
 const sendRegistrationAdminNotification = async (registration, event) => {
@@ -209,7 +233,7 @@ const sendRegistrationAdminNotification = async (registration, event) => {
       </table>
     </div>
   `;
-  return sendEmail({ to: process.env.CONTACT_EMAIL, subject: `New Registration: ${registration.fullName} - ${event?.title || 'Event'}`, html });
+  return sendEmail({ to: process.env.CONTACT_EMAIL, subject: `New Registration: ${registration.fullName} - ${event?.title || 'Event'}`, html, type: 'registration_notification', relatedId: registration._id });
 };
 
 const sendRegistrationConfirmed = async (registration, event) => {
@@ -241,7 +265,7 @@ const sendRegistrationConfirmed = async (registration, event) => {
       <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
     </div>
   `;
-  return sendEmail({ to: registration.email, subject: `✓ Registration Confirmed - ${eventTitle} - MC Adarkwah`, html });
+  return sendEmail({ to: registration.email, subject: `✓ Registration Confirmed - ${eventTitle} - MC Adarkwah`, html, type: 'registration_confirmed', relatedId: registration._id });
 };
 
 const sendPasswordResetEmail = async (email, resetUrl) => {
@@ -262,7 +286,7 @@ const sendPasswordResetEmail = async (email, resetUrl) => {
       <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
     </div>
   `;
-  return sendEmail({ to: email, subject: 'Password Reset - MC Adarkwah Admin', html });
+  return sendEmail({ to: email, subject: 'Password Reset - MC Adarkwah Admin', html, type: 'password_reset' });
 };
 
 module.exports = { sendEmail, sendBookingConfirmation, sendContactNotification, sendAdminNotification, sendBookingConfirmed, sendQuoteNotification, sendQuoteConfirmation, sendQuoteStatusUpdate, sendRegistrationConfirmed, sendRegistrationAdminNotification, sendPasswordResetEmail };

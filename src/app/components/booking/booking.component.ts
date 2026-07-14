@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 import { ApiService } from '../../services/api.service';
 import { CurrencyService, CurrencyCode } from '../../services/currency.service';
@@ -10,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [CommonModule, FormsModule, ScrollRevealDirective],
+  imports: [CommonModule, FormsModule, RouterModule, ScrollRevealDirective],
   templateUrl: './booking.component.html',
   styleUrls: ['./booking.component.scss'],
 })
@@ -43,6 +44,11 @@ export class BookingComponent implements OnInit, OnDestroy {
   isSubmitted = false;
   submitError = '';
   currency: CurrencyCode = 'GHS';
+  today = new Date().toISOString().split('T')[0];
+  bookingReference = '';
+  blockedDates = new Set<string>();
+  bookingDateError = '';
+  loadingAvailability = true;
   private destroy$ = new Subject<void>();
 
   eventTypes = [
@@ -85,20 +91,46 @@ export class BookingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const today = new Date().toISOString().split('T')[0];
-    (document.querySelector('input[type="date"]') as HTMLInputElement)?.setAttribute('min', today);
+    this.api.getAvailability().subscribe({
+      next: data => {
+        for (const entry of data) {
+          if (entry.status === 'blocked' || entry.status === 'booked') {
+            this.blockedDates.add(entry.date);
+          }
+        }
+        this.loadingAvailability = false;
+      },
+      error: () => { this.loadingAvailability = false; },
+    });
+  }
+
+  onDateChange(dateStr: string): void {
+    this.bookingDateError = '';
+    this.bookingData.eventDate = dateStr;
+    if (dateStr && this.blockedDates.has(dateStr)) {
+      this.bookingDateError = 'This date is not available. Please select another date.';
+    }
+  }
+
+  isDateBlocked(dateStr: string): boolean {
+    return this.blockedDates.has(dateStr);
   }
 
   submitBooking(form: NgForm): void {
     if (form.invalid) return;
+    if (this.bookingData.eventDate && this.blockedDates.has(this.bookingData.eventDate)) {
+      this.bookingDateError = 'This date is not available. Please select another date.';
+      return;
+    }
 
     this.isSubmitting = true;
     this.submitError = '';
 
     this.api.submitBooking(this.bookingData as any).subscribe({
-      next: () => {
+      next: (res) => {
         this.isSubmitting = false;
         this.isSubmitted = true;
+        this.bookingReference = res.referenceCode || '';
         this.toast.show('Booking request submitted successfully!', 'success');
         this.resetForm(form);
       },

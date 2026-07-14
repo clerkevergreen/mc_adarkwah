@@ -68,4 +68,8 @@ export class BookingsService {
       .delete<ApiResponse<void>>(`${this.apiUrl}/bookings/${id}`)
       .pipe(map(res => undefined));
   }
+
+  downloadContract(id: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/contracts/${id}`, { responseType: 'blob' });
+  }
 }

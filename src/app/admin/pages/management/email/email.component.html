@@ -1,0 +1,60 @@
+<div class="layout">
+  <app-sidebar (toggle)="sidebarCollapsed = !sidebarCollapsed"></app-sidebar>
+  @if (sidebarCollapsed) {
+    <div class="layout__sidebar-backdrop" (click)="sidebarCollapsed = false"></div>
+  }
+
+  <div class="layout__main">
+    <app-topbar pageTitle="Email Logs"></app-topbar>
+
+    <div class="layout__content">
+      <div class="page">
+        <div class="page__toolbar">
+          <div class="page__stats">
+            <div class="page__stat">
+              <span class="page__stat-value" style="color: #22c55e;">{{ stats().sent }}</span>
+              <span class="page__stat-label">Sent</span>
+            </div>
+            <div class="page__stat">
+              <span class="page__stat-value" style="color: #ef4444;">{{ stats().failed }}</span>
+              <span class="page__stat-label">Failed</span>
+            </div>
+            <div class="page__stat">
+              <span class="page__stat-value">{{ stats().total }}</span>
+              <span class="page__stat-label">Total</span>
+            </div>
+          </div>
+
+          <button class="btn btn--gold btn--sm" (click)="openTestModal()">Send Test</button>
+        </div>
+
+        <div class="page__chips">
+          <button class="page__chip" [class.page__chip--active]="statusFilter === 'all'" (click)="filterChange('all')">All</button>
+          <button class="page__chip" [class.page__chip--active]="statusFilter === 'sent'" (click)="filterChange('sent')">Sent</button>
+          <button class="page__chip" [class.page__chip--active]="statusFilter === 'failed'" (click)="filterChange('failed')">Failed</button>
+        </div>
+
+        <app-data-table
+          [columns]="columns"
+          [rows]="logs()"
+          [loading]="loading"
+        ></app-data-table>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (showTestModal) {
+  <app-modal title="Send Test Email" size="sm" (close)="showTestModal = false">
+    <div style="padding: 0.5rem 0;">
+      <label style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.7);margin-bottom:0.4rem;">Recipient Email</label>
+      <input type="email" class="form-input" [(ngModel)]="testEmail" placeholder="you@example.com" />
+    </div>
+    <div slot="footer" style="display:flex;gap:0.75rem;justify-content:flex-end;">
+      <button class="btn btn--ghost" (click)="showTestModal = false">Cancel</button>
+      <button class="btn btn--gold" (click)="sendTest()" [disabled]="!testEmail || sendingTest">
+        {{ sendingTest ? 'Sending...' : 'Send Test' }}
+      </button>
+    </div>
+  </app-modal>
+}

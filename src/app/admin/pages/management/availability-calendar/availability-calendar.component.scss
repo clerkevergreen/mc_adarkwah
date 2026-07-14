@@ -1,0 +1,112 @@
+@use '../../../../styles/variables' as *;
+
+.avail {
+  &__header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+  }
+
+  &__title { font-family: $font-heading; color: $white; font-size: 1.4rem; margin: 0; }
+
+  &__legend {
+    display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+  }
+
+  &__legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: rgba($white, 0.6); }
+
+  &__dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+    &--available { background: #22c55e; }
+    &--blocked { background: #ef4444; }
+    &--booked { background: #d4a84b; }
+  }
+
+  &__calendar {
+    background: rgba($white, 0.02); border: 1px solid rgba($gold, 0.1);
+    border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;
+  }
+
+  &__nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  &__nav-btn {
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    background: rgba($white, 0.04); border: 1px solid rgba($gold, 0.12);
+    border-radius: 8px; color: rgba($white, 0.6); cursor: pointer; transition: all 0.2s;
+    &:hover { background: rgba($gold, 0.1); color: $gold; }
+  }
+
+  &__month { font-family: $font-heading; color: $white; font-size: 1.1rem; }
+
+  &__weekdays {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px;
+  }
+
+  &__weekday {
+    text-align: center; font-size: 0.75rem; color: rgba($white, 0.35);
+    padding: 0.4rem 0; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  &__days {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+  }
+
+  &__day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-size: 0.85rem; cursor: pointer; border: none;
+    background: transparent; color: rgba($white, 0.7); transition: all 0.15s;
+    position: relative;
+
+    &--empty { cursor: default; }
+    &--past { opacity: 0.25; cursor: not-allowed; }
+
+    &--today { font-weight: 700; color: $gold; box-shadow: inset 0 0 0 1px rgba($gold, 0.3); }
+    &--available { &:hover { background: rgba(#22c55e, 0.12); } }
+    &--blocked { background: rgba(#ef4444, 0.15); color: #ef4444; &:hover { background: rgba(#ef4444, 0.25); } }
+    &--booked { background: rgba($gold, 0.12); color: $gold; cursor: default; }
+  }
+
+  &__loading { padding: 2rem 0; }
+
+  &__summary {
+    h3 { font-family: $font-heading; color: $white; font-size: 1rem; margin: 0 0 1rem; }
+  }
+
+  &__empty { color: rgba($white, 0.35); font-size: 0.85rem; padding: 1rem 0; }
+
+  &__list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  &__list-item {
+    display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem;
+    background: rgba($white, 0.02); border: 1px solid rgba($gold, 0.06);
+    border-radius: 8px; font-size: 0.85rem;
+  }
+
+  &__list-date { color: $white; font-weight: 500; min-width: 120px; }
+  &__list-reason { color: rgba($white, 0.45); flex: 1; }
+
+  &__list-unblock {
+    padding: 0.3rem 0.8rem; background: rgba(#ef4444, 0.1); border: 1px solid rgba(#ef4444, 0.2);
+    border-radius: 6px; color: #ef4444; font-size: 0.75rem; cursor: pointer; white-space: nowrap;
+    transition: all 0.2s;
+    &:hover { background: rgba(#ef4444, 0.2); }
+  }
+
+  &__overlay {
+    position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.6); display: flex;
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+
+  &__dialog {
+    background: #16162a; border: 1px solid rgba($gold, 0.12);
+    border-radius: 16px; padding: 2rem; width: 100%; max-width: 400px;
+
+    h3 { font-family: $font-heading; color: $white; margin: 0 0 0.25rem; }
+  }
+
+  &__dialog-date { color: rgba($gold, 0.7); font-size: 0.85rem; margin-bottom: 1.25rem; }
+
+  &__dialog-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; }
+}

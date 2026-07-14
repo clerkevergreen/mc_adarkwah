@@ -1,0 +1,111 @@
+<section class="portal section">
+  <div class="container">
+    <div class="section__header" appScrollReveal>
+      <span class="section__badge">Client Portal</span>
+      <h2 class="section__title">Your <span class="text-gold">Booking</span></h2>
+      <p class="section__desc">Enter your email and reference code to view your booking details and download your contract.</p>
+    </div>
+
+    @if (!booking) {
+      <div class="portal__form-wrap" appScrollReveal>
+        <form class="portal__form" (ngSubmit)="lookup()" #lookupForm="ngForm">
+          <div class="portal__form-group">
+            <label>Email Address</label>
+            <input type="email" class="portal__input" placeholder="your@email.com"
+              [(ngModel)]="email" name="email" required />
+          </div>
+          <div class="portal__form-group">
+            <label>Reference Code</label>
+            <input type="text" class="portal__input" placeholder="e.g. MC-AB12CD34"
+              [(ngModel)]="referenceCode" name="referenceCode" required
+              style="text-transform: uppercase;" />
+          </div>
+          <button type="submit" class="btn btn--gold btn--lg portal__submit"
+            [disabled]="lookupForm.invalid || loading">
+            @if (loading) {
+              <span class="portal__spinner"></span> Looking up...
+            } @else {
+              View Booking
+            }
+          </button>
+          @if (error) {
+            <p class="portal__error">{{ error }}</p>
+          }
+        </form>
+        <p class="portal__hint">Don't have a reference code? <a routerLink="/" fragment="booking">Book an event</a> to receive one.</p>
+      </div>
+    } @else {
+      <div class="portal__dashboard" appScrollReveal>
+        <div class="portal__card portal__card--header">
+          <div class="portal__card-top">
+            <div>
+              <h3 class="portal__card-title">Welcome, {{ booking.fullName }}</h3>
+              <p class="portal__card-ref">Reference: <strong>{{ booking.referenceCode }}</strong></p>
+            </div>
+            <span class="badge" [class]="getStatusClass(booking.status)">{{ booking.status | titlecase }}</span>
+          </div>
+        </div>
+
+        <div class="portal__card">
+          <h4 class="portal__card-heading">Event Details</h4>
+          <div class="portal__grid">
+            <div class="portal__field">
+              <span class="portal__label">Event Type</span>
+              <span class="portal__value">{{ booking.eventType }}</span>
+            </div>
+            <div class="portal__field">
+              <span class="portal__label">Event Date</span>
+              <span class="portal__value">{{ booking.eventDate | date:'fullDate' }}</span>
+            </div>
+            <div class="portal__field">
+              <span class="portal__label">Location</span>
+              <span class="portal__value">{{ booking.eventLocation || 'TBD' }}</span>
+            </div>
+            <div class="portal__field">
+              <span class="portal__label">Guests</span>
+              <span class="portal__value">{{ booking.guestCount || '-' }}</span>
+            </div>
+            @if (booking.budgetRange) {
+              <div class="portal__field">
+                <span class="portal__label">Budget Range</span>
+                <span class="portal__value">{{ booking.budgetRange }}</span>
+              </div>
+            }
+            <div class="portal__field">
+              <span class="portal__label">Submitted</span>
+              <span class="portal__value">{{ booking.createdAt | date:'mediumDate' }}</span>
+            </div>
+          </div>
+          @if (booking.additionalNotes) {
+            <div class="portal__notes">
+              <span class="portal__label">Additional Notes</span>
+              <p class="portal__value">{{ booking.additionalNotes }}</p>
+            </div>
+          }
+        </div>
+
+        <div class="portal__card">
+          <h4 class="portal__card-heading">Contract</h4>
+          <p class="portal__card-desc">Download your event hosting contract in PDF format.</p>
+          <button class="btn btn--gold" (click)="downloadContract()" [disabled]="downloading">
+            @if (downloading) {
+              <span class="portal__spinner"></span> Downloading...
+            } @else {
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.4rem;">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Download Contract
+            }
+          </button>
+        </div>
+
+        <div class="portal__card portal__card--contact">
+          <h4 class="portal__card-heading">Need Help?</h4>
+          <p>Contact us at <a href="mailto:mcadarkwah@gmail.com">mcadarkwah@gmail.com</a> or call <a href="tel:+447507615314">+44 7507 615314</a></p>
+        </div>
+
+        <button class="btn btn--outline portal__back" (click)="reset()">Back to Lookup</button>
+      </div>
+    }
+  </div>
+</section>

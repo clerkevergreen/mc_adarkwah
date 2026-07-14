@@ -105,10 +105,26 @@
         <div class="booking__form-row">
           <div class="booking__form-group">
             <label>Event Date *</label>
-            <input type="date" name="eventDate" #eventDate="ngModel" [(ngModel)]="bookingData.eventDate" required class="booking__input"
-              [class.booking__input--error]="eventDate.invalid && (eventDate.dirty || eventDate.touched)" />
-            <div class="booking__field-error" *ngIf="eventDate.invalid && (eventDate.dirty || eventDate.touched)">
+            <input type="date" name="eventDate" #eventDate="ngModel"
+              [ngModel]="bookingData.eventDate"
+              (ngModelChange)="onDateChange($event)"
+              required class="booking__input"
+              [class.booking__input--error]="(eventDate.invalid && (eventDate.dirty || eventDate.touched)) || bookingDateError !== ''"
+              [attr.min]="today" />
+            <div class="booking__field-error" *ngIf="bookingDateError">{{ bookingDateError }}</div>
+            <div class="booking__field-error" *ngIf="!bookingDateError && eventDate.invalid && (eventDate.dirty || eventDate.touched)">
               <span *ngIf="eventDate.errors?.['required']">Event date is required</span>
+            </div>
+            <div class="booking__avail-hint" *ngIf="loadingAvailability">
+              <span class="booking__avail-spinner"></span> Checking availability...
+            </div>
+            <div class="booking__avail-hint" *ngIf="!loadingAvailability && blockedDates.size === 0 && !bookingData.eventDate">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              All dates are available
+            </div>
+            <div class="booking__avail-hint" *ngIf="!loadingAvailability && blockedDates.size > 0 && !bookingData.eventDate">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Some dates may be unavailable — select a date to verify
             </div>
           </div>
           <div class="booking__form-group">
@@ -148,7 +164,7 @@
         </div>
 
         <div class="booking__form-actions">
-          <button type="submit" class="btn btn--gold btn--lg" [disabled]="bookingForm.invalid || isSubmitting">
+          <button type="submit" class="btn btn--gold btn--lg" [disabled]="bookingForm.invalid || isSubmitting || bookingDateError !== ''">
             <span *ngIf="!isSubmitting">
               Book Now
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -254,6 +270,13 @@
           <h3>Thank You!</h3>
           <p *ngIf="!showQuoteForm">Your booking request has been received. We will get back to you within 24 hours to confirm your event details.</p>
           <p *ngIf="showQuoteForm">Your quote request has been received. We will review your event details and get back to you within 24 hours with a personalized quote.</p>
+          @if (bookingReference && !showQuoteForm) {
+            <div class="booking__ref">
+              <span class="booking__ref-label">Your Reference Code:</span>
+              <span class="booking__ref-code">{{ bookingReference }}</span>
+              <p class="booking__ref-hint">Use this code to access the <a routerLink="/portal">Client Portal</a> and download your contract.</p>
+            </div>
+          }
           <p class="booking__success-note" *ngIf="!showQuoteForm">A confirmation email will be sent to your email address once your booking is approved.</p>
           <p class="booking__success-note" *ngIf="showQuoteForm">A confirmation will be sent to your email address once your quote is ready.</p>
           <button class="btn btn--gold" (click)="resetAll()">Submit Another Request</button>

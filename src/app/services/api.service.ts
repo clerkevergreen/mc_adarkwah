@@ -116,9 +116,13 @@ export class ApiService {
       .pipe(map(res => (res.data || []).map(e => mapId(e))));
   }
 
-  submitBooking(data: BookingForm): Observable<{ success: boolean; message: string }> {
+  submitBooking(data: BookingForm): Observable<{ success: boolean; message: string; referenceCode?: string }> {
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/bookings`, data)
-      .pipe(map(res => ({ success: res.success, message: res.message || 'Booking submitted' })));
+      .pipe(map(res => ({
+        success: res.success,
+        message: res.message || 'Booking submitted',
+        referenceCode: res.data?.referenceCode,
+      })));
   }
 
   submitQuote(data: QuoteForm): Observable<{ success: boolean; message: string }> {
@@ -154,5 +158,13 @@ export class ApiService {
   login(email: string, password: string): Observable<{ token: string; admin: any }> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password })
       .pipe(map(res => res.data));
+  }
+
+  getAvailability(): Observable<{ date: string; status: string }[]> {
+    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/availability`)
+      .pipe(map(res => (res.data || []).map(e => {
+        const { _id, __v, ...rest } = e;
+        return { ...rest, date: rest.date ? rest.date.split('T')[0] : rest.date };
+      })));
   }
 }

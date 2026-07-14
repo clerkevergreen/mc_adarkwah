@@ -88,6 +88,10 @@ app.use('/api/statistics', require('./routes/statistics'));
 app.use('/api/hero', require('./routes/hero'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/nav', require('./routes/nav'));
+app.use('/api/availability', require('./routes/availability'));
+app.use('/api/contracts', require('./routes/contracts'));
+app.use('/api/portal', require('./routes/portal'));
+app.use('/api/email', require('./routes/email'));
 
 /* =========================
    SMTP DEBUG ROUTE (ADDED)

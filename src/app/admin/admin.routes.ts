@@ -42,6 +42,8 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'profile', loadComponent: () => import('./pages/management/profile/profile.component').then(m => m.ProfileComponent) },
       { path: 'statistics', loadComponent: () => import('./pages/management/statistics/statistics.component').then(m => m.StatisticsComponent) },
       { path: 'videos', loadComponent: () => import('./pages/management/videos/videos.component').then(m => m.VideosComponent) },
+      { path: 'availability', loadComponent: () => import('./pages/management/availability-calendar/availability-calendar.component').then(m => m.AvailabilityCalendarComponent) },
+      { path: 'email', loadComponent: () => import('./pages/management/email/email.component').then(m => m.EmailComponent) },
     ],
   },
 ];
