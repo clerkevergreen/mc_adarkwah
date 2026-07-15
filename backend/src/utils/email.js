@@ -190,6 +190,28 @@ const sendBookingConfirmed = async (booking) => {
   return sendEmail({ to: booking.email, subject: '✓ Booking Confirmed - MC Adarkwah', html, type: 'booking_confirmed', relatedId: booking._id });
 };
 
+const sendAdminBookingConfirmed = async (booking) => {
+  const html = `
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0a0a0a;color:#fff;padding:2rem;border:1px solid #22c55e;border-radius:12px;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <h2 style="color:#22c55e;">✓ Booking Confirmed</h2>
+      </div>
+      <p>You just confirmed a booking from <strong>${booking.fullName}</strong>.</p>
+      <table style="width:100%;border-collapse:collapse;margin:1.5rem 0;">
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Name</td><td style="padding:8px;">${booking.fullName}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Email</td><td style="padding:8px;">${booking.email}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Phone</td><td style="padding:8px;">${booking.phone}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event</td><td style="padding:8px;">${booking.eventType}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Date</td><td style="padding:8px;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
+        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#22c55e;font-weight:bold;">✓ Confirmed</td></tr>
+      </table>
+      <hr style="border-color:#333;margin:2rem 0;">
+      <p style="color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
+    </div>
+  `;
+  return sendEmail({ to: process.env.CONTACT_EMAIL, subject: `✓ Booking Confirmed: ${booking.fullName} - ${booking.eventType}`, html, type: 'admin_booking_confirmed', relatedId: booking._id });
+};
+
 const sendBookingCancelled = async (booking) => {
   const html = `
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0a0a0a;color:#fff;padding:2rem;border:1px solid #ef4444;border-radius:12px;">
@@ -384,4 +406,4 @@ const sendPasswordResetEmail = async (email, resetUrl) => {
   return sendEmail({ to: email, subject: 'Password Reset - MC Adarkwah Admin', html, type: 'password_reset' });
 };
 
-module.exports = { sendEmail, sendBookingConfirmation, sendContactNotification, sendAdminNotification, sendBookingConfirmed, sendBookingCancelled, sendBookingCompleted, sendQuoteNotification, sendQuoteConfirmation, sendQuoteStatusUpdate, sendRegistrationConfirmed, sendRegistrationAdminNotification, sendPasswordResetEmail };
+module.exports = { sendEmail, sendBookingConfirmation, sendContactNotification, sendAdminNotification, sendBookingConfirmed, sendAdminBookingConfirmed, sendBookingCancelled, sendBookingCompleted, sendQuoteNotification, sendQuoteConfirmation, sendQuoteStatusUpdate, sendRegistrationConfirmed, sendRegistrationAdminNotification, sendPasswordResetEmail };

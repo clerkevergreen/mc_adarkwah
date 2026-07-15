@@ -1,5 +1,5 @@
 const Booking = require('../models/Booking');
-const { sendBookingConfirmation, sendAdminNotification, sendBookingConfirmed, sendBookingCancelled, sendBookingCompleted } = require('../utils/email');
+const { sendBookingConfirmation, sendAdminNotification, sendBookingConfirmed, sendAdminBookingConfirmed, sendBookingCancelled, sendBookingCompleted } = require('../utils/email');
 
 exports.createBooking = async (req, res, next) => {
   try {
@@ -48,6 +48,7 @@ exports.updateStatus = async (req, res, next) => {
     switch (status) {
       case 'confirmed':
         sendBookingConfirmed(booking);
+        sendAdminBookingConfirmed(booking);
         break;
       case 'cancelled':
         sendBookingCancelled(booking);
