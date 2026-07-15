@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const sgMail = require('@sendgrid/mail');
 const EmailLog = require('../models/EmailLog');
 
-const fromAddress = `"MC Adarkwah" <${process.env.SMTP_USER || process.env.CONTACT_EMAIL || 'noreply@mcadarkwah.com'}>`;
+const fromAddress = `"MC Adarkwah" <${process.env.FROM_EMAIL || process.env.SMTP_USER || process.env.CONTACT_EMAIL || 'noreply@mcadarkwah.com'}>`;
 
 /* ---------- SendGrid (primary) ---------- */
 
@@ -114,7 +114,7 @@ const sendBookingConfirmation = async (booking) => {
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0a0a0a;color:#fff;padding:2rem;border:1px solid #d4a84b;border-radius:12px;">
       <div style="text-align:center;margin-bottom:2rem;">
         <h1 style="color:#d4a84b;font-family:Georgia,serif;">MC Adarkwah</h1>
-        <p style="color:#999;">Booking Confirmation</p>
+        <p style="color:#d4a84b;">Booking Request Pending</p>
       </div>
       <h2 style="color:#d4a84b;">Thank You, ${booking.fullName}!</h2>
       <p>Your booking request has been received. Here are your details:</p>
@@ -131,7 +131,7 @@ const sendBookingConfirmation = async (booking) => {
       <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
     </div>
   `;
-  return sendEmail({ to: booking.email, subject: 'Booking Confirmation - MC Adarkwah', html, type: 'booking_confirmation', relatedId: booking._id });
+  return sendEmail({ to: booking.email, subject: 'Booking Pending - MC Adarkwah', html, type: 'booking_pending', relatedId: booking._id });
 };
 
 const sendContactNotification = async (contact) => {
@@ -188,6 +188,58 @@ const sendBookingConfirmed = async (booking) => {
     </div>
   `;
   return sendEmail({ to: booking.email, subject: '✓ Booking Confirmed - MC Adarkwah', html, type: 'booking_confirmed', relatedId: booking._id });
+};
+
+const sendBookingCancelled = async (booking) => {
+  const html = `
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0a0a0a;color:#fff;padding:2rem;border:1px solid #ef4444;border-radius:12px;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <div style="width:60px;height:60px;margin:0 auto 1rem;background:rgba(239,68,68,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <h1 style="color:#d4a84b;font-family:Georgia,serif;">Booking Cancelled</h1>
+      </div>
+      <h2 style="color:#ef4444;">Dear ${booking.fullName},</h2>
+      <p>We regret to inform you that your booking has been <strong style="color:#ef4444;">cancelled</strong>.</p>
+      <table style="width:100%;border-collapse:collapse;margin:1.5rem 0;">
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;">${booking.eventType}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;">${booking.eventLocation || 'TBD'}</td></tr>
+        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#ef4444;font-weight:bold;">✕ Cancelled</td></tr>
+      </table>
+      <p style="color:#999;">If you have any questions, please don't hesitate to contact us. We hope to serve you in the future.</p>
+      <p style="color:#999;">For inquiries, call <a href="tel:+447507615314" style="color:#d4a84b;">+44 7507 615314</a> / <a href="tel:+233552917251" style="color:#d4a84b;">+233 55 291 7251</a></p>
+      <hr style="border-color:#333;margin:2rem 0;">
+      <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
+    </div>
+  `;
+  return sendEmail({ to: booking.email, subject: '✕ Booking Cancelled - MC Adarkwah', html, type: 'booking_cancelled', relatedId: booking._id });
+};
+
+const sendBookingCompleted = async (booking) => {
+  const html = `
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0a0a0a;color:#fff;padding:2rem;border:1px solid #a855f7;border-radius:12px;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <div style="width:60px;height:60px;margin:0 auto 1rem;background:rgba(168,85,247,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <h1 style="color:#d4a84b;font-family:Georgia,serif;">Event Completed</h1>
+      </div>
+      <h2 style="color:#a855f7;">Dear ${booking.fullName},</h2>
+      <p>Your event has been marked as <strong style="color:#a855f7;">completed</strong>. Thank you for choosing MC Adarkwah!</p>
+      <table style="width:100%;border-collapse:collapse;margin:1.5rem 0;">
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;">${booking.eventType}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;">${booking.eventLocation || 'TBD'}</td></tr>
+        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#a855f7;font-weight:bold;">★ Completed</td></tr>
+      </table>
+      <p style="color:#999;">We hope you had a wonderful event! We would love to hear your feedback. Feel free to reach out to us anytime.</p>
+      <p style="color:#999;">For inquiries, call <a href="tel:+447507615314" style="color:#d4a84b;">+44 7507 615314</a> / <a href="tel:+233552917251" style="color:#d4a84b;">+233 55 291 7251</a></p>
+      <hr style="border-color:#333;margin:2rem 0;">
+      <p style="text-align:center;color:#666;font-size:0.8rem;">MC Adarkwah &bull; Professional Master of Ceremonies</p>
+    </div>
+  `;
+  return sendEmail({ to: booking.email, subject: '★ Event Completed - MC Adarkwah', html, type: 'booking_completed', relatedId: booking._id });
 };
 
 const sendQuoteNotification = async (quote) => {
@@ -332,4 +384,4 @@ const sendPasswordResetEmail = async (email, resetUrl) => {
   return sendEmail({ to: email, subject: 'Password Reset - MC Adarkwah Admin', html, type: 'password_reset' });
 };
 
-module.exports = { sendEmail, sendBookingConfirmation, sendContactNotification, sendAdminNotification, sendBookingConfirmed, sendQuoteNotification, sendQuoteConfirmation, sendQuoteStatusUpdate, sendRegistrationConfirmed, sendRegistrationAdminNotification, sendPasswordResetEmail };
+module.exports = { sendEmail, sendBookingConfirmation, sendContactNotification, sendAdminNotification, sendBookingConfirmed, sendBookingCancelled, sendBookingCompleted, sendQuoteNotification, sendQuoteConfirmation, sendQuoteStatusUpdate, sendRegistrationConfirmed, sendRegistrationAdminNotification, sendPasswordResetEmail };

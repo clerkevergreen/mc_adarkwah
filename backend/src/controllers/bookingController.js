@@ -1,5 +1,5 @@
 const Booking = require('../models/Booking');
-const { sendBookingConfirmation, sendAdminNotification, sendBookingConfirmed } = require('../utils/email');
+const { sendBookingConfirmation, sendAdminNotification, sendBookingConfirmed, sendBookingCancelled, sendBookingCompleted } = require('../utils/email');
 
 exports.createBooking = async (req, res, next) => {
   try {
@@ -45,8 +45,16 @@ exports.updateStatus = async (req, res, next) => {
     const booking = await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true });
     if (!booking) return res.status(404).json({ success: false, message: 'Booking not found' });
 
-    if (status === 'confirmed') {
-      sendBookingConfirmed(booking);
+    switch (status) {
+      case 'confirmed':
+        sendBookingConfirmed(booking);
+        break;
+      case 'cancelled':
+        sendBookingCancelled(booking);
+        break;
+      case 'completed':
+        sendBookingCompleted(booking);
+        break;
     }
 
     res.json({ success: true, data: booking });

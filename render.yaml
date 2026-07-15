@@ -31,3 +31,7 @@ services:
         sync: false
       - key: CONTACT_EMAIL
         sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        value: mubarakamui776@gmail.com
