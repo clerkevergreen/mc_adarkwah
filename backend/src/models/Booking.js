@@ -19,6 +19,12 @@ const bookingSchema = new mongoose.Schema({
     default: 'pending',
     index: true,
   },
+  amount: { type: Number, default: 0 },
+  paymentStatus: {
+    type: String,
+    enum: ['none', 'deposit', 'paid', 'refunded'],
+    default: 'none',
+  },
 }, { timestamps: true });
 
 bookingSchema.pre('save', function (next) {

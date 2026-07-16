@@ -27,3 +27,5 @@ services:
         sync: false
       - key: FROM_EMAIL
         value: mubarakamui776@gmail.com
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
