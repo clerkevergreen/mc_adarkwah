@@ -119,11 +119,11 @@ const sendBookingConfirmation = async (booking) => {
       <h2 style="color:#d4a84b;">Thank You, ${booking.fullName}!</h2>
       <p>Your booking request has been received. Here are your details:</p>
       <table style="width:100%;border-collapse:collapse;margin:1.5rem 0;">
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;border-bottom:1px solid #333;">${booking.eventType}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;border-bottom:1px solid #333;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;border-bottom:1px solid #333;">${booking.eventLocation || 'TBD'}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Guests</td><td style="padding:8px;border-bottom:1px solid #333;">${booking.guestCount || 'TBD'}</td></tr>
-        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#d4a84b;">Pending Confirmation</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;border-bottom:1px solid #333;color:#d4a84b;">${booking.eventType}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;border-bottom:1px solid #333;color:#d4a84b;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;border-bottom:1px solid #333;color:#d4a84b;">${booking.eventLocation || 'TBD'}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Guests</td><td style="padding:8px;border-bottom:1px solid #333;color:#d4a84b;">${booking.guestCount || 'TBD'}</td></tr>
+        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#d4a84b;font-weight:bold;">Pending Confirmation</td></tr>
       </table>
       <p style="color:#999;">We will get back to you within 24 hours to confirm your booking.</p>
       <p style="color:#999;">For urgent inquiries, call <a href="tel:+447507615314" style="color:#d4a84b;">+44 7507 615314</a> / <a href="tel:+233552917251" style="color:#d4a84b;">+233 55 291 7251</a></p>
@@ -176,11 +176,11 @@ const sendBookingConfirmed = async (booking) => {
       <h2 style="color:#22c55e;">Dear ${booking.fullName},</h2>
       <p>Great news! Your booking has been <strong style="color:#22c55e;">confirmed</strong>.</p>
       <table style="width:100%;border-collapse:collapse;margin:1.5rem 0;">
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;">${booking.eventType}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;">${booking.eventLocation || 'TBD'}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Guests</td><td style="padding:8px;">${booking.guestCount || 'TBD'}</td></tr>
-        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#22c55e;font-weight:bold;">✓ Confirmed</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;color:#d4a84b;">${booking.eventType}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;color:#d4a84b;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;color:#d4a84b;">${booking.eventLocation || 'TBD'}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Guests</td><td style="padding:8px;color:#d4a84b;">${booking.guestCount || 'TBD'}</td></tr>
+        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#d4a84b;font-weight:bold;">✓ Confirmed</td></tr>
       </table>
       <p style="color:#999;">We look forward to making your event unforgettable. A member of our team will follow up with any additional details.</p>
       <hr style="border-color:#333;margin:2rem 0;">
@@ -268,10 +268,10 @@ const sendBookingCancelled = async (booking) => {
       <h2 style="color:#ef4444;">Dear ${booking.fullName},</h2>
       <p>We regret to inform you that your booking has been <strong style="color:#ef4444;">cancelled</strong>.</p>
       <table style="width:100%;border-collapse:collapse;margin:1.5rem 0;">
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;">${booking.eventType}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;">${booking.eventLocation || 'TBD'}</td></tr>
-        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#ef4444;font-weight:bold;">✕ Cancelled</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;color:#d4a84b;">${booking.eventType}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;color:#d4a84b;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;color:#d4a84b;">${booking.eventLocation || 'TBD'}</td></tr>
+        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#d4a84b;font-weight:bold;">✕ Cancelled</td></tr>
       </table>
       <p style="color:#999;">If you have any questions, please don't hesitate to contact us. We hope to serve you in the future.</p>
       <p style="color:#999;">For inquiries, call <a href="tel:+447507615314" style="color:#d4a84b;">+44 7507 615314</a> / <a href="tel:+233552917251" style="color:#d4a84b;">+233 55 291 7251</a></p>
@@ -294,10 +294,10 @@ const sendBookingCompleted = async (booking) => {
       <h2 style="color:#a855f7;">Dear ${booking.fullName},</h2>
       <p>Your event has been marked as <strong style="color:#a855f7;">completed</strong>. Thank you for choosing MC Adarkwah!</p>
       <table style="width:100%;border-collapse:collapse;margin:1.5rem 0;">
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;">${booking.eventType}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;">${booking.eventLocation || 'TBD'}</td></tr>
-        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#a855f7;font-weight:bold;">★ Completed</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Type</td><td style="padding:8px;color:#d4a84b;">${booking.eventType}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Event Date</td><td style="padding:8px;color:#d4a84b;">${new Date(booking.eventDate).toLocaleDateString()}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #333;color:#999;">Location</td><td style="padding:8px;color:#d4a84b;">${booking.eventLocation || 'TBD'}</td></tr>
+        <tr><td style="padding:8px;color:#999;">Status</td><td style="padding:8px;color:#d4a84b;font-weight:bold;">★ Completed</td></tr>
       </table>
       <p style="color:#999;">We hope you had a wonderful event! We would love to hear your feedback. Feel free to reach out to us anytime.</p>
       <p style="color:#999;">For inquiries, call <a href="tel:+447507615314" style="color:#d4a84b;">+44 7507 615314</a> / <a href="tel:+233552917251" style="color:#d4a84b;">+233 55 291 7251</a></p>
