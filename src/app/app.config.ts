@@ -1,9 +1,10 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, ErrorHandler } from '@angular/core';
 import { provideRouter, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
-import { adminInterceptor } from './admin/admin.interceptor';
+import { apiErrorInterceptor } from './shared/interceptors/api-error.interceptor';
+import { GlobalErrorHandler } from './shared/error-handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,6 +14,7 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
     ),
     provideAnimationsAsync(),
-    provideHttpClient(withFetch(), withInterceptors([adminInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([apiErrorInterceptor])),
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
   ],
 };
