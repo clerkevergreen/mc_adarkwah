@@ -1,4 +1,7 @@
+@use 'styles/variables' as v;
+
 :host {
   display: block;
   min-height: 100vh;
+  background: v.$dark;
 }
