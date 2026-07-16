@@ -19,16 +19,33 @@ export class GalleryComponent implements OnInit {
   lightboxOpen = false;
   lightboxIndex = 0;
   loading = true;
+  error: string | null = null;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getGalleryItems().subscribe(data => {
-      this.galleryItems = data;
-      this.filterItems('all');
-      this.loading = false;
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    this.dataService.getGalleryItems().subscribe({
+      next: (data) => {
+        this.galleryItems = data;
+        this.filterItems('all');
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = err.error?.message || err.message || 'Failed to load';
+        this.loading = false;
+      }
     });
     this.categories = this.dataService.getGalleryCategories();
+  }
+
+  retry(): void {
+    this.loadData();
   }
 
   filterItems(category: GalleryCategory): void {

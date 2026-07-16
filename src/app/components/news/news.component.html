@@ -18,7 +18,14 @@
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="!loading && newsItems.length === 0">
+    <div class="empty-state" *ngIf="error">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h3>Failed to load</h3>
+      <p>{{ error }}</p>
+      <button class="btn--retry" (click)="retry()">Try Again</button>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !error && newsItems.length === 0">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-4 0v-9"/><polyline points="2 15 6 15 6 10 10 10"/></svg>
       <h3>No News Yet</h3>
       <p>Latest updates and announcements will appear here.</p>

@@ -6,7 +6,31 @@
       <p class="section__desc">Discover the journey, passion, and dedication that makes MC Adarkwah one of Africa's most sought-after event hosts.</p>
     </div>
 
-    <div class="about__grid">
+    <div *ngIf="loading" class="about__grid">
+      <div class="about__image">
+        <div class="about__image-wrapper">
+          <div class="skeleton" style="width:100%;aspect-ratio:3/4;border-radius:20px;"></div>
+          <div class="skeleton" style="width:100px;height:60px;border-radius:16px;position:absolute;bottom:-20px;right:-20px;"></div>
+        </div>
+      </div>
+      <div class="about__content">
+        <div class="skeleton" style="width:200px;height:28px;margin-bottom:0.5rem;"></div>
+        <div class="skeleton" style="width:160px;height:16px;margin-bottom:1.5rem;"></div>
+        <div class="skeleton" style="width:100%;height:80px;margin-bottom:2rem;"></div>
+        <div class="about__stats">
+          <div class="skeleton" style="width:100%;height:60px;border-radius:12px;" *ngFor="let _ of [1,2,3,4]"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="error">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h3>Failed to load</h3>
+      <p>{{ error }}</p>
+      <button class="btn--retry" (click)="retry()">Try Again</button>
+    </div>
+
+    <div class="about__grid" *ngIf="!loading && !error">
       <div class="about__image" appScrollReveal animation="fade-left">
         <div class="about__image-wrapper">
           <div class="about__image-glow"></div>
@@ -61,7 +85,7 @@
       </div>
     </div>
 
-    <div class="about__timeline" appScrollReveal>
+    <div class="about__timeline" appScrollReveal *ngIf="!loading && !error">
       <h3 class="about__timeline-title">Career <span class="text-gold">Milestones</span></h3>
       <div class="about__timeline-track">
         <div class="about__timeline-line"></div>

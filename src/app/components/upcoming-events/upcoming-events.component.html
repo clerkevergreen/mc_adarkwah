@@ -6,7 +6,33 @@
       <p class="section__desc">Don't miss out on these amazing upcoming events hosted by MC Adarkwah.</p>
     </div>
 
-    <div class="upcoming__list">
+    <div *ngIf="loading" class="upcoming__list">
+      <div class="upcoming__item" *ngFor="let _ of [1,2]">
+        <div class="skeleton" style="width:80px;height:80px;border-radius:12px;flex-shrink:0;"></div>
+        <div class="skeleton" style="width:70px;height:70px;border-radius:12px;flex-shrink:0;"></div>
+        <div style="flex:1">
+          <div class="skeleton" style="width:120px;height:14px;margin-bottom:0.5rem;"></div>
+          <div class="skeleton" style="width:200px;height:18px;margin-bottom:0.3rem;"></div>
+          <div class="skeleton" style="width:160px;height:12px;"></div>
+        </div>
+        <div class="skeleton" style="width:180px;height:60px;border-radius:8px;"></div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="error">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h3>Failed to load</h3>
+      <p>{{ error }}</p>
+      <button class="btn--retry" (click)="retry()">Try Again</button>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !error && upcomingEvents.length === 0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <h3>No Upcoming Events</h3>
+      <p>Check back soon for upcoming events.</p>
+    </div>
+
+    <div class="upcoming__list" *ngIf="!loading && !error && upcomingEvents.length > 0">
       <div class="upcoming__item" *ngFor="let event of upcomingEvents; let i = index"
         appScrollReveal [delay]="i * 150">
         <div class="upcoming__thumb" *ngIf="event.thumbnailImage">

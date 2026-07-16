@@ -15,16 +15,33 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
   testimonials: Testimonial[] = [];
   currentIndex = 0;
   loading = true;
+  error: string | null = null;
   private autoSlideInterval: any;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getTestimonials().subscribe(data => {
-      this.testimonials = data;
-      this.loading = false;
-      this.startAutoSlide();
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    this.dataService.getTestimonials().subscribe({
+      next: (data) => {
+        this.testimonials = data;
+        this.loading = false;
+        if (data.length > 0) this.startAutoSlide();
+      },
+      error: (err) => {
+        this.error = err.error?.message || err.message || 'Failed to load';
+        this.loading = false;
+      }
     });
+  }
+
+  retry(): void {
+    this.loadData();
   }
 
   private startAutoSlide(): void {

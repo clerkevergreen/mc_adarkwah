@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data.service';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
+import { forkJoin } from 'rxjs';
 
 const defaultAboutInfo = {
   name: 'MC Adarkwah',
@@ -38,20 +39,41 @@ export class AboutComponent implements OnInit, AfterViewInit {
   statistics: any[] = [];
   counters: { current: number; target: number; suffix: string }[] = [];
   isCounting = false;
+  loading = true;
+  error: string | null = null;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getAboutInfo().subscribe(data => {
-      if (data) this.aboutInfo = data;
-    });
-    this.dataService.getStatistics().subscribe(stats => {
-      this.statistics = stats;
-    });
+    this.loadData();
   }
 
   ngAfterViewInit(): void {
-    this.initCounterObserver();
+    // counter observer initialized after data loads
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    forkJoin({
+      about: this.dataService.getAboutInfo(),
+      stats: this.dataService.getStatistics()
+    }).subscribe({
+      next: ({ about, stats }) => {
+        if (about) this.aboutInfo = about;
+        this.statistics = stats.map(s => ({ ...s, current: 0 }));
+        this.loading = false;
+        if (this.statistics.length > 0) this.initCounterObserver();
+      },
+      error: (err) => {
+        this.error = err.error?.message || err.message || 'Failed to load';
+        this.loading = false;
+      }
+    });
+  }
+
+  retry(): void {
+    this.loadData();
   }
 
   private initCounterObserver(): void {

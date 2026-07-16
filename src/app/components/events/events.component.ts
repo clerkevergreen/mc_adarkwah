@@ -18,17 +18,31 @@ export class EventsComponent implements OnInit {
   featuredEvents: Event[] = [];
   loadingFeatured = true;
   loadingUpcoming = true;
+  errorFeatured: string | null = null;
+  errorUpcoming: string | null = null;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getUpcomingEvents().subscribe(data => {
-      this.upcomingEvents = data;
-      this.loadingUpcoming = false;
+    this.loadFeatured();
+    this.loadUpcoming();
+  }
+
+  loadFeatured(): void {
+    this.loadingFeatured = true;
+    this.errorFeatured = null;
+    this.dataService.getFeaturedEvents().subscribe({
+      next: (data) => { this.featuredEvents = data; this.loadingFeatured = false; },
+      error: (err) => { this.errorFeatured = err.error?.message || err.message || 'Failed to load'; this.loadingFeatured = false; }
     });
-    this.dataService.getFeaturedEvents().subscribe(data => {
-      this.featuredEvents = data;
-      this.loadingFeatured = false;
+  }
+
+  loadUpcoming(): void {
+    this.loadingUpcoming = true;
+    this.errorUpcoming = null;
+    this.dataService.getUpcomingEvents().subscribe({
+      next: (data) => { this.upcomingEvents = data; this.loadingUpcoming = false; },
+      error: (err) => { this.errorUpcoming = err.error?.message || err.message || 'Failed to load'; this.loadingUpcoming = false; }
     });
   }
 

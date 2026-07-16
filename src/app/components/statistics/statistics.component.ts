@@ -12,17 +12,37 @@ import { DataService } from '../../services/data.service';
 export class StatisticsComponent implements OnInit, AfterViewInit {
   statistics: any[] = [];
   isCounting = false;
+  loading = true;
+  error: string | null = null;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getStatistics().subscribe(stats => {
-      this.statistics = stats.map(s => ({ ...s, current: 0 }));
-    });
+    this.loadData();
   }
 
   ngAfterViewInit(): void {
-    this.initCounterObserver();
+    // counter observer initialized after data loads
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    this.dataService.getStatistics().subscribe({
+      next: (stats) => {
+        this.statistics = stats.map(s => ({ ...s, current: 0 }));
+        this.loading = false;
+        if (this.statistics.length > 0) this.initCounterObserver();
+      },
+      error: (err) => {
+        this.error = err.error?.message || err.message || 'Failed to load';
+        this.loading = false;
+      }
+    });
+  }
+
+  retry(): void {
+    this.loadData();
   }
 
   private initCounterObserver(): void {

@@ -18,7 +18,14 @@
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="!loading && services.length === 0">
+    <div class="empty-state" *ngIf="error">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h3>Failed to load</h3>
+      <p>{{ error }}</p>
+      <button class="btn--retry" (click)="retry()">Try Again</button>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !error && services.length === 0">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       <h3>No Services Available</h3>
       <p>Services will be listed here once they are added.</p>

@@ -13,13 +13,24 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
 export class SponsorsComponent implements OnInit {
   sponsors: any[] = [];
   loading = true;
+  error: string | null = null;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getSponsors().subscribe(data => {
-      this.sponsors = data;
-      this.loading = false;
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    this.dataService.getSponsors().subscribe({
+      next: (data) => { this.sponsors = data; this.loading = false; },
+      error: (err) => { this.error = err.error?.message || err.message || 'Failed to load'; this.loading = false; }
     });
+  }
+
+  retry(): void {
+    this.loadData();
   }
 }

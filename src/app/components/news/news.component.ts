@@ -14,13 +14,24 @@ import { NewsItem } from '../../models/news.model';
 export class NewsComponent implements OnInit {
   newsItems: NewsItem[] = [];
   loading = true;
+  error: string | null = null;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getNewsItems().subscribe(data => {
-      this.newsItems = data;
-      this.loading = false;
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    this.dataService.getNewsItems().subscribe({
+      next: (data) => { this.newsItems = data; this.loading = false; },
+      error: (err) => { this.error = err.error?.message || err.message || 'Failed to load'; this.loading = false; }
     });
+  }
+
+  retry(): void {
+    this.loadData();
   }
 }

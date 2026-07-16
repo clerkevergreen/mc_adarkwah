@@ -15,28 +15,45 @@ import { FAQ } from '../../models/faq.model';
 export class FaqComponent implements OnInit {
   faqs: FAQ[] = [];
   loading = true;
+  error: string | null = null;
 
   constructor(private dataService: DataService, private seo: SeoService) {}
 
   ngOnInit(): void {
-    this.dataService.getFAQs().subscribe(data => {
-      this.faqs = data.map(f => ({ ...f, isOpen: false }));
-      this.loading = false;
-      if (data.length > 0) {
-        this.seo.setStructuredData({
-          '@context': 'https://schema.org',
-          '@type': 'FAQPage',
-          mainEntity: data.map(f => ({
-            '@type': 'Question',
-            name: f.question,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: f.answer,
-            },
-          })),
-        });
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    this.dataService.getFAQs().subscribe({
+      next: (data) => {
+        this.faqs = data.map(f => ({ ...f, isOpen: false }));
+        this.loading = false;
+        if (data.length > 0) {
+          this.seo.setStructuredData({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: data.map(f => ({
+              '@type': 'Question',
+              name: f.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: f.answer,
+              },
+            })),
+          });
+        }
+      },
+      error: (err) => {
+        this.error = err.error?.message || err.message || 'Failed to load';
+        this.loading = false;
       }
     });
+  }
+
+  retry(): void {
+    this.loadData();
   }
 
   toggleFAQ(id: string): void {

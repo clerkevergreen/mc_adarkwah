@@ -17,6 +17,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
   services: Service[] = [];
   selectedService: Service | null = null;
   loading = true;
+  error: string | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -36,10 +37,20 @@ export class ServicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dataService.getServices().subscribe(data => {
-      this.services = data;
-      this.loading = false;
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    this.dataService.getServices().subscribe({
+      next: (data) => { this.services = data; this.loading = false; },
+      error: (err) => { this.error = err.error?.message || err.message || 'Failed to load'; this.loading = false; }
     });
+  }
+
+  retry(): void {
+    this.loadData();
   }
 
   selectService(service: Service): void {

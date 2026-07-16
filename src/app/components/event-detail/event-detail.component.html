@@ -1,6 +1,29 @@
 <app-navbar></app-navbar>
 
-<section class="event-detail" *ngIf="event">
+<section class="event-detail" *ngIf="loading">
+  <div class="event-detail__banner">
+    <div class="event-detail__banner-placeholder">
+      <div class="skeleton" style="width:100%;height:60vh;min-height:400px;"></div>
+    </div>
+  </div>
+  <div class="event-detail__content">
+    <div class="container">
+      <div class="event-detail__grid">
+        <div class="event-detail__main">
+          <div class="skeleton" style="width:250px;height:24px;margin-bottom:1rem;"></div>
+          <div class="skeleton" style="width:100%;height:120px;margin-bottom:2rem;"></div>
+          <div class="skeleton" style="width:180px;height:20px;margin-bottom:1rem;"></div>
+          <div class="skeleton" style="width:60%;height:16px;margin-bottom:0.5rem;" *ngFor="let _ of [1,2,3]"></div>
+        </div>
+        <div class="event-detail__sidebar">
+          <div class="skeleton" style="width:100%;height:300px;border-radius:16px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="event-detail" *ngIf="!loading && event">
   <div class="event-detail__banner">
     <img *ngIf="event.bannerImage && !bannerError; else noBannerImg" [src]="event.bannerImage" [alt]="event.title" class="event-detail__banner-img" (error)="bannerError = true" />
     <ng-template #noBannerImg>
@@ -86,7 +109,14 @@
   </div>
 </section>
 
-<section class="event-detail__not-found" *ngIf="!event">
+<div class="empty-state" *ngIf="error" style="padding:8rem 0;">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <h3>Failed to load event</h3>
+  <p>{{ error }}</p>
+  <button class="btn--retry" (click)="retry()">Try Again</button>
+</div>
+
+<section class="event-detail__not-found" *ngIf="!loading && !error && !event">
   <div class="container">
     <h2>Event Not Found</h2>
     <p>The event you are looking for does not exist.</p>

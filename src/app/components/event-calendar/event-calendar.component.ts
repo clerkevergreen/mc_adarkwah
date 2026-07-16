@@ -17,6 +17,8 @@ export class EventCalendarComponent implements OnInit {
   currentYear: number;
   calendarDays: (number | null)[] = [];
   monthEvents: Event[] = [];
+  loading = true;
+  error: string | null = null;
 
   months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -27,12 +29,35 @@ export class EventCalendarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataService.getUpcomingEvents().subscribe(upcoming => {
-      this.dataService.getPastEvents().subscribe(past => {
-        this.allEvents = [...upcoming, ...past];
-        this.generateCalendar();
-      });
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    this.dataService.getUpcomingEvents().subscribe({
+      next: (upcoming) => {
+        this.dataService.getPastEvents().subscribe({
+          next: (past) => {
+            this.allEvents = [...upcoming, ...past];
+            this.generateCalendar();
+            this.loading = false;
+          },
+          error: (err) => {
+            this.error = err.error?.message || err.message || 'Failed to load';
+            this.loading = false;
+          }
+        });
+      },
+      error: (err) => {
+        this.error = err.error?.message || err.message || 'Failed to load';
+        this.loading = false;
+      }
     });
+  }
+
+  retry(): void {
+    this.loadData();
   }
 
   generateCalendar(): void {

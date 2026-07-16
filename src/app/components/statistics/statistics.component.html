@@ -1,7 +1,28 @@
 <section class="stats section" id="stats">
   <div class="stats__bg"></div>
   <div class="container">
-    <div class="stats__grid">
+    <div *ngIf="loading" class="stats__grid">
+      <div class="stats__item" *ngFor="let _ of [1,2,3,4]">
+        <div class="skeleton" style="width:56px;height:56px;border-radius:14px;margin:0 auto 1rem;"></div>
+        <div class="skeleton" style="width:80px;height:36px;margin:0 auto 0.3rem;"></div>
+        <div class="skeleton" style="width:100px;height:14px;margin:0 auto;"></div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="error">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h3>Failed to load</h3>
+      <p>{{ error }}</p>
+      <button class="btn--retry" (click)="retry()">Try Again</button>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !error && statistics.length === 0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <h3>No Statistics Yet</h3>
+      <p>Statistics will appear here once available.</p>
+    </div>
+
+    <div class="stats__grid" *ngIf="!loading && !error && statistics.length > 0">
       <div class="stats__item" *ngFor="let stat of statistics; let i = index"
         [style.--delay]="i * 0.15 + 's'">
         <div class="stats__icon">

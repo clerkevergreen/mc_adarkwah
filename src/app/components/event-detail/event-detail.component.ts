@@ -20,6 +20,8 @@ export class EventDetailComponent implements OnInit {
   event: Event | undefined | null = null;
   bannerError = false;
   showRegistration = false;
+  loading = true;
+  error: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,11 +35,23 @@ export class EventDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadEvent();
+  }
+
+  loadEvent(): void {
     const slug = this.route.snapshot.paramMap.get('slug');
-    if (slug) {
-      this.dataService.getEventBySlug(slug).subscribe(event => {
+    if (!slug) {
+      this.loading = false;
+      return;
+    }
+    this.loading = true;
+    this.error = null;
+    this.event = undefined;
+    this.dataService.getEventBySlug(slug).subscribe({
+      next: (event) => {
         this.event = event;
         this.bannerError = false;
+        this.loading = false;
         if (this.event) {
           this.seo.setPageTitle(this.event.title);
           this.seo.setMetaTags({
@@ -71,7 +85,15 @@ export class EventDetailComponent implements OnInit {
             },
           });
         }
-      });
-    }
+      },
+      error: (err) => {
+        this.error = err.error?.message || err.message || 'Failed to load event';
+        this.loading = false;
+      }
+    });
+  }
+
+  retry(): void {
+    this.loadEvent();
   }
 }

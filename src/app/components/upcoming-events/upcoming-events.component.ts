@@ -15,10 +15,25 @@ import { Event } from '../../models/event.model';
 })
 export class UpcomingEventsComponent implements OnInit {
   upcomingEvents: Event[] = [];
+  loading = true;
+  error: string | null = null;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.getUpcomingEvents().subscribe(data => this.upcomingEvents = data);
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.loading = true;
+    this.error = null;
+    this.dataService.getUpcomingEvents().subscribe({
+      next: (data) => { this.upcomingEvents = data; this.loading = false; },
+      error: (err) => { this.error = err.error?.message || err.message || 'Failed to load'; this.loading = false; }
+    });
+  }
+
+  retry(): void {
+    this.loadData();
   }
 }
