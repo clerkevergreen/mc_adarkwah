@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const morgan = require('morgan');
+const timeout = require('connect-timeout');
 const path = require('path');
 const fs = require('fs');
 const net = require('net');
@@ -36,6 +38,19 @@ app.use(cors({
    SECURITY HEADERS
 ========================= */
 app.use(helmet());
+
+/* =========================
+   REQUEST LOGGING
+========================= */
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+/* =========================
+   REQUEST TIMEOUT
+========================= */
+app.use(timeout('30s'));
+app.use((req, res, next) => {
+  if (!req.timedout) next();
+});
 
 /* =========================
    QUERY SANITIZATION
