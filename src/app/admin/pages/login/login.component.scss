@@ -106,10 +106,21 @@
       box-shadow: 0 0 0 3px rgba($gold, 0.1);
     }
 
+    &--error {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    }
+
     &:-webkit-autofill {
       -webkit-box-shadow: 0 0 0 1000px #1a1a2e inset;
       -webkit-text-fill-color: $white;
     }
+  }
+
+  &__field-error {
+    font-size: 0.75rem;
+    color: #ef4444;
+    margin-top: 0.15rem;
   }
 
   &__links {

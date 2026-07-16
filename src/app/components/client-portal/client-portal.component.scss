@@ -25,6 +25,13 @@
     border-radius: 8px; color: $white; font-size: 0.9rem; outline: none;
     &:focus { border-color: $gold; background: rgba($gold, 0.05); }
     &::placeholder { color: rgba($white, 0.25); }
+    &--error { border-color: #ef4444 !important; }
+  }
+
+  &__field-error {
+    font-size: 0.75rem;
+    color: #ef4444;
+    margin-top: 0.15rem;
   }
 
   &__submit { width: 100%; margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }

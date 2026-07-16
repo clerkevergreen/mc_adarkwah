@@ -12,13 +12,24 @@
           <div class="portal__form-group">
             <label>Email Address</label>
             <input type="email" class="portal__input" placeholder="your@email.com"
-              [(ngModel)]="email" name="email" required />
+              #emailField="ngModel" [(ngModel)]="email" name="email" required email
+              [class.portal__input--error]="emailField.invalid && (emailField.dirty || emailField.touched)" />
+            @if (emailField.invalid && (emailField.dirty || emailField.touched)) {
+              <div class="portal__field-error">
+                @if (emailField.errors?.['required']) { Email is required }
+                @if (emailField.errors?.['email']) { Enter a valid email }
+              </div>
+            }
           </div>
           <div class="portal__form-group">
             <label>Reference Code</label>
             <input type="text" class="portal__input" placeholder="e.g. MC-AB12CD34"
-              [(ngModel)]="referenceCode" name="referenceCode" required
-              style="text-transform: uppercase;" />
+              #codeField="ngModel" [(ngModel)]="referenceCode" name="referenceCode" required
+              style="text-transform: uppercase;"
+              [class.portal__input--error]="codeField.invalid && (codeField.dirty || codeField.touched)" />
+            @if (codeField.invalid && (codeField.dirty || codeField.touched)) {
+              <div class="portal__field-error">Reference code is required</div>
+            }
           </div>
           <button type="submit" class="btn btn--gold btn--lg portal__submit"
             [disabled]="lookupForm.invalid || loading">

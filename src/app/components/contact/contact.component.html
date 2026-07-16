@@ -82,7 +82,7 @@
             @if (error) {
               <div class="contact__form-error">{{ error }}</div>
             }
-            <button class="btn btn--gold" type="submit" [disabled]="submitting">
+            <button class="btn btn--gold" type="submit" [disabled]="contactForm.invalid || submitting">
               {{ submitting ? 'Sending...' : 'Send Message' }}
             </button>
           </form>

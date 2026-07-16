@@ -10,22 +10,44 @@
     <form class="setup__form" (ngSubmit)="onSubmit()" #setupForm="ngForm">
       <div class="setup__field">
         <label class="setup__label" for="name">Name</label>
-        <input id="name" class="setup__input" type="text" placeholder="Your name" [(ngModel)]="name" name="name" required />
+        <input id="name" class="setup__input" type="text" placeholder="Your name" #nameField="ngModel" [(ngModel)]="name" name="name" required
+          [class.setup__input--error]="nameField.invalid && (nameField.dirty || nameField.touched)" />
+        @if (nameField.invalid && (nameField.dirty || nameField.touched)) {
+          <div class="setup__field-error">Name is required</div>
+        }
       </div>
       <div class="setup__field">
         <label class="setup__label" for="email">Email</label>
-        <input id="email" class="setup__input" type="email" placeholder="admin@example.com" [(ngModel)]="email" name="email" required />
+        <input id="email" class="setup__input" type="email" placeholder="admin@example.com" #emailField="ngModel" [(ngModel)]="email" name="email" required email
+          [class.setup__input--error]="emailField.invalid && (emailField.dirty || emailField.touched)" />
+        @if (emailField.invalid && (emailField.dirty || emailField.touched)) {
+          <div class="setup__field-error">
+            @if (emailField.errors?.['required']) { Email is required }
+            @if (emailField.errors?.['email']) { Enter a valid email }
+          </div>
+        }
       </div>
       <div class="setup__field">
         <label class="setup__label" for="password">Password</label>
-        <input id="password" class="setup__input" type="password" placeholder="Min. 6 characters" [(ngModel)]="password" name="password" required />
+        <input id="password" class="setup__input" type="password" placeholder="Min. 6 characters" #passwordField="ngModel" [(ngModel)]="password" name="password" required minlength="6"
+          [class.setup__input--error]="passwordField.invalid && (passwordField.dirty || passwordField.touched)" />
+        @if (passwordField.invalid && (passwordField.dirty || passwordField.touched)) {
+          <div class="setup__field-error">
+            @if (passwordField.errors?.['required']) { Password is required }
+            @if (passwordField.errors?.['minlength']) { Min. 6 characters }
+          </div>
+        }
       </div>
       <div class="setup__field">
         <label class="setup__label" for="confirmPassword">Confirm Password</label>
-        <input id="confirmPassword" class="setup__input" type="password" placeholder="Repeat password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+        <input id="confirmPassword" class="setup__input" type="password" placeholder="Repeat password" #confirmField="ngModel" [(ngModel)]="confirmPassword" name="confirmPassword" required
+          [class.setup__input--error]="confirmField.invalid && (confirmField.dirty || confirmField.touched)" />
+        @if (confirmField.invalid && (confirmField.dirty || confirmField.touched)) {
+          <div class="setup__field-error">Confirm password is required</div>
+        }
       </div>
       <div class="setup__error" *ngIf="error">{{ error }}</div>
-      <button class="setup__btn" type="submit" [disabled]="loading">
+      <button class="setup__btn" type="submit" [disabled]="setupForm.invalid || loading">
         <span *ngIf="!loading">Create Admin Account</span>
         <span *ngIf="loading">Creating...</span>
       </button>
