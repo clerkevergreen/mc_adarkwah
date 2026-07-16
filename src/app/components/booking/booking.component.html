@@ -279,13 +279,7 @@
           }
           <p class="booking__success-note" *ngIf="!showQuoteForm">A confirmation email will be sent to your email address once your booking is approved.</p>
           <p class="booking__success-note" *ngIf="showQuoteForm">A confirmation will be sent to your email address once your quote is ready.</p>
-          <div class="booking__success-actions" *ngIf="!showQuoteForm">
-            <button class="btn btn--gold" (click)="payNow()" [disabled]="paying">
-              {{ paying ? 'Redirecting...' : 'Pay Deposit' }}
-            </button>
-            <p class="booking__ref-hint">Secure your date by paying a deposit via Paystack.</p>
-          </div>
-          <button class="btn btn--outline" (click)="resetAll()">Submit Another Request</button>
+          <button class="btn btn--gold" (click)="resetAll()">Submit Another Request</button>
         </div>
       </ng-template>
     </div>

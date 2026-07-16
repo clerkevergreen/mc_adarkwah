@@ -81,15 +81,6 @@ app.use('/uploads', express.static(uploadDir));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
 
 /* =========================
-   PAYSTACK WEBHOOK (raw body required for signature verification)
-========================= */
-app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), (req, res, next) => {
-  req.rawBody = req.body;
-  req.body = JSON.parse(req.body);
-  next();
-}, require('./controllers/paymentController').handleWebhook);
-
-/* =========================
    API ROUTES
 ========================= */
 app.use('/api/auth', require('./routes/auth'));
@@ -116,7 +107,6 @@ app.use('/api/availability', require('./routes/availability'));
 app.use('/api/contracts', require('./routes/contracts'));
 app.use('/api/portal', require('./routes/portal'));
 app.use('/api/email', require('./routes/email'));
-app.use('/api/payments', require('./routes/payments'));
 
 /* =========================
    SMTP DIAGNOSTIC

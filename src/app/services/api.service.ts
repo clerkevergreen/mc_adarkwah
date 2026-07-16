@@ -116,13 +116,12 @@ export class ApiService {
       .pipe(map(res => (res.data || []).map(e => mapId(e))));
   }
 
-  submitBooking(data: BookingForm): Observable<{ success: boolean; message: string; referenceCode?: string; bookingId?: string }> {
+  submitBooking(data: BookingForm): Observable<{ success: boolean; message: string; referenceCode?: string }> {
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/bookings`, data)
       .pipe(map(res => ({
         success: res.success,
         message: res.message || 'Booking submitted',
         referenceCode: res.data?.referenceCode,
-        bookingId: res.data?._id,
       })));
   }
 
@@ -158,16 +157,6 @@ export class ApiService {
 
   login(email: string, password: string): Observable<{ token: string; admin: any }> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password })
-      .pipe(map(res => res.data));
-  }
-
-  initializePayment(bookingId: string): Observable<{ authorizationUrl: string; reference: string }> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/payments/initialize`, { bookingId })
-      .pipe(map(res => res.data));
-  }
-
-  verifyPayment(reference: string): Observable<{ status: string; amount: number }> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/payments/verify/${reference}`)
       .pipe(map(res => res.data));
   }
 

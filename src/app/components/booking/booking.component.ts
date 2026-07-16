@@ -46,8 +46,6 @@ export class BookingComponent implements OnInit, OnDestroy {
   currency: CurrencyCode = 'GHS';
   today = new Date().toISOString().split('T')[0];
   bookingReference = '';
-  bookingId = '';
-  paying = false;
   blockedDates = new Set<string>();
   bookingDateError = '';
   loadingAvailability = true;
@@ -133,7 +131,6 @@ export class BookingComponent implements OnInit, OnDestroy {
         this.isSubmitting = false;
         this.isSubmitted = true;
         this.bookingReference = res.referenceCode || '';
-        this.bookingId = res.bookingId || '';
         this.toast.show('Booking request submitted successfully!', 'success');
         this.resetForm(form);
       },
@@ -178,21 +175,6 @@ export class BookingComponent implements OnInit, OnDestroy {
       eventLocation: '', guestCount: 0, budgetRange: '', additionalNotes: '',
       agreeToTerms: false,
     };
-  }
-
-  payNow(): void {
-    if (!this.bookingId) return;
-    this.paying = true;
-    this.api.initializePayment(this.bookingId).subscribe({
-      next: (res) => {
-        this.paying = false;
-        window.location.href = res.authorizationUrl;
-      },
-      error: (err) => {
-        this.paying = false;
-        this.toast.show(err.error?.message || 'Failed to initialize payment', 'error');
-      },
-    });
   }
 
   resetAll(): void {
