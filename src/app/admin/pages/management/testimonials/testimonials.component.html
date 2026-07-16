@@ -36,7 +36,11 @@
             @for (t of filteredTestimonials; track t.id) {
               <tr>
                 <td class="table__name-cell">
-                  <img [src]="t.photo || 'assets/images/placeholder-avatar.jpg'" alt="" class="table__avatar" />
+                  @if (t.photo) {
+                    <img [src]="t.photo" alt="" class="table__avatar" />
+                  } @else {
+                    <div class="table__avatar table__avatar--initials">{{ t.name.charAt(0) }}</div>
+                  }
                   <span>{{ t.name }}</span>
                 </td>
                 <td>{{ t.eventName }}</td>

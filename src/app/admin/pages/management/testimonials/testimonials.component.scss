@@ -154,6 +154,17 @@
     object-fit: cover;
     border: 1px solid rgba($gold, 0.15);
     flex-shrink: 0;
+
+    &--initials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba($gold, 0.12);
+      color: $gold;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
   }
 
   &__review {
